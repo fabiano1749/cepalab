@@ -4,7 +4,7 @@
     <param-name>primefaces.CLIENT_SIDE_VALIDATION</param-name>
     <param-value>true</param-value>
   </context-param>
-  <display-name>SistemaVendas2</display-name>
+  <display-name>SistemaVendas</display-name>
   <welcome-file-list>
     <welcome-file>Home.xhtml</welcome-file>
   </welcome-file-list>
