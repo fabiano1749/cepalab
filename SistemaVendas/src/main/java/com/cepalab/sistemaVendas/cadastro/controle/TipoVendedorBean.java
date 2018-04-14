@@ -8,7 +8,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.cepalab.sistemaVendas.cadastro.dominio.ComissaoTipoVendedorProduto;
+import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaTipoVendedorProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoVendedor;
 import com.cepalab.sistemaVendas.repository.Produtos;
@@ -26,7 +26,7 @@ public class TipoVendedorBean implements Serializable {
 	private List<TipoVendedor> itens;
 	private TipoVendedor itemAux;
 	private List<Produto> listaProdutos;
-	private ComissaoTipoVendedorProduto comissaoProduto;
+	private PoliticaTipoVendedorProduto comissaoProduto;
 	
 	@Inject
 	private TiposVendedores tipos;
@@ -44,7 +44,7 @@ public class TipoVendedorBean implements Serializable {
 	public void limpar() {
 		item = new TipoVendedor();
 		itemAux = new TipoVendedor();
-		comissaoProduto = new ComissaoTipoVendedorProduto();
+		comissaoProduto = new PoliticaTipoVendedorProduto();
 	}
 
 	@PostConstruct
@@ -70,11 +70,11 @@ public class TipoVendedorBean implements Serializable {
 	public void adicionar() {
 		comissaoProduto.setTipoVendedor(item);
 		item.getComissaoTipoVendedor().add(comissaoProduto);
-		comissaoProduto = new ComissaoTipoVendedorProduto();
+		comissaoProduto = new PoliticaTipoVendedorProduto();
 
 	}
 
-	public void remover(ComissaoTipoVendedorProduto comissao) {
+	public void remover(PoliticaTipoVendedorProduto comissao) {
 		item.getComissaoTipoVendedor().remove(comissao);
 	}
 
@@ -148,11 +148,11 @@ public class TipoVendedorBean implements Serializable {
 		this.listaProdutos = listaProdutos;
 	}
 
-	public ComissaoTipoVendedorProduto getComissaoProduto() {
+	public PoliticaTipoVendedorProduto getComissaoProduto() {
 		return comissaoProduto;
 	}
 
-	public void setComissaoProduto(ComissaoTipoVendedorProduto comissaoProduto) {
+	public void setComissaoProduto(PoliticaTipoVendedorProduto comissaoProduto) {
 		this.comissaoProduto = comissaoProduto;
 	}
 	
@@ -160,7 +160,7 @@ public class TipoVendedorBean implements Serializable {
 	private void listaComissao() {
 		if(item.getComissaoTipoVendedor().size() == 0) {
 			for(Produto p : listaProdutos) {
-				ComissaoTipoVendedorProduto aux = new ComissaoTipoVendedorProduto();
+				PoliticaTipoVendedorProduto aux = new PoliticaTipoVendedorProduto();
 				aux.setProduto(p);
 				aux.setTipoVendedor(item);
 				item.getComissaoTipoVendedor().add(aux);
@@ -171,9 +171,9 @@ public class TipoVendedorBean implements Serializable {
 		else if(item.getComissaoTipoVendedor().size() < listaProdutos.size()) {
 			
 			for(Produto p : listaProdutos) {
-				ComissaoTipoVendedorProduto aux = new ComissaoTipoVendedorProduto();
+				PoliticaTipoVendedorProduto aux = new PoliticaTipoVendedorProduto();
 				int i = 0;
-				for(ComissaoTipoVendedorProduto c :item.getComissaoTipoVendedor() ) {
+				for(PoliticaTipoVendedorProduto c :item.getComissaoTipoVendedor() ) {
 					if(c.getProduto().getNome().equals(p.getNome())) {
 						i = 1;
 					}

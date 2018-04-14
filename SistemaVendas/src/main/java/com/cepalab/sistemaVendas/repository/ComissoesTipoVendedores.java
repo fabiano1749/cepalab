@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
-import com.cepalab.sistemaVendas.cadastro.dominio.ComissaoTipoVendedorProduto;
+import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaTipoVendedorProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoVendedor;
@@ -21,10 +21,10 @@ public class ComissoesTipoVendedores implements Serializable {
 	private EntityManager manager;
 
 	@SuppressWarnings("unchecked")
-	public List<ComissaoTipoVendedorProduto> ComissoesPorTipoVendedor(TipoVendedor tipo) {
+	public List<PoliticaTipoVendedorProduto> ComissoesPorTipoVendedor(TipoVendedor tipo) {
 
 		try {
-			return manager.createQuery("from ComissaoTipoVendedorProduto where tipoVendedor= :tipo", ComissaoTipoVendedorProduto.class)
+			return manager.createQuery("from ComissaoTipoVendedorProduto where tipoVendedor= :tipo", PoliticaTipoVendedorProduto.class)
 					.setParameter("tipo", tipo).getResultList();
 		} catch (NoResultException e) {
 			return null;
@@ -32,10 +32,10 @@ public class ComissoesTipoVendedores implements Serializable {
 	}
 
 	public BigDecimal taxaComissaoFuncionarioProduto(Funcionario func, Produto produto){
-		List<ComissaoTipoVendedorProduto> lista = ComissoesPorTipoVendedor(func.getTipoVendedor()) ;
+		List<PoliticaTipoVendedorProduto> lista = ComissoesPorTipoVendedor(func.getTipoVendedor()) ;
 		BigDecimal taxa = new BigDecimal("0");
 		
-		for(ComissaoTipoVendedorProduto c : lista) {
+		for(PoliticaTipoVendedorProduto c : lista) {
 			if(c.getProduto().getNome().equals(produto.getNome())){
 				taxa = c.getTaxaComissao();
 			}
@@ -45,10 +45,10 @@ public class ComissoesTipoVendedores implements Serializable {
 	}
 	
 	public BigDecimal taxaComissaoFuncionarioProdutoEnvio(Funcionario func, Produto produto){
-		List<ComissaoTipoVendedorProduto> lista = ComissoesPorTipoVendedor(func.getTipoVendedor()) ;
+		List<PoliticaTipoVendedorProduto> lista = ComissoesPorTipoVendedor(func.getTipoVendedor()) ;
 		BigDecimal taxa = new BigDecimal("0");
 		
-		for(ComissaoTipoVendedorProduto c : lista) {
+		for(PoliticaTipoVendedorProduto c : lista) {
 			if(c.getProduto().getNome().equals(produto.getNome())){
 				taxa = c.getTaxaComissaoEnvio();
 			}
