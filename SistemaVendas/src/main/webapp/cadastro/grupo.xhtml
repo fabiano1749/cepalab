@@ -1,0 +1,119 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+		<h1 class="fa-page-title">Cadastro de Grupos de Usuários</h1>
+
+		<p:toolbar style="width: 100%; margin-top: 20px">
+			<p:toolbarGroup>
+				<p:commandButton value="Novo" onclick="PF('NovoGrupo').show()"
+					actionListener="#{grupoBean.limpar}" update="formPnlNovo" />
+			</p:toolbarGroup>
+		</p:toolbar>
+
+
+
+		<h:form id="idFormTab">
+			<p:messages autoUpdate="true" />
+			<p:dataTable id="idFormTab" value="#{grupoBean.itens}" var="item"
+				style="margin-top: 20px ; width: 70% " reflow="true">
+
+				<p:column headerText="Código" style="width: 20%; text-align: center">
+					<h:outputText value="#{item.id}" />
+				</p:column>
+
+				<p:column headerText="Nome" style="width: 30%; text-align: center">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<p:column headerText="Descrição"
+					style="width: 30%; text-align: center">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<p:column headerText="Ações" style="width: 20%; text-align: center">
+					<p:commandButton icon="ui-icon-pencil"
+						style="margin-left: 4px; width: 40%" onclick="PF('edita').show()"
+						update="#{p:component('pnlEdita')}"
+						actionListener="#{grupoBean.troca(item)}" />
+
+					<p:commandButton icon="ui-icon-trash"
+						style="margin-left: 20px; width: 40%"
+						actionListener="#{grupoBean.troca(item)}"
+						oncomplete="PF('confirmExclusao').show()" process="@this"
+						update="idConfirmDialogExlusao" />
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+
+
+		<p:dialog widgetVar="NovoGrupo" header="Novo Grupo de Usuários"
+			resizable="false">
+			<h:form id="formPnlNovo">
+				<h:panelGroup id="idPnlG">
+					<p:panelGrid columns="2" id="pnlnovo">
+						<p:outputLabel value="Nome" for="idNome" />
+						<p:inputText id="idNome" value="#{grupoBean.item.nome}"
+							required="true" requiredMessage="Nome não informado!" />
+
+						<p:outputLabel value="Descição" for="idDescricao" />
+						<p:inputText id="idDescricao" value="#{grupoBean.item.descricao}" />
+
+					</p:panelGrid>
+
+					<p:commandButton value="Salvar"
+						actionListener="#{grupoBean.salvar()}"
+						update="idFormTab:idFormTab idPnlG"
+						oncomplete="PF('NovoGrupo').hide(); return false;" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+
+
+		<p:dialog widgetVar="edita" header="Editar Grupo de Usuários"
+			resizable="false">
+			<h:form id="formPnlEditar">
+				<h:panelGroup id="idPnlGEdita">
+					<p:panelGrid columns="2" id="pnlEdita">
+					
+						<p:outputLabel value="Nome" for="idNome" />
+						<p:inputText id="idNome" value="#{grupoBean.itemAux.nome}"
+							required="true" requiredMessage="Nome não informado!" />
+
+						<p:outputLabel value="Descição" for="idDescricao" />
+						<p:inputText id="idDescricao" value="#{grupoBean.itemAux.descricao}" />
+					
+					</p:panelGrid>
+
+					<p:commandButton value="Salvar"
+						actionListener="#{grupoBean.editar()}"
+						update="idFormTab:idFormTab idPnlGEdita"
+						oncomplete="PF('edita').hide(); return false;" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao" header="Exclusão de Grupo de Usuários"
+			message="Quer realmente excluir o grupo : #{grupoBean.itemAux.nome}?">
+			<h:form id="formExclusao">
+				<p:messages />
+
+				<p:commandButton value="Sim" actionListener="#{grupoBean.excluir}"
+					update="idFormTab:idFormTab" process="@this"
+					oncomplete="PF('confirmExclusao').hide() return false;" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
+			</h:form>
+		</p:confirmDialog>
+
+
+
+	</ui:define>
+</ui:composition>

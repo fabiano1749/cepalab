@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+		<h1 class="fa-page-title">Cadastro de Tipo de Funcionário</h1>
+
+
+		<p:toolbar style="width: 100%">
+			<p:toolbarGroup>
+				<p:commandButton value="Novo"
+					onclick="PF('NovoTipoFuncionario').show()"
+					actionListener="#{tipoFuncionarioBean.limpar}"
+					update="formPnlNovo:idPnlG" />
+			</p:toolbarGroup>
+		</p:toolbar>
+
+
+
+		<h:form id="idFormTab">
+			<p:messages autoUpdate="true" />
+
+			<p:dataTable id="tabTF" value="#{tipoFuncionarioBean.itens}"
+				var="item" style="margin-top: 20px ; width: 70% " reflow="true">
+
+				<p:column headerText="Código" style="width: 20%; text-align: center">
+					<h:outputText value="#{item.id}" />
+				</p:column>
+
+				<p:column headerText="Nome" style="width: 30%; text-align: center">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<p:column headerText="Grupo de Usuários"
+					style="width: 30%; text-align: center">
+					<h:outputText value="#{item.primeiroElemento().nome}" />
+				</p:column>
+
+
+				<p:column headerText="Ações" style="width: 20%; text-align: center">
+					<p:commandButton icon="ui-icon-pencil"
+						style="margin-left: 4px; width: 40%" onclick="PF('edita').show()"
+						update="#{p:component('pnlEdita')}"
+						actionListener="#{tipoFuncionarioBean.troca(item)}" />
+
+					<p:commandButton icon="ui-icon-trash"
+						style="margin-left: 20px; width: 40%"
+						actionListener="#{tipoFuncionarioBean.troca(item)}"
+						oncomplete="PF('confirmExclusao').show()" process="@this"
+						update="idConfirmDialogExlusao" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+
+
+		<p:dialog widgetVar="NovoTipoFuncionario"
+			header="Novo Tipo de Funcionário" resizable="false">
+			<h:form id="formPnlNovo">
+				<h:panelGroup id="idPnlG">
+					<p:panelGrid columns="2" id="pnlnovo">
+						<p:outputLabel value="Nome" for="idNome" />
+						<p:inputText id="idNome" value="#{tipoFuncionarioBean.item.nome}"
+							required="true" requiredMessage="Nome não informado!" />
+
+						<p:outputLabel value="Grupo" for="idGrupo" />
+						<p:selectOneMenu id="idGrupo" value="#{tipoFuncionarioBean.grupo}"
+							required="true" converter="omnifaces.SelectItemsConverter"
+							requiredMessage="Grupo de usuários não selecionado">
+							<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+							<f:selectItems value="#{tipoFuncionarioBean.grupoUsuarios}"
+								var="grupo" itemValue="#{grupo}" itemLabel="#{grupo.nome}" />
+						</p:selectOneMenu>
+
+					</p:panelGrid>
+
+					<p:commandButton value="Salvar"
+						actionListener="#{tipoFuncionarioBean.salvar()}"
+						update="idFormTab:tabTF idPnlG"
+						oncomplete="PF('NovoTipoFuncionario').hide(); return false;" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+
+
+		<p:dialog widgetVar="edita" header="Editar Tipo de Funcionário"
+			resizable="false">
+			<h:form id="formPnlEditar">
+				<h:panelGroup id="idPnlGEdita">
+					<p:panelGrid columns="2" id="pnlEdita">
+						<p:outputLabel value="Código" />
+						<p:outputLabel value="#{tipoFuncionarioBean.itemAux.id}" />
+						<p:outputLabel value="Nome" for="idEditaNome" />
+						<p:inputText id="idEditaNome" required="true"
+							value="#{tipoFuncionarioBean.itemAux.nome}"
+							requiredMessage="O nome deve ser informado!" />
+					</p:panelGrid>
+
+					<p:outputLabel value="" />
+					<p:outputLabel value="" />
+
+					<p:commandButton value="Salvar"
+						actionListener="#{tipoFuncionarioBean.editar()}"
+						update="idFormTab:tabTF idPnlGEdita"
+						oncomplete="PF('edita').hide(); return false;" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao" header="Exclusão de tipo de funcionário"
+			message="Quer realmente excluir o tipo de funcionário : #{tipoFuncionarioBean.itemAux.nome}?">
+			<h:form id="formExclusao">
+				<p:messages />
+
+				<p:commandButton value="Sim"
+					actionListener="#{tipoFuncionarioBean.excluir}"
+					update="idFormTab:tabTF" process="@this"
+					oncomplete="PF('confirmExclusao').hide()" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
+			</h:form>
+		</p:confirmDialog>
+
+
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+
+	<h1 class="fa-page-title">Cadastro de Operações</h1>
+	<h:outputStylesheet library="css" name="sistema.css" />
+
+	<f:metadata>
+		<o:viewParam name="item" value="#{operacaoBean.item}" />
+	</f:metadata>
+
+</h:head>
+
+<h:body>
+
+
+	<h:form id="formOperacao">
+		
+		<p:messages id="mensagem" autoUpdate="true" />
+		<p:panelGrid id="pnlDados" columns="8" styleClass="semBorda"
+			style="margin-top: 20px">
+			<p:outputLabel value="Tipo de Operação" for="tipo" />
+			<p:selectOneMenu id="tipo" value="#{operacaoBean.item.tipo}"
+				required="true" requiredMessage="Tipo da operação não informado!">
+				<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+				<f:selectItems value="#{operacaoBean.tiposOperacoes()}" var="tipo"
+					itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+				<p:ajax process="@this" partialSubmit="true" />
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Clientes" for="IdCliente" />
+			<p:selectOneMenu id="IdCliente" style="width: 400px"
+				value="#{operacaoBean.item.cliente}"
+				converter="omnifaces.SelectItemsConverter" required="true"
+				requiredMessage="Cliente não selecionado!" filter="true"
+				filterMatchMode="contains">
+				<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+				<f:selectItems value="#{operacaoBean.listaClientes}" var="cliente"
+					itemValue="#{cliente}"
+					itemLabel="#{cliente.nome} - #{cliente.codigo}" />
+
+				<p:ajax listener="#{consignacaoBean.criaListaConsignados}"
+					update="idTabView:idTabConsignados" process="@this"
+					partialSubmit="true" />
+
+				<p:ajax listener="#{vendaBean.criaListaVendas}"
+					update="idTabView:idTabVenda" process="@this" partialSubmit="true" />
+
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Data" style="margin: 20px" for="data" />
+			<p:calendar style="vertical-align:middle" id="data" locale="pt"
+				value="#{operacaoBean.item.data}" required="true"
+				pattern="dd/MM/yyyy" requiredMessage="Data não informada!">
+				<p:ajax process="@this" partialSubmit="true" />
+			</p:calendar>
+		</p:panelGrid>
+
+		<p:tabView id="idTabView" style="margin-top: 30px">
+
+			<p:tab title="Consignações">
+				<ui:include src="/operacao/consignacao.xhtml" />
+			</p:tab>
+
+			<p:tab title="Venda não consignada">
+				<ui:include src="/operacao/venda.xhtml" />
+			</p:tab>
+
+			<p:tab title="Amostras">
+				<ui:include src="/operacao/amostra.xhtml" />
+			</p:tab>
+
+			<p:tab title="Resumo da operação">
+				<ui:include src="/operacao/resumoOperacao.xhtml" />
+			</p:tab>
+
+			<p:tab title="Apuração das receitas">
+				<ui:include src="/dialogos/apuraReceita.xhtml" />
+			</p:tab>
+
+
+		</p:tabView>
+
+
+
+	</h:form>
+</h:body>
+
+
+
+</html>

@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Pesquisa Funcionários</h1>
+
+		<h:form id="idFormPesquisa" prependId="false">
+			<p:messages autoUpdate="true" />
+			<p:toolbar style="width: 100%; margin-top: 20px">
+
+				<p:toolbarGroup>
+					<p:commandButton value="Pesquisar"
+						actionListener="#{pesquisaFuncionarioBean.pesquisa}"
+						process="pnlPesquisa @this" update="idTabFun" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:button value="Novo" outcome="/cadastro/funcionario" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+			<p:panelGrid id="pnlPesquisa" columns="2" style="margin-top: 20px"
+				styleClass="semBorda">
+
+				<p:outputLabel value="Tipo" />
+				<p:selectOneMenu value="#{pesquisaFuncionarioBean.tipo}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{pesquisaFuncionarioBean.listaTipos}"
+						var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.nome}" />
+				</p:selectOneMenu>
+
+			</p:panelGrid>
+
+			<p:dataTable id="idTabFun" 
+				value="#{pesquisaFuncionarioBean.listaFuncionarios}" var="item"
+				style="margin-top: 20px ; width: 100% " reflow="true">
+
+				<p:column headerText="Nome" style="width: 15%; text-align: center">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<p:column headerText="Cpf" style="text-align: center;  width:7%">
+					<h:outputText value="#{item.cpf}" />
+				</p:column>
+
+				<p:column headerText="Telefone" style="text-align: center;width:10%">
+					<h:outputText value="#{item.telefone}" />
+				</p:column>
+
+				<p:column headerText="Email" style="width: 17%; text-align: center">
+					<h:outputText value="#{item.email}" />
+				</p:column>
+
+
+				<p:column headerText="Função" style=" text-align: center; width:6%">
+					<h:outputText value="#{item.tipo.nome}" />
+				</p:column>
+
+				<p:column headerText="Tipo-vendedor"
+					style=" text-align: center;width:10%">
+					<h:outputText value="#{item.tipoVendedor.nome}" />
+				</p:column>
+
+				<p:column headerText="Salário" style=" text-align: center;width:10%">
+					<h:outputText value="#{item.salario}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Status" style=" text-align: center;width:5%">
+					<h:outputText value="#{item.status.descricao}" />
+				</p:column>
+
+
+				<p:column headerText="Ações" style="text-align: center">
+					<p:commandButton icon="ui-icon-pencil" title="Editar"
+						process="@this" update="@none"
+						style="margin-left: 4px; width: 70%"
+						action="#{pesquisaFuncionarioBean.abrirDialogo(item)}">
+						
+						<p:ajax event="dialogReturn" listener="#{pesquisaFuncionarioBean.pesquisa}" process="@this" update="idTabFun"/>
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+
+		
+
+
+
+	</ui:define>
+</ui:composition>

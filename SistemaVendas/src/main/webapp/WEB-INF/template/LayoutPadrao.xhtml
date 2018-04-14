@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Sistema de Vendas</title>
+	<h:outputStylesheet library="css" name="sistema.css" />
+	<h:outputScript library="js" name="jquery.maskMoney.js" />
+	<h:outputScript library="js" name="locale.js" />
+</h:head>
+
+<h:body>
+	<p:ajaxStatus oncomplete="configurarMoeda()" />
+
+
+	<header>
+
+	<div style="float: right; margin-right: 110px">
+
+		<span
+			style="float: left; height: 30px; line-height: 30px; margin-right: 60px">
+			Olá #{seguranca.nomeUsuario} ! </span>
+
+		<h:form style="display: inline-block">
+			<p:menubar styleClass="menu-sistema">
+				<p:submenu label="Vendedor">
+					<p:menuitem value="Operação" outcome="/operacao/operacao" />
+					<p:menuitem value="Custos de Viagem"
+						outcome="/operacao/custosViagem" />
+					<p:menuitem value="Recebimentos Inadimplentes"
+						outcome="/operacao/recebimentoInadimplentes" />
+					<p:menuitem value="Resumo do Movimento"
+						outcome="/fechamento/fechamento" />
+
+					<p:separator />
+
+					<p:menuitem value="Cadastro de Cliente" outcome="/cadastro/cliente" />
+				</p:submenu>
+
+				<p:submenu label="Expedição">
+					<p:menuitem value="Expedição" outcome="/expedicao/expedicao" />
+					<p:menuitem value="Envio Transportadora" outcome="/expedicao/envioTransportadora" />
+				</p:submenu>
+
+				<p:submenu label="Consultas">
+					<p:menuitem value="Fechamento" outcome="/fechamento/fechamento" />
+					<p:menuitem value="Resumo Vendedor" outcome="/consultas/resumoVendedor"/>
+					<p:menuitem value="Consolidado" outcome="/consultas/vendedorVsProduto"/>
+				</p:submenu>
+
+				<p:submenu label="Relatórios">
+
+				</p:submenu>
+
+				<p:submenu label="Cadastros">
+					<p:menuitem value="Clientes" outcome="/cadastro/cliente" />
+					<p:menuitem value="Funcionários" outcome="/cadastro/funcionario" />
+					<p:menuitem value="Produtos" outcome="/cadastro/produto" />
+					<p:menuitem value="Tipos de Produtos" outcome="/cadastro/tipoProduto" />
+					<p:menuitem value="Transportadora" outcome="/cadastro/transportadora" />
+					<p:separator />
+
+					<p:menuitem value="Tipos de Funcionários"
+						outcome="/cadastro/tipoFuncionario" />
+					<p:menuitem value="Tipos de Vendedores"
+						outcome="/cadastro/tipoVendedor" />
+					<p:menuitem value="Grupos de Usuários" outcome="/cadastro/grupo" />
+					<p:menuitem value="Rotas" outcome="/cadastro/rota" />
+
+					<p:separator />
+
+					<p:menuitem value="Despesas do Vendedor"
+						outcome="/cadastro/despesaVendedor" />
+					<p:menuitem value="Desconto de Salário"
+						outcome="/cadastro/descontoSalario" />
+					<p:menuitem value="Comissão Recolhida"
+						outcome="/cadastro/comissaoRecolhidaRessarcida" />
+					
+					<p:menuitem value="ImportarClientes"
+						outcome="/cadastro/importar" />
+
+				</p:submenu>
+				
+				<p:submenu label="Usuário">
+					<p:menuitem value="Alterar Senha" outcome="/cadastro/alteraSenha" />
+				</p:submenu>
+				
+				<p:menuitem value="Sair" url="/logout" />
+			</p:menubar>
+		</h:form>
+	</div>
+
+	<div style="clear: both"></div>
+
+	</header>
+
+	<div id="conteudo">
+		<ui:insert name="corpo" />
+	</div>
+
+	<p:separator style="margin-top: 20px" />
+
+	<footer> Sistema de vendas / consignação - Cepalab </footer>
+
+
+	<script>
+		function configurarMoeda() {
+			$(".moeda").maskMoney({
+				decimal : ",",
+				thousands : ".",
+				allowZero : true
+			});
+		}
+
+		$(document).ready(function() {
+			configurarMoeda();
+		});
+	</script>
+
+
+</h:body>
+
+
+
+
+</html>

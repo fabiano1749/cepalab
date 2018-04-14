@@ -1,0 +1,151 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<f:metadata>
+			<o:viewParam name="item" value="#{tipoVendedorBean.item}" />
+		</f:metadata>
+
+		<h1 class="fa-page-title">Cadastro de Tipo de Vendedor</h1>
+
+		<h:form id="formTab">
+			<p:messages id="mensagem" autoUpdate="true" />
+			<p:toolbar style="width: 50%; margin-top: 20px">
+				<p:toolbarGroup>
+					<p:button value="Novo" outcome="/cadastro/tipoVendedor" />
+					<p:commandButton value="Salvar" id="idSalvar"
+						actionListener="#{tipoVendedorBean.salvar()}"
+						style="margin-left: 10px;" update="pnlDados idComissaoTab" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:button value="Pesquisar"
+						outcome="/cadastro/pesquisaTipoVendedor" />
+				</p:toolbarGroup>
+			</p:toolbar>
+
+
+
+			<p:panelGrid id="pnlDados" columns="3" styleClass="semBorda"
+				style="margin-top: 10px">
+
+				<p:outputLabel value="Nome" for="idNome" />
+				<p:inputText id="idNome" value="#{tipoVendedorBean.item.nome}"
+					required="true" requiredMessage="Nome não informado!" />
+
+			</p:panelGrid>
+
+
+			<p:dataTable id="idComissaoTab" style="margin-top:10px; width: 80%"
+				value="#{tipoVendedorBean.item.comissaoTipoVendedor}"
+				editable="true" editMode="cell" var="comissao">
+
+				<p:column headerText="Produto" style=" text-align: center">
+					<h:outputText value="#{comissao.produto.nome}" />
+				</p:column>
+
+				<p:column headerText="Comissão - %" style="text-align: center">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText value="#{comissao.taxaComissao}">
+								<f:convertNumber pattern="#0.00" locale="pt_BR" />
+							</h:outputText>
+						</f:facet>
+
+						<f:facet name="input">
+							<p:inputNumber value="#{comissao.taxaComissao}"
+								decimalSeparator="," thousandSeparator="." />
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+
+				<p:column headerText="ComissãoEnvio - %" style="text-align: center">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText value="#{comissao.taxaComissaoEnvio}">
+								<f:convertNumber pattern="#0.00" locale="pt_BR" />
+							</h:outputText>
+						</f:facet>
+
+						<f:facet name="input">
+							<p:inputNumber value="#{comissao.taxaComissaoEnvio}"
+								decimalSeparator="," thousandSeparator="." />
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+
+				<p:column headerText="Abertura" style="text-align: center">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText value="#{comissao.abertura}">
+								<f:convertNumber type="currency" locale="pt_BR" />
+							</h:outputText>
+						</f:facet>
+
+						<f:facet name="input">
+							<p:inputNumber value="#{comissao.abertura}" decimalSeparator=","
+								thousandSeparator="." />
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+
+				<p:column headerText="Abertura Premiação" style="text-align: center">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText value="#{comissao.aberturaPremiacao}">
+								<f:convertNumber type="currency" locale="pt_BR" />
+							</h:outputText>
+						</f:facet>
+
+						<f:facet name="input">
+							<p:inputNumber value="#{comissao.aberturaPremiacao}"
+								decimalSeparator="," thousandSeparator="." />
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+
+
+				<p:column headerText="Colocação" style="text-align: center">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText value="#{comissao.colocacao}">
+								<f:convertNumber type="currency" locale="pt_BR" />
+							</h:outputText>
+						</f:facet>
+
+						<f:facet name="input">
+							<p:inputNumber value="#{comissao.colocacao}" decimalSeparator=","
+								thousandSeparator="." />
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+
+				<p:column headerText="Colocação Premiação"
+					style="text-align: center">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText value="#{comissao.colocacaoPremiacao}">
+								<f:convertNumber type="currency" locale="pt_BR" />
+							</h:outputText>
+						</f:facet>
+
+						<f:facet name="input">
+							<p:inputNumber value="#{comissao.colocacaoPremiacao}"
+								decimalSeparator="," thousandSeparator="." />
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+
+			</p:dataTable>
+
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

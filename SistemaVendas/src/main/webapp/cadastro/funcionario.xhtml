@@ -1,0 +1,102 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+		<f:metadata>
+			<o:viewParam name="item" value="#{funcionarioBean.item}" />
+		</f:metadata>
+
+
+		<h1 class="fa-page-title">Cadastro de Funcionários</h1>
+
+		<h:form id="formPnlNovo">
+			<p:toolbar style="margin-top: 20px; margin-top: 20px">
+
+				<p:toolbarGroup>
+					<p:button value="Novo" outcome="/cadastro/funcionario" />
+					<p:commandButton value="Salvar"
+						actionListener="#{funcionarioBean.salvar()}"
+						process="pnlNovo @this"/>
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:button value="Pesquisar" outcome="/cadastro/pesquisaFuncionario" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+
+			<p:messages autoUpdate="true" />
+
+			<p:panelGrid columns="4" id="pnlNovo" styleClass="semBorda"
+				columnClasses="rotulo, campo,rotulo, campo"
+				style="width:50%; margin-top: 10px">
+
+				<p:outputLabel value="Função" for="idTipo" />
+				<p:selectOneMenu id="idTipo" value="#{funcionarioBean.item.tipo}"
+					style="width: 80%" converter="omnifaces.SelectItemsConverter"
+					required="true" requiredMessage="Função não selecionada">
+					<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+					<f:selectItems value="#{funcionarioBean.tiposFuncionarios}"
+						var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.nome}" />
+				</p:selectOneMenu>
+
+
+
+				<p:outputLabel value="Nome" for="idNomeNovo" />
+				<p:inputText id="idNomeNovo" value="#{funcionarioBean.item.nome}"
+					required="true" requiredMessage="Nome não informado!" />
+
+				<p:outputLabel value="CPF" for="idCpfNovo" />
+				<p:inputMask mask="999.999.999-99" id="idCpfNovo"
+					value="#{funcionarioBean.item.cpf}" required="true"
+					requiredMessage="Cpf Não informado ou incompleto!" />
+
+
+				<p:outputLabel value="Telefone" />
+				<p:inputMask mask="(99)99999-9999"
+					value="#{funcionarioBean.item.telefone}" />
+
+				<p:outputLabel value="Email" />
+				<p:inputText value="#{funcionarioBean.item.email}" />
+
+				<p:outputLabel value="Status" />
+				<p:selectOneMenu value="#{funcionarioBean.item.status}"
+					style="width: 80%">
+					<f:selectItems value="#{funcionarioBean.statusFuncionario()}"
+						var="status" itemValue="#{status}" itemLabel="#{status.descricao}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Senha" for="senha" />
+				<p:inputText id="senha" value="#{funcionarioBean.item.senha}"
+					required="true" requiredMessage="É preciso informar uma senha!" />
+
+
+				<p:outputLabel value="Tipo" for="idTipoVendedor" />
+				<p:selectOneMenu id="idTipoVendedor" required="true"
+					requiredMessage="Tipo de Vendedor não informado!"
+					value="#{funcionarioBean.item.tipoVendedor}" style="width: 80%"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" />
+					<f:selectItems value="#{funcionarioBean.tiposVend}" var="tipo"
+						itemValue="#{tipo}" itemLabel="#{tipo.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Salário" />
+				<p:inputNumber value="#{funcionarioBean.item.salario}"
+					decimalSeparator="," thousandSeparator="." />
+
+				<p:outputLabel value="Placa" />
+				<p:inputMask mask="aaa-9999"
+					value="#{funcionarioBean.item.placaCarro}" />
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

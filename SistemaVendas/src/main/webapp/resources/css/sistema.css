@@ -1,0 +1,182 @@
+@charset "utf-8";
+
+body {
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0px;
+	font-weight: normal;
+}
+
+header {
+	padding: 5px 0px;
+	margin-bottom: 20px;
+	height: 40px;
+	background-color: #00BFFF;
+	color: #fff;
+	box-shadow: 0px 2px 2px #ccc;
+}
+
+header>div {
+	margin-left: 8px;
+}
+
+#conteudo {
+	padding: 0px 8px;
+}
+
+footer {
+	padding: 0px 8px;
+	margin-bottom: 10px;
+}
+
+h1 {
+	font-size: 24px;
+	font-weight: 500;
+	padding: 0px;
+	margin: 0px;
+}
+
+#login-dialog {
+	width: 290px;
+	margin: auto;
+	margin-top: 150px;
+}
+
+.grid-login {
+	background-color: #f2f2f2;
+	border-radius: 8px;
+	border: 1px solid #ccc;
+	margin-top: 8px;
+	padding: 10px;
+}
+
+/*Menu Sistema INICIO*/
+.menu-sistema {
+	border: 0px !important;
+	padding: 0px !important;
+	background: none !important;
+}
+
+/*Menu Sistema FIM*/
+.rotulo {
+	width: 30%;
+}
+
+.campo {
+	width: 30%;
+}
+
+.rotulo2 {
+	width: 100px;
+}
+
+.campo2 {
+	width: 400px;
+}
+
+
+.grid5 {
+	width: 5%;
+}
+
+.grid10 {
+	width: 10%;
+}
+
+.grid15 {
+	width: 15%;
+}
+
+.grid20 {
+	width: 20%;
+}
+
+.grid30 {
+	width: 30%;
+}
+
+.grid40 {
+	width: 40%;
+}
+
+.grid50 {
+	width: 50%;
+}
+
+.grid60 {
+	width: 60%;
+}
+
+.grid70 {
+	width: 70%;
+}
+
+.grid80 {
+	width: 80%;
+}
+
+.semBorda tr, .semBorda td {
+	border: none !important;
+}
+
+
+#conteudo-left {
+	/*Novamente definimos a largura da div*/
+	width: 35%;
+	/* altura da div */
+	height: 400px;
+	/* O atributo Float é utilizado para fazermos o nosso bloco(div) literalmente flutue e se posicione onde queremos na página, quando escolhemos left, dizemos que esse bloco irá se posicionar na parte esquerda da página */
+	float: left;
+	/* Cor de fundo da div */
+	
+	margin-top: 20px
+}
+
+#conteudo-right {
+	/*Novamente definimos a largura da div*/
+	width: 65%;
+	/* altura da div */
+	height: 400px;
+	/* Pode parecer meio estranho usarmos o mesmo atributo left para o bloco em que queremos posicionar na direita, mas como sabemos, o CSS é um estilo em cascata, nossa div conteúdo definimos a largura de 1000px e na conteudo-left 500px, 
+automaticamente ao definirmos o conteudo-right com 500px e à esquerda também, ele ficou à direita do conteudo-left, pois o máximo que a div filha poderá ter é 1000px, sendo 500+500=1000px */
+	float: left;
+	/* Cor de fundo da div */
+	
+	margin-top: 20px
+}
+
+
+/*CSS para tela de fechamento*/
+#conteudo-left-resumo {
+	/*Novamente definimos a largura da div*/
+	width: 60%;
+	/* altura da div */
+	height: 350px;
+	/* O atributo Float é utilizado para fazermos o nosso bloco(div) literalmente flutue e se posicione onde queremos na página, quando escolhemos left, dizemos que esse bloco irá se posicionar na parte esquerda da página */
+	float: left; 
+	/* Cor de fundo da div */
+	
+	margin-top: 2px;
+}
+
+#conteudo-right-resumo {
+	/*Novamente definimos a largura da div*/
+	width: 35%;
+	/* altura da div */
+	height: 400px;
+	/* Pode parecer meio estranho usarmos o mesmo atributo left para o bloco em que queremos posicionar na direita, mas como sabemos, o CSS é um estilo em cascata, nossa div conteúdo definimos a largura de 1000px e na conteudo-left 500px, 
+automaticamente ao definirmos o conteudo-right com 500px e à esquerda também, ele ficou à direita do conteudo-left, pois o máximo que a div filha poderá ter é 1000px, sendo 500+500=1000px */
+	float: left;
+	/* Cor de fundo da div */
+	
+	margin-top: 2px;
+	margin-left: 30px;
+}
+
+#container{
+   overflow: hidden;
+   width: 95%;
+   padding: 2px;
+}
+
+

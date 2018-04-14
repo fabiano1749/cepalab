@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Pesquisa de Tipos de Vendedores</h1>
+
+		<h:form id="idFormPesquisa">
+			<p:messages autoUpdate="true" />
+			<p:toolbar style="width: 50%; margin-top: 20px">
+
+				<p:toolbarGroup align="right">
+					<p:button value="Novo" outcome="/cadastro/tipoVendedor" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+
+			<p:dataTable id="idTab" style="margin-top:10px; width: 50%"
+				value="#{tipoVendedorBean.itens}" var="item">
+
+				<p:column headerText="Código" style="text-align: center">
+					<h:outputText value="#{item.id}" />
+				</p:column>
+
+				<p:column headerText="Tipo de Vendedor" style=" text-align: center">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+
+
+				<p:column headerText="Ações" style="text-align: center">
+					<p:button icon="ui-icon-pencil"
+						outcome="/cadastro/tipoVendedor">
+						<f:param name="item" value="#{item.id}"/>
+					</p:button>
+
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{tipoVendedorBean.troca(item)}"
+						update="idConfirmDialogExlusao" process="@this"
+						oncomplete="PF('confirmExclusao').show()" />
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao" header="Exclusão de tipo de Vendedor"
+			message="Quer realmente excluir o tipo de Vendedor : #{tipoVendedorBean.itemAux.nome}?">
+			<h:form id="formExclusao">
+				<p:messages />
+
+				<p:commandButton value="Sim"
+					actionListener="#{tipoVendedorBean.excluir}"
+					update="idFormPesquisa:idTab" process="@this"
+					oncomplete="PF('confirmExclusao').hide() return false;" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
+			</h:form>
+		</p:confirmDialog>
+	</ui:define>
+</ui:composition>

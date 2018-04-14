@@ -1,0 +1,125 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Envio Transportadora</h1>
+
+		<h:form id="idForm">
+			<p:messages autoUpdate="true" closable="2"/>
+
+
+
+			<p:panelGrid columns="11" styleClass="semBorda"
+				style="margin-top: 10px; font-size: 10px">
+
+				<p:outputLabel value="Vendedor" />
+				<p:selectOneMenu
+					value="#{envioTransportadoraBean.filtro.funcionario}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{envioTransportadoraBean.listaFuncionarios}"
+						var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Inicio" for="idInicio" />
+				<p:calendar id="idInicio" required="true"
+					requiredMessage="Data de inicio não informada!"
+					value="#{envioTransportadoraBean.filtro.inicio}" locale="pt"
+					pattern="dd/MM/yyyy" />
+
+				<p:outputLabel value="Fim" for="idFim" />
+				<p:calendar id="idFim" required="true"
+					requiredMessage="Data do fim não informada!"
+					value="#{envioTransportadoraBean.filtro.fim}" locale="pt"
+					pattern="dd/MM/yyyy" />
+
+				<p:outputLabel value="Enviados" />
+				<p:selectBooleanCheckbox
+					value="#{envioTransportadoraBean.filtro.enviados}" />
+
+				<p:outputLabel value="Todos" />
+				<p:selectBooleanCheckbox
+					value="#{envioTransportadoraBean.filtro.todos}" />
+
+				<p:commandButton value="Pesquisar"
+					actionListener="#{envioTransportadoraBean.pesquisa}" update="idTab" />
+
+			</p:panelGrid>
+
+			<p:dataTable id="idTab" var="op"
+				value="#{envioTransportadoraBean.listaOperacoes}" editable="true"
+				editMode="cell" style="font-size: 10px; margin-top: 10px">
+
+				<p:column headerText="Cliente" style="width: 25%; font-size: 9px">
+					<h:outputText value="#{op.cliente.codigo} - #{op.cliente.nome}" />
+				</p:column>
+
+				<p:column headerText="Produtos" style="width: 40%">
+					<h:outputText value="#{op.ProdutoQuantidadeTransportadora()}" />
+				</p:column>
+
+				<p:column headerText="Data da venda" style="width: 5%">
+					<h:outputText value="#{op.data}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+
+				<p:column headerText="Data de Envio"
+					style="text-align: center; width: 12%">
+					<p:calendar id="idEnvio" value="#{op.dataEnvio}" locale="pt" 
+						pattern="dd/MM/yyyy" >
+						<p:ajax process="@this" partialSubmit="true"/>
+					</p:calendar>
+				</p:column>
+
+				<p:column headerText="Transportadora" style="width: 11%">
+					<p:selectOneMenu value="#{op.transportadora}"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+						<f:selectItems
+							value="#{envioTransportadoraBean.listaTransportadoras}" var="t"
+							itemValue="#{t}" itemLabel="#{t.nome}" />
+
+						<p:ajax process="@this" partialSubmit="true" />
+					</p:selectOneMenu>
+				</p:column>
+
+				<p:column headerText="Frete" style="text-align: center; width: 3%">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText id="preco" value="#{op.valorFrete}">
+								<f:convertNumber pattern="#0.00" locale="pt_BR" />
+							</h:outputText>
+						</f:facet>
+						<f:facet name="input">
+							<p:inputNumber id="preCo" value="#{op.valorFrete}"
+								decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+								<p:ajax update="preco preCo" process="preCo"
+									partialSubmit="true" />
+							</p:inputNumber>
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+
+				<p:column headerText=" " style="text-align: center; width: 7%">
+					<p:commandButton icon="ui-icon-check" value="Confirmar"
+						style="width: 100%" process="@this idTab" partialSubmit="true"
+						actionListener="#{envioTransportadoraBean.confirmar(op)}"
+						update="idTab" />
+				</p:column>
+
+
+			</p:dataTable>
+
+
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

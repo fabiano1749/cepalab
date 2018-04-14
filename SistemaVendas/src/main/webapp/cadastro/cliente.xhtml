@@ -1,0 +1,213 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+		<f:metadata>
+			<o:viewParam name="item" value="#{clienteBean.item}" />
+		</f:metadata>
+
+		<h1 class="fa-page-title">Cadastro de Clientes</h1>
+
+		<h:form>
+			<p:toolbar style="width: 80%; margin-top: 20px ">
+
+				<p:toolbarGroup>
+
+					<p:button value="Novo" outcome="/cadastro/cliente" />
+					<p:commandButton value="Salvar" id="idBotaoSalvar"
+						actionListener="#{clienteBean.salvar()}"
+						style="margin-left: 10px;" />
+
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:button value="Pesquisar" outcome="/cadastro/pesquisaCliente" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+			<p:messages id="mensagem" autoUpdate="true" />
+			<p:tabView id="tabView" style="margin-top: 10px; width:80%">
+
+
+				<p:tab title="Dados do Cliente" id="tabDados">
+
+
+
+					<p:panelGrid columns="2" styleClass="semBorda" id="idPngDados">
+
+					<p:outputLabel value="Pessoa" for="idPessoa" />
+					<p:selectOneMenu id="idPessoa"
+						value="#{clienteBean.item.tipoPessoa}"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItems value="#{clienteBean.tipoPessoa()}" var="tipo"
+							itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+
+						<p:ajax listener="#{clienteBean.pessoa}" process="@this"
+							partialSubmit="true" update="idPngDados" />
+					</p:selectOneMenu>
+
+
+					<p:outputLabel value="CNPJ" for="cnpjId"
+						rendered="#{clienteBean.pessoaJuridica}" />
+					<p:inputMask id="cnpjId" mask="99.999.999/9999-99" required="true"
+						requiredMessage="CNPJ não informado."
+						rendered="#{clienteBean.pessoaJuridica}"
+						value="#{clienteBean.item.cpfCnpj}" />
+
+					<p:outputLabel value="CPF" for="cpfId"
+						rendered="#{clienteBean.pessoaFisica}" />
+					<p:inputMask id="cpfId" mask="999.999.999-99" required="true"
+						requiredMessage="CPF não informado."
+						rendered="#{clienteBean.pessoaFisica}"
+						value="#{clienteBean.item.cpfCnpj}" />
+
+					<p:outputLabel value="Razão social" for="nomeId" />
+					<p:inputText id="nomeId" value="#{clienteBean.item.nome}"
+						required="true" requiredMessage="Nome não informado." />
+
+					<p:outputLabel value="Nome fantasia" />
+					<p:inputText value="#{clienteBean.item.nomeFantasia}" />
+
+
+
+
+					<p:outputLabel value="Inscrição Estadual" />
+					<p:inputText value="#{clienteBean.item.inscricaoEstadual}" />
+
+					<p:outputLabel value="Inscrição Municipal" />
+					<p:inputText value="#{clienteBean.item.inscricaoMunicipal}" />
+
+					<p:outputLabel value="Responsável / Contato" />
+					<p:inputText value="#{clienteBean.item.responsavelContato}" />
+
+
+					<p:outputLabel value="Vendedor" for="idVendedor"
+						rendered="#{clienteBean.isAdministrador()}" />
+					<p:selectOneMenu id="idVendedor"
+						rendered="#{clienteBean.isAdministrador()}"
+						value="#{clienteBean.funcionario}" required="true"
+						converter="omnifaces.SelectItemsConverter"
+						requiredMessage="Funcionário não selecionado!">
+						<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+						<f:selectItems value="#{clienteBean.listaFuncionarios}" var="fun"
+							itemValue="#{fun}" itemLabel="#{fun.nome}" />
+						<p:ajax listener="#{clienteBean.criaListaRotas}"
+							process="idVendedor" partialSubmit="true" update="idRota" />
+					</p:selectOneMenu>
+
+
+					<p:outputLabel value="Rota" for="idRota" />
+					<p:selectOneMenu id="idRota" value="#{clienteBean.item.rota}"
+						required="true" converter="omnifaces.SelectItemsConverter"
+						requiredMessage="Rota não selecionada" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+						<f:selectItems value="#{clienteBean.rotasCliente}" var="rota"
+							itemValue="#{rota}"
+							itemLabel="#{rota.descricao} - #{rota.numero} " />
+					</p:selectOneMenu>
+
+
+					<p:outputLabel value="Status" />
+					<p:selectOneMenu value="#{clienteBean.item.status}"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItems value="#{clienteBean.statusCliente()}" var="status"
+							itemValue="#{status}" itemLabel="#{status.descricao}" />
+					</p:selectOneMenu>
+
+					<h:outputText value="Bloqueado" />
+					<p:selectBooleanCheckbox value="#{clienteBean.item.bloqueado}" />
+
+					<p:outputLabel value="Código" />
+					<p:inputText value="#{clienteBean.item.codigo}" />
+
+
+
+					<p:outputLabel value="Observação" />
+					<p:inputTextarea value="#{clienteBean.item.observacao}" />
+
+
+					</p:panelGrid>
+
+
+				</p:tab>
+
+				<p:tab title="Endereço">
+
+					<p:panelGrid columns="2" styleClass="semBorda">
+
+						<p:outputLabel value="Estado" for="estadoId" />
+						<p:inputText id="estadoId" value="#{clienteBean.item.endereco.uf}"
+							required="true" requiredMessage="Estado não informado." />
+
+						<p:outputLabel value="Cidade" for="cidadeId" />
+						<p:inputText id="cidadeId"
+							value="#{clienteBean.item.endereco.cidade}" required="true"
+							requiredMessage="Cidade não informada." />
+
+						<p:outputLabel value="Bairro" for="bairroId" />
+						<p:inputText id="bairroId"
+							value="#{clienteBean.item.endereco.bairro}" required="true"
+							requiredMessage="Bairro não informado." />
+
+						<p:outputLabel value="Logradouro" for="logradouroId" />
+						<p:inputText id="logradouroId"
+							value="#{clienteBean.item.endereco.logradouro}" required="true"
+							requiredMessage="Logradouro não informado." />
+
+						<p:outputLabel value="Número" for="numeroId" />
+						<p:inputText id="numeroId"
+							value="#{clienteBean.item.endereco.numero}" required="true"
+							requiredMessage="Número do estabelecimento não informado." />
+
+						<p:outputLabel value="Complemento" />
+						<p:inputText value="#{clienteBean.item.endereco.complemento}" />
+
+						<p:outputLabel value="Cep" for="cepId" />
+						<p:inputMask mask="99999-999" id="cepId" value="#{clienteBean.item.endereco.cep}"
+							required="true" requiredMessage="Cep não informado." />
+
+					</p:panelGrid>
+
+				</p:tab>
+
+				<p:tab title="Contato">
+
+					<p:panelGrid columns="2" styleClass="semBorda">
+
+						<p:outputLabel value="Celular" />
+						<p:inputMask mask="(99)99999-9999"
+							value="#{clienteBean.item.contato.celular}" />
+
+						<p:outputLabel value="Telefone fixo" for="fixo" />
+						<p:inputMask mask="(99)9999-9999" id="fixo" required="true"
+							requiredMessage="Telefone fixo não informado!"
+							value="#{clienteBean.item.contato.fixo}" />
+
+						<p:outputLabel value="Email-1" />
+						<p:inputText value="#{clienteBean.item.contato.email1}" />
+
+						<p:outputLabel value="Email-2" />
+						<p:inputText value="#{clienteBean.item.contato.email2}" />
+
+					</p:panelGrid>
+
+
+				</p:tab>
+
+
+
+			</p:tabView>
+
+		</h:form>
+
+
+
+	</ui:define>
+</ui:composition>

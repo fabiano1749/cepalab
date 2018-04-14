@@ -1,0 +1,289 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+
+	<p:dataTable id="idTabConsignados"
+		value="#{operacaoBean.item.consignacoes}" var="item" editable="true"
+		editMode="cell" style="margin-top: 30px" reflow="true">
+
+		<f:facet name="header">
+			<p:commandButton value="Consignar um novo produto" process="@this"
+				onclick="PF('dlConsig').show();" />
+		</f:facet>
+
+		<p:column headerText="Produto"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.produto.nome}" />
+		</p:column>
+
+		<p:column headerText="Consignados"
+			style="font-size: small; text-align: center">
+			<h:outputText id="consignados" value="#{item.totalConsignado}" />
+		</p:column>
+
+		<p:column headerText="Preço"
+			style="font-size: small; text-align: center">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText id="preco" value="#{item.valorUnitario}">
+						<f:convertNumber pattern="#0.00" locale="pt_BR" />
+					</h:outputText>
+				</f:facet>
+				<f:facet name="input">
+					<p:inputNumber id="preCo" value="#{item.valorUnitario}"
+						decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+						<p:ajax listener="#{consignacaoBean.validaPreco(item)}"
+							process="@this"
+							update="preco preCo :formOperacao:idTabView:idResumoOperacao"
+							partialSubmit="true" />
+
+						<p:ajax
+							listener="#{resumoOperacaoBean.alimentaListaResumoConsignacaoVenda}"
+							process="@this" partialSubmit="true"
+							update=":formOperacao:idTabView:idResumoOperacao" />
+
+						<p:ajax listener="#{receitaBean.criaListaReceitas}"
+							process="@this" partialSubmit="true"
+							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita" />
+
+					</p:inputNumber>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+
+
+		<p:column headerText="Vendidos"
+			style="font-size: small; text-align: center">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{item.vendidos}" id="outputVendidos" />
+				</f:facet>
+				<f:facet name="input">
+					<p:inputText value="#{item.vendidos}" id="inputVendidos">
+						<p:ajax listener="#{consignacaoBean.atualizaConsignados(item)}"
+							process="@this" partialSubmit="true"
+							update="outputVendidos inputVendidos consignados" />
+						<p:ajax listener="#{consignacaoBean.taxaComissao(item)}"
+							process="@this" partialSubmit="true" update="outPutTaxa" />
+
+						<p:ajax
+							listener="#{resumoOperacaoBean.alimentaListaResumoConsignacaoVenda}"
+							process="@this" partialSubmit="true"
+							update=":formOperacao:idTabView:idResumoOperacao" />
+
+						<p:ajax listener="#{receitaBean.criaListaReceitas}"
+							process="@this" partialSubmit="true"
+							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita" />
+
+					</p:inputText>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+		<p:column headerText="Nota Fiscal"
+			style="font-size: small;  text-align: center; width: 15%"
+			styleClass="semBorda">
+			<h:panelGrid columns="2">
+				<h:panelGroup>
+					<h:outputText value="Nota" />
+					<p:selectBooleanCheckbox value="#{item.nota}" id="nota"
+						style="margin-left: 6px">
+						<p:ajax listener="#{consignacaoBean.nota(item)}"
+							process="@this Emitida" partialSubmit="true" update="Emitida" />
+					</p:selectBooleanCheckbox>
+				</h:panelGroup>
+				<h:panelGroup>
+					<h:outputText value="Emitida" />
+					<p:selectBooleanCheckbox value="#{item.notaEmitida}" id="Emitida"
+						style="margin-left: 6px"
+						disabled="#{consignacaoBean.exibeNotaEmitida(item)}">
+						<p:ajax process="@this" partialSubmit="true" update="Emitida" />
+					</p:selectBooleanCheckbox>
+				</h:panelGroup>
+			</h:panelGrid>
+		</p:column>
+
+		<p:column headerText="Comissão - %"
+			style="font-size: small; text-align: center; width: 10%">
+			<p:cellEditor>
+				<f:facet name="output" style="width: 60px">
+					<h:outputText id="outPutTaxa" value="#{item.taxaComissao}">
+						<f:convertNumber pattern="#0.00" locale="pt_BR" />
+					</h:outputText>
+				</f:facet>
+				<f:facet name="input" style="width: 60px">
+					<p:inputNumber id="inputTaxa" value="#{item.taxaComissao}"
+						decimalSeparator="," thousandSeparator=".">
+						<p:ajax process="inputTaxa" partialSubmit="true"
+							update="outPutTaxa inputTaxa :formOperacao:idTabView:idResumoOperacao" />
+					</p:inputNumber>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+
+		<p:column headerText="Devolvidos"
+			style="font-size: small; text-align: center">
+			<p:cellEditor>
+				<f:facet name="output" style="width: 60px">
+					<h:outputText value="#{item.devolvidos}" id="outputDevolvidos" />
+				</f:facet>
+				<f:facet name="input" style="width: 60px">
+					<p:inputText value="#{item.devolvidos}" id="inputDevolvidos">
+						<p:ajax listener="#{consignacaoBean.atualizaConsignados(item)}"
+							process="inputDevolvidos" partialSubmit="true"
+							update="outputDevolvidos inputDevolvidos consignados" />
+					</p:inputText>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+		<p:column headerText="Nova consignação"
+			style="font-size: small; text-align: center">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{item.consignados}" id="outputConsignacao" />
+				</f:facet>
+				<f:facet name="input">
+					<p:inputText value="#{item.consignados}" id="inputConsignacao">
+						<p:ajax listener="#{consignacaoBean.atualizaConsignados(item)}"
+							process="inputConsignacao" partialSubmit="true"
+							update="inputConsignacao outputConsignacao consignados" />
+					</p:inputText>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+
+		<p:column headerText="Pronta entrega"
+			style="font-size: small; width: 110px; text-align: center">
+			<p:selectBooleanCheckbox id="idProntaEntrega"
+				value="#{item.prontaEntrega}">
+				<p:ajax process="@this" partialSubmit="true"
+					update="idProntaEntrega" />
+			</p:selectBooleanCheckbox>
+		</p:column>
+
+		<p:column headerText=" " style="text-align: center">
+			<p:commandButton icon="ui-icon-trash"
+				style="margin-left: 4px; width: 40%" process="@this"
+				partialSubmit="true"
+				actionListener="#{consignacaoBean.trocaItem(item)}"
+				oncomplete="PF('confirmExclusaoConsignacao').show();"
+				update=":formOperacao:idTabView:idexlusaoConsignacao" />
+		</p:column>
+
+	</p:dataTable>
+
+
+	<!-- Diálogo para consignação de um novo produto -->
+	<p:dialog header="Nova consignação" widgetVar="dlConsig" modal="true"
+		id="dialogo">
+
+		<p:panelGrid id="pnlNovo" columns="4" styleClass="semBorda">
+
+			<p:outputLabel value="Produto" for="produtoN" />
+			<p:selectOneMenu id="produtoN" immediate="true" required="true"
+				requiredMessage="Produto não informado!"
+				value="#{consignacaoBean.consignacao.produto}"
+				converter="omnifaces.SelectItemsConverter">
+				<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+				<f:selectItems value="#{consignacaoBean.listaProdutos}"
+					var="produto" itemValue="#{produto}" itemLabel="#{produto.nome}" />
+				<p:ajax update="minValorConsignacao precoU" />
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Menor valor para consignação" />
+			<p:outputLabel id="minValorConsignacao"
+				value="#{consignacaoBean.consignacao.produto.minValorConsignacao}" />
+
+			<p:outputLabel value="Valor Unitário" for="precoU" />
+			<p:inputNumber id="precoU"
+				disabled="#{consignacaoBean.habilitaPrecoUnitario()}"
+				required="true" decimalSeparator="," thousandSeparator="."
+				decimalPlaces="2" requiredMessage="Valor unitário não informado!"
+				value="#{consignacaoBean.consignacao.valorUnitario}">
+				<p:ajax listener="#{consignacaoBean.validaPrecoNovaConsignacao()}"
+					update="precoU" process="@this" partialSubmit="true" />
+			</p:inputNumber>
+
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+
+			<p:outputLabel value="Quantidade" for="quant" />
+			<p:inputNumber id="quant" decimalPlaces="0" minValue="0"
+				required="true" requiredMessage="Quantidade não informada!"
+				value="#{consignacaoBean.consignacao.consignados}" />
+
+
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+
+			<p:outputLabel value="Pronta entrega" />
+			<p:selectBooleanCheckbox style="margin-left: 10px"
+				value="#{consignacaoBean.consignacao.prontaEntrega}">
+			</p:selectBooleanCheckbox>
+
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+
+
+			<p:outputLabel value="Nota fiscal" />
+			<h:panelGroup>
+				<p:panelGrid columns="3">
+
+					<p:selectBooleanCheckbox immediate="true"
+						value="#{consignacaoBean.consignacao.nota}">
+						<p:ajax update="notaEmitida" />
+					</p:selectBooleanCheckbox>
+
+					<p:outputLabel value="Emitida" />
+					<p:selectBooleanCheckbox id="notaEmitida"
+						value="#{consignacaoBean.consignacao.notaEmitida}"
+						disabled="#{consignacaoBean.notaEmitidaNovo()}">
+					</p:selectBooleanCheckbox>
+				</p:panelGrid>
+			</h:panelGroup>
+
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+
+
+			<p:outputLabel value="Colocação" />
+			<p:selectBooleanCheckbox style="margin-left: 10px"
+				value="#{consignacaoBean.abertura.colocacao}">
+			</p:selectBooleanCheckbox>
+
+
+
+		</p:panelGrid>
+		<p:commandButton value="Confirmar"
+			actionListener="#{consignacaoBean.adicionaConsignacao}"
+			update="idTabConsignados pnlNovo" process="pnlNovo @this"
+			partialSubmit="true"
+			oncomplete="PF('dlConsig').hide(); return false;" />
+	</p:dialog>
+
+
+	<p:confirmDialog id="idexlusaoConsignacao"
+		widgetVar="confirmExclusaoConsignacao"
+		header="Exclusão de consignação"
+		message="Quer realmente excluir o produto : #{consignacaoBean.consignacao.produto.nome}?">
+
+		<p:commandButton value="Sim"
+			actionListener="#{consignacaoBean.removeConsignacao}"
+			update="idTabConsignados :formOperacao:idTabView:idResumoOperacao :formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita"
+			process="@this" partialSubmit="true"
+			oncomplete="PF('confirmExclusaoConsignacao').hide(); return false;" />
+		<p:button value="Não"
+			onclick="PF('confirmExclusaoConsignacao').hide(); return false;" />
+
+	</p:confirmDialog>
+
+
+
+</ui:composition>

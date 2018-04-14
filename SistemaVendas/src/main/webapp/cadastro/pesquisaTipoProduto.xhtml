@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Pesquisa Tipo de Produtos</h1>
+
+		<h:form id="idFormPesquisa">
+			<p:messages autoUpdate="true" />
+			<p:toolbar style="width: 50%; margin-top: 20px">
+
+				<p:toolbarGroup>
+					<p:commandButton value="Pesquisar"
+						actionListener="#{pesquisaTipoProdutoBean.pesquisar}"
+						process="@this" update="idTab" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:button value="Novo" outcome="/cadastro/tipoProduto" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+
+			<p:dataTable id="idTab" value="#{pesquisaTipoProdutoBean.listaTipos}"
+				var="item" style="margin-top: 20px ; width: 50% " reflow="true">
+
+				
+				<p:column headerText="Nome" style="text-align: center">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+				
+				<p:column headerText="Produtos" style="text-align: center">
+					<h:outputText value="#{item.quantProdutos()}" />
+				</p:column>
+
+				<p:column headerText="Ações" style="text-align: center">
+					<p:commandButton icon="ui-icon-pencil" title="Editar"
+						process="@this" update="@none"
+						style="margin-left: 4px; width: 70%"
+						action="#{pesquisaTipoProdutoBean.abrirDialogo(item)}">
+
+						<p:ajax event="dialogReturn"
+							listener="#{pesquisaTipoProdutoBean.pesquisar}" process="@this"
+							update="idTab" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+
+
+
+
+
+	</ui:define>
+</ui:composition>

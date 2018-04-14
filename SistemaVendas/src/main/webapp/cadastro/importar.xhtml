@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h:form id="idFormTab">
+
+			<p:panelGrid columns="3" styleClass="semBorda">
+				<p:outputLabel value="Nome do arquivo" />
+				<p:inputText value="#{importaClientes.nomeArquivo}" />
+				<p:commandButton value="Importar"
+					actionListener="#{importaClientes.importaCliente}" />
+			</p:panelGrid>
+		</h:form>
+
+
+
+
+	</ui:define>
+</ui:composition>

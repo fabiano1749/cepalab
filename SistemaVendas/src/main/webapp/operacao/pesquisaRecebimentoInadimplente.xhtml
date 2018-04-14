@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Pesquisa de Recebimentos de
+			Inadimplentes</h1>
+
+		<h:form id="idFormPesquisa">
+			<p:toolbar style="width: 70%; margin-top: 20px">
+
+				<p:toolbarGroup>
+					<p:button value="Novo"
+						outcome="/operacao/recebimentoInadimplentes" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+			<p:panelGrid columns="7" style="margin-top: 20px"
+				styleClass="semBorda">
+
+				<p:outputLabel value="Funcionário"
+					rendered="#{pesquisaRecebimentoInadimplenteBean.isAdministrador()}" />
+				<p:selectOneMenu id="idfuncionario"
+					rendered="#{pesquisaRecebimentoInadimplenteBean.isAdministrador()}"
+					value="#{pesquisaRecebimentoInadimplenteBean.filtro.funcionario}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems
+						value="#{pesquisaRecebimentoInadimplenteBean.listaFuncionarios}"
+						var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Data inicial" for="inicio" />
+				<p:calendar id="inicio" pattern="dd/MM/yyyy" locale="pt"
+					value="#{pesquisaRecebimentoInadimplenteBean.filtro.inicio}"
+					required="true" requiredMessage="Data inicial não informada!" />
+
+				<p:outputLabel value="Data final" for="fim" />
+				<p:calendar id="fim"
+					value="#{pesquisaRecebimentoInadimplenteBean.filtro.fim}"
+					required="true" requiredMessage="Data final não informada!"
+					pattern="dd/MM/yyyy" locale="pt" />
+
+
+				<p:commandButton value="Pesquisar"
+					actionListener="#{pesquisaRecebimentoInadimplenteBean.pesquisar}"
+					update="idTabela" />
+
+			</p:panelGrid>
+
+
+
+			<p:dataTable id="idTabela"
+				value="#{pesquisaRecebimentoInadimplenteBean.recebimentosFiltrados}"
+				var="item" style="margin-top: 20px ; width: 70% " reflow="true">
+
+				<p:column headerText="Cliente" style="text-align: center">
+					<h:outputText value="#{item.cliente.nome}" />
+				</p:column>
+
+				<p:column headerText="Data" style=" text-align: center">
+					<h:outputText value="#{item.data}">
+						<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Valor" style="text-align: center">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber pattern="#0.00" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Nota" style="text-align: center">
+					<h:outputText value="#{item.nota}" />
+				</p:column>
+
+
+				<p:column headerText="Ações" style="text-align: center">
+					<p:button icon="ui-icon-pencil"
+						style="margin-left: 4px; width: 40%"
+						outcome="/operacao/recebimentoInadimplentes">
+						<f:param name="item" value="#{item.id}" />
+					</p:button>
+				</p:column>
+
+
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,249 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Cadastro de Produtos</h1>
+
+		<p:toolbar style="margin-top: 20px">
+
+			<p:toolbarGroup>
+				<p:commandButton value="Novo" onclick="PF('NovoProduto').show()"
+					update="formPnlNovo" />
+			</p:toolbarGroup>
+		</p:toolbar>
+
+		<h:form id="idFormTab">
+			<p:messages autoUpdate="true" />
+			<p:dataTable id="idTabela" value="#{produtoBean.itens}" var="produto"
+				style="margin-top: 20px; width:100%" reflow="true">
+
+				<p:column headerText="Código" style="width:10%; text-align: center">
+					<h:outputText value="#{produto.id}" />
+				</p:column>
+
+				<p:column headerText="Nome" style="width:25%; text-align: center">
+					<h:outputText value="#{produto.nome}" />
+				</p:column>
+
+				<p:column headerText="Custo" style="width:10%; text-align: center">
+					<h:outputText value="#{produto.custo}">
+						<f:convertNumber type="currency" locale="pt_BR"
+							maxFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Minimo valor venda"
+					style="width:20%; text-align: center">
+					<h:outputText value="#{produto.minValorVenda}">
+						<f:convertNumber type="currency" locale="pt_BR"
+							maxFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Minimo valor consignação"
+					style="width:20%; text-align: center">
+					<h:outputText value="#{produto.minValorConsignacao}">
+						<f:convertNumber type="currency" locale="pt_BR"
+							maxFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Pode consignar"
+					style="width:20%; text-align: center">
+					<h:outputText value="#{produto.podeConsignar.descricao}" />
+				</p:column>
+
+				<p:column headerText="Tipo" style="width:20%; text-align: center">
+					<h:outputText value="#{produto.tipo.nome}" />
+				</p:column>
+
+				<p:column headerText="Cálculo de comissao" style="width:20%; text-align: center">
+					<h:outputText value="#{produto.calculoComissao.descricao}" />
+				</p:column>
+
+
+				<p:column headerText="Ações" style="width:15%; text-align: center">
+					<p:commandButton icon="ui-icon-pencil" style="margin-left: 10px"
+						onclick="PF('EditaProduto').show()"
+						update="#{p:component('pnlEdita')}"
+						actionListener="#{produtoBean.troca(produto)}" />
+
+					<p:commandButton icon="ui-icon-trash" style="margin-left: 20px"
+						actionListener="#{produtoBean.troca(produto)}" process="@this"
+						oncomplete="PF('confirmExclusao').show()"
+						update="idConfirmDialogExlusao" />
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+
+
+		<p:dialog widgetVar="NovoProduto" header="Novo Produto"
+			resizable="false">
+			<h:form id="formPnlNovo">
+				<h:panelGroup id="idPnlG">
+					<h:panelGrid columns="2" id="pnlnovo">
+
+						<p:outputLabel value="Nome" for="idNome" />
+						<p:inputText id="idNome" value="#{produtoBean.item.nome}"
+							required="true" style="width:250px"
+							requiredMessage="Nome não informado!">
+						</p:inputText>
+
+						<p:outputLabel value="Tipo Produto" for="idTipo" />
+						<p:selectOneMenu id="idTipo" value="#{produtoBean.item.tipo}"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItems value="#{produtoBean.listaTipos}" var="tipo"
+								itemValue="#{tipo}" itemLabel="#{tipo.nome}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Cálculo de Comissão" />
+						<p:selectOneMenu value="#{produtoBean.item.calculoComissao}"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItems value="#{produtoBean.calculoComissao()}" var="calculo"
+								itemValue="#{calculo}" itemLabel="#{calculo.descricao}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Custo" for="idCusto" />
+						<p:inputNumber id="idCusto" value="#{produtoBean.item.custo}"
+							required="true" style="width:100px"
+							requiredMessage="O Custo deve ser informado!"
+							decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+
+
+						<p:outputLabel value="Minvenda" for="MinVenda" />
+						<p:inputNumber id="MinVenda"
+							value="#{produtoBean.item.minValorVenda}" required="true"
+							style="width:100px"
+							requiredMessage="O menor valor para venda deve ser informado!"
+							decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+
+
+						<p:outputLabel value="Pode consignar" />
+						<p:selectOneMenu value="#{produtoBean.item.podeConsignar}"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItems value="#{produtoBean.podeConsignar()}" var="pode"
+								itemValue="#{pode}" itemLabel="#{pode.descricao}" />
+							<p:ajax listener="#{produtoBean.podeConsignarValor}"
+								update="MinConsignacao" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="MinConsignação" id="MinConsignacaoLabel" />
+						<p:inputNumber value="#{produtoBean.item.minValorConsignacao}"
+							id="MinConsignacao" style="width:100px"
+							disabled="#{produtoBean.podeConsignar}" decimalSeparator=","
+							thousandSeparator="." decimalPlaces="2" />
+
+
+
+
+					</h:panelGrid>
+
+					<p:outputLabel value="" />
+					<p:outputLabel value="" />
+
+					<p:commandButton value="Salvar"
+						actionListener="#{produtoBean.salvar}"
+						update="idFormTab:idTabela idPnlG "
+						oncomplete="PF('NovoProduto').hide(); return false;" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+
+
+		<p:dialog widgetVar="EditaProduto" header="Editar Produto"
+			resizable="false">
+			<h:form id="formPnlEdita">
+				<h:panelGroup id="idPnlGEdita">
+					<h:panelGrid columns="2" id="pnlEdita">
+
+						<p:outputLabel value="Nome" for="idNome" />
+						<p:inputText id="idNome" value="#{produtoBean.itemAuxiliar.nome}"
+							required="true" style="width:250px"
+							requiredMessage="Nome não informado!">
+						</p:inputText>
+
+						<p:outputLabel value="Tipo Produto" for="idTipo" />
+						<p:selectOneMenu id="idTipo"
+							value="#{produtoBean.itemAuxiliar.tipo}"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItems value="#{produtoBean.listaTipos}" var="tipo"
+								itemValue="#{tipo}" itemLabel="#{tipo.nome}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Cálculo de Comissão" />
+						<p:selectOneMenu value="#{produtoBean.itemAuxiliar.calculoComissao}"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItems value="#{produtoBean.calculoComissao()}" var="calculo"
+								itemValue="#{calculo}" itemLabel="#{calculo.descricao}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Custo" for="idCusto" />
+						<p:inputNumber id="idCusto"
+							value="#{produtoBean.itemAuxiliar.custo}" required="true"
+							style="width:100px" requiredMessage="O Custo deve ser informado!"
+							decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+
+
+						<p:outputLabel value="Minvenda" for="MinVenda" />
+						<p:inputNumber id="MinVenda"
+							value="#{produtoBean.itemAuxiliar.minValorVenda}" required="true"
+							style="width:100px"
+							requiredMessage="O menor valor para venda deve ser informado!"
+							decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
+
+
+						<p:outputLabel value="Pode consignar" />
+						<p:selectOneMenu value="#{produtoBean.itemAuxiliar.podeConsignar}"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItems value="#{produtoBean.podeConsignar()}" var="pode"
+								itemValue="#{pode}" itemLabel="#{pode.descricao}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="MinConsignação" />
+						<p:inputNumber
+							value="#{produtoBean.itemAuxiliar.minValorConsignacao}"
+							styleClass="moeda" style="width:100px" decimalSeparator=","
+							thousandSeparator="." decimalPlaces="2" />
+
+
+
+					</h:panelGrid>
+
+					<p:outputLabel value="" />
+					<p:outputLabel value="" />
+
+					<p:commandButton value="Salvar"
+						actionListener="#{produtoBean.editar}"
+						update="idFormTab:idTabela idPnlGEdita "
+						oncomplete="PF('EditaProduto').hide(); return false;" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao" header="Exclusão de produto"
+			message="Quer realmente excluir o produto : #{produtoBean.itemAuxiliar.nome}?">
+			<h:form id="formExclusao">
+				<p:messages />
+
+				<p:commandButton value="Sim" actionListener="#{produtoBean.excluir}"
+					update="idFormTab:idTabela" process="@this"
+					oncomplete="PF('confirmExclusao').hide(); return false;" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
+
+			</h:form>
+		</p:confirmDialog>
+
+
+	</ui:define>
+
+
+</ui:composition>

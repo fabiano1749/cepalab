@@ -1,0 +1,566 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+
+	<ui:define name="corpo">
+
+
+
+		<h:form>
+			<p:toolbar style="margin-top: 20px;">
+
+				<p:toolbarGroup style="pading: 5px">
+
+					<p:outputLabel value="Cliente" for="cliente" style="margin: 20px" />
+					<p:selectOneMenu id="cliente"
+						style="width: 300px; vertical-align:middle;"
+						value="#{listasBean.nome}">
+						<f:selectItem itemLabel="Drogaria Araújo" itemValue="1" />
+						<f:selectItem itemLabel="Drogaria Pacheco" itemValue="2" />
+						<f:selectItem itemLabel="Drogaria do João" itemValue="3" />
+						<f:selectItem itemLabel="Droga+" itemValue="4" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Data" style="margin: 20px" />
+					<p:calendar style="vertical-align:middle;" />
+
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+
+			<p:tabView id="idTavendaConsig" style="margin-top: 20px">
+				<p:tab title="Consignações" >
+
+
+					<p:dataTable id="idTabConsignados"
+						value="#{listasBean.consignados}" var="consignado" editable="true"
+						editMode="cell" style="margin-top: 60px" reflow="true">
+
+						<f:facet name="header">
+
+							<p:commandButton value="Consignar um novo produto"
+								onclick="PF('dlConsig').show(); return false;" />
+						</f:facet>
+
+						<p:column headerText="Produto"
+							style="font-size: small; width: 10%; text-align: center">
+
+							<h:outputText value="#{consignado.nome}" />
+
+						</p:column>
+
+						<p:column headerText="Consignados"
+							style="font-size: small; width: 7%; text-align: center">
+
+							<h:outputText value="#{consignado.quantidade}" />
+
+						</p:column>
+
+						<p:column headerText="Preço-unitário"
+							style="font-size: small; width: 10%; text-align: center">
+
+							<h:outputText value="#{consignado.valor_unitario}" />
+
+						</p:column>
+
+						<p:column headerText="Vendidos"
+							style="font-size: small; text-align: center; width: 5%;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{consignado.vendidos}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{consignado.vendidos}" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Repostos"
+							style="font-size: small; text-align: center; width: 5%;">
+							<p:cellEditor>
+								<f:facet name="output" style="width: 60px">
+									<h:outputText value="#{listasBean.numero}" />
+								</f:facet>
+								<f:facet name="input" style="width: 60px">
+									<p:inputText value="#{listasBean.numero}" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Pronta entrega"
+							style="font-size: small; width: 10%; text-align: center  ">
+							<p:selectOneRadio id="NotaEmitida">
+								<f:selectItem itemLabel="Sim" itemValue="Sim" />
+								<f:selectItem itemLabel="Não" itemValue="Nao" />
+							</p:selectOneRadio>
+						</p:column>
+
+						<p:column headerText="Devolvidos"
+							style="font-size: small; width: 13%">
+							<p:panelGrid columns="2" style="width: 100%" 
+								columnClasses="grid30, grid70">
+								<h:inputText style="width: 100%; text-align: center" />
+								<p:selectOneMenu style="width: 80%">
+									<f:selectItem itemLabel="Vencido" itemValue="vencido" />
+									<f:selectItem itemLabel="Inválido" itemValue="invalido" />
+									<f:selectItem itemLabel="Danificado" itemValue="danificado" />
+									<f:selectItem itemLabel="Cancelamento" itemValue="cancelamento" />
+									<f:selectItem itemLabel="Outros" itemValue="outros" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+						</p:column>
+
+						<p:column headerText="Comissão" 
+							style="font-size: small; width: 5%; text-align: center">
+							<h:outputText value="10 %" />
+						</p:column>
+
+						<p:column headerText="Alterar"
+							style="font-size: small; width: 15%">
+							<p:button value="Preço" style="width:45%" />
+							<p:button value="comissão" style="width:45%; margin-left: 10px" />
+						</p:column>
+
+					</p:dataTable>
+
+					<br />
+					
+					<p:commandButton value="Confirmar Consignações"
+						actionListener="#{listasBean.vendaConsignados}"
+						update="idtabVEndaResumo  pnlReceita" />
+					</p:tab>
+
+					<p:tab title="Vendas de produtos não consignados" >
+
+					<p:dataTable id="idTabelaVenda" value="#{listasBean.vendas}"
+						var="venda" editable="true" editMode="cell"
+						style="margin-top: 60px">
+
+						<f:facet name="header">
+							<p:commandButton value="Adicionar produto na tabela de venda"
+								onclick="PF('dlVenda').show(); return false;" />
+						</f:facet>
+
+						<p:column headerText="Produto"
+							style="font-size: small; width: 180px; text-align: center">
+
+							<h:outputText value="#{venda.produto}" />
+
+						</p:column>
+
+						<p:column headerText="Ultima venda"
+							style="font-size: small; width: 90px; text-align: center">
+
+							<h:outputText value="#{venda.ultimaVenda}" />
+
+						</p:column>
+
+						<p:column headerText="Preço-unitário"
+							style="font-size: small; width: 90px; text-align: center  ">
+
+							<h:outputText value="#{venda.valorUnidade}" />
+
+						</p:column>
+
+						<p:column headerText="Vendidos"
+							style="font-size: small; width: 60px; text-align: center">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{venda.quantidade}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{venda.quantidade}" />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Pronta entrega"
+							style="font-size: small; width: 110px; text-align: center">
+							<p:selectOneRadio id="NotaEmitida">
+								<f:selectItem itemLabel="Sim" itemValue="Sim" />
+								<f:selectItem itemLabel="Não" itemValue="Nao" />
+							</p:selectOneRadio>
+						</p:column>
+
+						<p:column headerText="Repostos"
+							style="font-size: small; width: 180px; text-align: center">
+							<p:panelGrid columns="2" style="width: 215px"
+								columnClasses="column1Class, column2Class">
+								<h:inputText style="width: 50px" />
+								<p:selectOneMenu style="width: 90px">
+									<f:selectItem itemLabel="Vencido" itemValue="vencido" />
+									<f:selectItem itemLabel="Inválido" itemValue="invalido" />
+									<f:selectItem itemLabel="Danificado" itemValue="danificado" />
+									<f:selectItem itemLabel="Outros" itemValue="outros" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+						</p:column>
+
+						<p:column headerText="Comissão"
+							style="font-size: small; width: 60px; text-align: center">
+							<h:outputText value="#{venda.comissao}" />
+						</p:column>
+
+
+						<p:column headerText="Ações"
+							style="font-size: small; text-align: center; width: 240px">
+							<p:button value="Alterar preço unitário" />
+							<p:button value="Alterar comissão" />
+						</p:column>
+
+					</p:dataTable>
+
+
+					<br />
+					<br />
+
+					<p:commandButton value="Confirmar Vendas"
+						action="#{listasBean.subtotalVendas}"
+						actionListener="#{listasBean.vendaConsignados}"
+						update="idtabVEndaResumo  pnlReceita" />
+
+
+
+
+					<!-- Diálogo para consignação de um novo produto -->
+					<p:dialog header="Nova consignação" widgetVar="dlConsig"
+						modal="true">
+
+						<p:panelGrid id="pnlConsigna" columns="2">
+							<h:outputLabel value="Produto" />
+							<p:selectOneMenu value="#{listasBean.consignado.nome}">
+								<f:selectItem itemLabel="Prod-1" itemValue="Prod-1" />
+								<f:selectItem itemLabel="Prod-2" itemValue="Prod-2" />
+								<f:selectItem itemLabel="Prod-3" itemValue="Prod-3" />
+								<f:selectItem itemLabel="Prod-4" itemValue="Prod-4" />
+								<f:selectItem itemLabel="Prod-5" itemValue="Prod-5" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Quantidade" />
+							<p:inputText value="#{listasBean.consignado.quantidade}" />
+							<h:outputLabel value="Valor unitário" />
+							<p:inputText value="#{listasBean.consignado.valor_unitario}" />
+							<h:outputLabel value="Pronta entrenga" />
+							<p:selectOneMenu>
+								<f:selectItem itemLabel="Não" itemValue="Não" />
+								<f:selectItem itemLabel="Sim" itemValue="Sim" />
+							</p:selectOneMenu>
+
+							<p:commandButton value="Confirmar"
+								action="#{listasBean.adicionaConsigado}"
+								update="idTabConsignados pnlConsigna" oncomplete="" />
+							<p:button value="Cancelar"
+								onclick="PF('dlConsig').hide(); return false;" />
+
+						</p:panelGrid>
+					</p:dialog>
+
+
+					<!-- Diálogo para Venda de um novo produto -->
+					<p:dialog header="Nova Venda" widgetVar="dlVenda" modal="true">
+
+						<p:panelGrid columns="2" id="pnl">
+							<h:outputLabel value="produto" for="prod" />
+							<p:selectOneMenu id="prod" value="#{listasBean.venda.produto}">
+								<f:selectItem itemLabel="Plus" itemValue="Plus" />
+								<f:selectItem itemLabel="Seringa" itemValue="Seringa" />
+								<f:selectItem itemLabel="Fita" itemValue="Fita" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Quantidade" />
+							<p:inputText value="#{listasBean.venda.quantidade}" />
+							<h:outputLabel value="Valor unitário" />
+							<p:inputText value="#{listasBean.venda.valorUnidade}" />
+							<h:outputLabel value="Pronta entrenga" />
+							<p:selectOneMenu value="#{listasBean.venda.prontaEntrega}">
+								<f:selectItem itemLabel="Não" itemValue="Sim" />
+								<f:selectItem itemLabel="Sim" itemValue="Não" />
+							</p:selectOneMenu>
+
+							<h:outputLabel value="Comissão" />
+							<p:inputText value="#{listasBean.venda.comissao}" />
+
+							<p:commandButton value="Confirmar"
+								action="#{listasBean.adicionaVenda}" update="idTabelaVenda pnl"
+								oncomplete="" />
+							<p:button value="Cancelar"
+								onclick="PF('dlVenda').hide(); return false;" />
+
+						</p:panelGrid>
+					</p:dialog>
+
+				</p:tab>
+
+
+
+
+				<!-- Realizar Amostras  -->
+
+				<p:tab title="Amostras">
+
+					<!-- Diálogo para Amostras de produtos -->
+					<p:dialog header="Nova Amostra" widgetVar="dlAmostra" modal="true">
+
+						<p:panelGrid columns="2" id="pnlAmostra">
+							<h:outputLabel value="produto" for="produ" />
+							<p:selectOneMenu id="produ" value="#{listasBean.amostra.produto}">
+								<f:selectItem itemLabel="Plus" itemValue="Plus" />
+								<f:selectItem itemLabel="Seringa" itemValue="Seringa" />
+								<f:selectItem itemLabel="Fita" itemValue="Fita" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Quantidade" />
+							<p:inputText value="#{listasBean.amostra.quantidade}" />
+							<h:outputLabel value="Comentário" />
+							<p:inputText value="#{listasBean.amostra.motivo}" />
+
+							<p:commandButton value="Confirmar" 
+								action="#{listasBean.adicionaAmostras}"
+								update="idtabAmostra pnlAmostra" />
+							<p:button value="Cancelar" 
+								onclick="PF('dlAmostra').hide(); return false;" />
+								
+
+						</p:panelGrid>
+					</p:dialog>
+
+
+
+
+
+
+
+					<p:dataTable id="idtabAmostra" value="#{listasBean.amostras}"
+						var="amostra" style="margin-top: 60px; width: 60%"
+						emptyMessage="">
+
+						<f:facet name="header">
+							<p:button value="Adicionar Produto"
+								onclick="PF('dlAmostra').show(); return false;" />
+						</f:facet>
+
+						<p:column headerText="Produto"
+							style="font-size: small; width: 30%; text-align: center">
+							<h:outputText value="#{amostra.produto}" />
+						</p:column>
+
+						<p:column headerText="Quantidade"
+							style="font-size: small; width: 20%px; text-align: center">
+							<h:outputText value="#{amostra.quantidade}" />
+						</p:column>
+
+						<p:column headerText="comentário"
+							style="font-size: small; width: 30%; text-align: center">
+							<h:outputText value="#{amostra.motivo}" />
+						</p:column>
+
+
+						<p:column headerText="Ações" style="font-size: small; width: 20%">
+							<p:panelGrid columns="2">
+								<p:button value="Editar" />
+								<p:button value="Excluir" />
+							</p:panelGrid>
+						</p:column>
+
+
+
+					</p:dataTable>
+
+					<br />
+					<br />
+
+					<p:commandButton value="Confirmar Amostras"
+						update="idtabAmostraResumo" />
+
+				</p:tab>
+
+
+				<p:tab title="Resumo da operação">
+
+
+					<p:dataTable id="idtabVEndaResumo" value="#{listasBean.vendas2}"
+						var="venda" style="margin-top: 60px; width: 80%" emptyMessage="">
+
+						<f:facet name="header">
+             			Produtos Vendidos - Resumo
+            		</f:facet>
+
+						<p:column headerText="Produto"
+							style="font-size: small; width: 10%; text-align: center">
+							<h:outputText value="#{venda.produto}" />
+						</p:column>
+
+						<p:column headerText="Quantidade"
+							style="font-size: small; width: 10%; text-align: center">
+							<h:outputText value="#{venda.quantidade}" />
+						</p:column>
+
+						<p:column headerText="Valor unitário"
+							style="font-size: small; width: 10%; text-align: center">
+							<h:outputText value="#{venda.valorUnidade}" />
+						</p:column>
+
+						<p:column headerText="Total" style="font-size: small; width: 10%; text-align: center">
+							<h:outputText value="#{venda.total}" />
+						</p:column>
+
+						<p:column headerText="comissão - %"
+							style="font-size: small; width: 10%; text-align: center">
+							<h:outputText value="10 %" />
+						</p:column>
+
+						<p:column headerText="comissão R$"
+							style="font-size: small; width: 10%; text-align: center">
+							<h:outputText value="" />
+						</p:column>
+
+						<p:column headerText="Nota"
+							style="width:20%; font-size: small; text-align: center">
+							<p:selectOneRadio id="formaPag">
+								<f:selectItem itemLabel="Sim" itemValue="Sim" />
+								<f:selectItem itemLabel="Não" itemValue="Nao" />
+							</p:selectOneRadio>
+						</p:column>
+
+						<p:column headerText="Nota Emitida"
+							style="width:20%; font-size: small; text-align: center">
+							<p:selectOneRadio id="NotaEmitida">
+								<f:selectItem itemLabel="Sim" itemValue="Sim" />
+								<f:selectItem itemLabel="Não" itemValue="Nao" />
+							</p:selectOneRadio>
+						</p:column>
+
+						<p:columnGroup type="footer">
+							<p:row>
+								<p:column colspan="3" footerText="Subtotal"
+									style="text-align: right" />
+								<p:column style="text-align: right"
+									footerText="#{listasBean.totalVendas}">
+									<h:outputText value="#{listasBean.totalVendas}" />
+								</p:column>
+								
+								<p:column  footerText="Comissão"
+									style="text-align: right" />
+								
+								<p:column style="text-align: right"
+									footerText=" ">
+									<h:outputText value=" " />
+								</p:column>
+								
+
+							</p:row>
+						</p:columnGroup>
+
+					</p:dataTable>
+
+
+
+
+					<p:dataTable id="idtabAmostraResumo" value="#{listasBean.amostras}"
+						var="amostra" style="margin-top: 60px; width: 60%"
+						emptyMessage="">
+
+						<f:facet name="header">
+             			Amostras - Resumo
+            		</f:facet>
+
+						<p:column headerText="Produto"
+							style="font-size: small; width: 40%; text-align: center">
+							<h:outputText value="#{amostra.produto}" />
+						</p:column>
+
+						<p:column headerText="Quantidade"
+							style="font-size: small; width: 20%; text-align: center">
+							<h:outputText value="#{amostra.quantidade}" />
+						</p:column>
+
+						<p:column headerText="comentário"
+							style="font-size: small; width: 40%; text-align: center">
+							<h:outputText value="#{amostra.motivo}" />
+						</p:column>
+
+
+					</p:dataTable>
+
+
+					<br />
+
+					<p:panelGrid columns="2">
+						<p:commandButton value="Apurar receita"
+							onclick="PF('dlReceita').show(); return false" />
+
+					</p:panelGrid>
+
+
+					<!-- Diálogo para apuração das receitas -->
+					<p:dialog header="Apurar receitas" widgetVar="dlReceita"
+						modal="true" style="text-align: center">
+
+						<p:panelGrid columns="2" id="pnlReceita">
+							<h:outputLabel value="Receitas" for="receita" />
+							<h:outputText id="receita" value="#{listasBean.totalVendas}"
+								sstyle="text-align: right" />
+							<h:outputLabel value="Formas de pagamento" for="formaPag" />
+							<p:selectOneRadio id="formaPag"
+								value="#{listasBean.numeroPagamentos}">
+								<f:selectItem itemLabel="1" itemValue="1" />
+								<f:selectItem itemLabel="2" itemValue="2" />
+								<f:selectItem itemLabel="3" itemValue="3" />
+								<f:ajax render="idtable" />
+							</p:selectOneRadio>
+
+						</p:panelGrid>
+
+
+						<p:dataTable id="idtable" value="#{listasBean.receitas}"
+							rows="#{listasBean.numeroPagamentos}" editable="true"
+							editMode="cell" var="receita"
+							style="margin-top: 60px; width: 600px" emptyMessage="">
+
+							<p:column headerText="Valor"
+								style="width:60px; text-align: center">
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="0" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{receita.valor}" />
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+
+							<p:column headerText="Forma de pagamento"
+								style="width: 150px; text-align: center">
+								<p:selectOneMenu value="#{receita.formaPag}">
+									<f:selectItem itemLabel="Dinheiro" itemValue="dinheiro" />
+									<f:selectItem itemLabel="Cheque" itemValue="Cheque" />
+									<f:selectItem itemLabel="Boleto" itemValue="Boleto" />
+								</p:selectOneMenu>
+							</p:column>
+
+						</p:dataTable>
+
+						
+						<br />
+
+						<p:commandButton value="Confirmar Venda" />
+						<p:button value="Cancelar"
+							onclick="PF('dlReceita').hide(); return false;" />
+					</p:dialog>
+
+
+
+				</p:tab>
+
+			</p:tabView>
+
+
+
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>

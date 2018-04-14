@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+
+	<h1 class="fa-page-title">Cadastro de Tipo de Produto</h1>
+	<h:outputStylesheet library="css" name="sistema.css" />
+	<f:metadata>
+		<o:viewParam name="item" value="#{tipoProdutoBean.item}" />
+	</f:metadata>
+
+</h:head>
+
+<h:body>
+
+
+	<h:form id="form">
+
+		<p:panelGrid id="idPnl" columns="2" styleClass="semBorda"
+				style="margin-top: 10px">
+
+				<p:outputLabel value="Nome" for="idNome" />
+				<p:inputText id="idNome" value="#{tipoProdutoBean.item.nome}"
+					required="true" requiredMessage="Nome não informado!" />
+
+				<p:outputLabel value="Comissão abertura" for="idCA" />
+				<p:inputNumber id="idCA"
+					value="#{tipoProdutoBean.item.comissaoAbertura}"
+					style="width:100px" decimalSeparator="," thousandSeparator="."
+					decimalPlaces="2" />
+
+				<p:outputLabel value="Premiação abertura" for="idPA" />
+				<p:inputNumber id="idPA"
+					value="#{tipoProdutoBean.item.premiacaoAbertura}"
+					style="width:100px" decimalSeparator="," thousandSeparator="."
+					decimalPlaces="2" />
+
+				<p:outputLabel value="Comissão colocação" for="idCC" />
+				<p:inputNumber id="idCC"
+					value="#{tipoProdutoBean.item.comissaoColocacao}"
+					style="width:100px" decimalSeparator="," thousandSeparator="."
+					decimalPlaces="2" />
+
+
+				<p:outputLabel value="Premiação colocação" for="idPC" />
+				<p:inputNumber id="idPC"
+					value="#{tipoProdutoBean.item.premiacaoColocacao}"
+					style="width:100px" decimalSeparator="," thousandSeparator="."
+					decimalPlaces="2" />
+
+				<p:commandButton value="Salvar"
+					actionListener="#{tipoProdutoBean.salvar}" update="idPnl"
+					action="#{pesquisaTipoProdutoBean.fechaDialogo}"
+					process="idPnl @this" partialSubmit="true" />
+
+			</p:panelGrid>
+	
+	</h:form>
+</h:body>
+
+
+
+</html>

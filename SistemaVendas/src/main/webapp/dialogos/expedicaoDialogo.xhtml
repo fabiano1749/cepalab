@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+
+	<h1 class="fa-page-title">Cadastro de Expedições</h1>
+	<h:outputStylesheet library="css" name="sistema.css" />
+	<f:metadata>
+		<o:viewParam name="item" value="#{expedicaoBean.item}" />
+	</f:metadata>
+
+</h:head>
+
+<h:body>
+
+
+	<h:form id="form">
+		<p:toolbar style="width: 80%; margin-top: 20px ">
+
+			<p:toolbarGroup>
+
+				<p:commandButton value="Salvar" id="idBotaoSalvar"
+					actionListener="#{expedicaoBean.salvar}" style="margin-left: 5px;"
+					process="@form" action="#{pesquisaExpedicaoBean.fechaDialogo}" />
+
+			</p:toolbarGroup>
+
+		</p:toolbar>
+
+		<p:messages id="mensagem" autoUpdate="true" />
+
+		<p:panelGrid columns="4" style="margin-top: 15px"
+			styleClass="semBorda" id="idPngDados">
+
+			<p:outputLabel value="Vendedor" for="vendedor" />
+			<p:selectOneMenu id="vendedor" required="true"
+				requiredMessage="Funcionario não informado!"
+				value="#{expedicaoBean.item.funcionario}"
+				converter="omnifaces.SelectItemsConverter">
+				<f:selectItems value="#{expedicaoBean.listaFuncionarios}" var="fun"
+					itemValue="#{fun}" itemLabel="#{fun.nome}" />
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Data" for="idData" />
+			<p:calendar id="idData" value="#{expedicaoBean.item.abertura}"
+				required="true" requiredMessage="Data não informada!" locale="pt"
+				pattern="dd/MM/yyyy">
+			</p:calendar>
+
+			<p:outputLabel value="Status" />
+			<p:selectOneMenu id="Status" value="#{expedicaoBean.item.status}"
+				converter="omnifaces.SelectItemsConverter">
+				<f:selectItems value="#{expedicaoBean.status()}" var="status"
+					itemValue="#{status}" itemLabel="#{status.descricao}" />
+				<p:ajax listener="#{expedicaoBean.statusFechado()}"
+					update="idPngDados" process="@this idPngDados" />
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Data do fechamento"
+				rendered="#{expedicaoBean.statusFechado}" />
+			<p:calendar id="idDataFechamento"
+				value="#{expedicaoBean.item.acerto}" locale="pt"
+				rendered="#{expedicaoBean.statusFechado}" pattern="dd/MM/yyyy" />
+
+		</p:panelGrid>
+
+		<p:dataTable id="idTabela" value="#{expedicaoBean.item.expedProdutos}"
+			var="item" style="margin-top: 20px ; width: 50% " reflow="true"
+			editable="true" editMode="cell">
+
+			<p:column headerText="Produto" style="text-align: center">
+				<h:outputText value="#{item.produto.nome}" />
+			</p:column>
+
+			<p:column headerText="Quantidade - Saída"
+				style="font-size: small; text-align: center">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{item.saida}" id="outputSaida" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{item.saida}" id="inputSaida">
+							<p:ajax process="@this" partialSubmit="true" update="outputSaida" />
+						</p:inputText>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column headerText="Quantidade - Chegada"
+				style="font-size: small; text-align: center">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{item.chegada}" id="outputChegada" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{item.chegada}" id="inputChegada">
+							<p:ajax process="@this" partialSubmit="true"
+								update="outputChegada" />
+						</p:inputText>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+		</p:dataTable>
+
+	</h:form>
+</h:body>
+
+
+
+</html>

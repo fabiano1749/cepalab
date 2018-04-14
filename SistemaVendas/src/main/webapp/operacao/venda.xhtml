@@ -1,0 +1,267 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+	<p:dataTable id="idTabVenda" value="#{operacaoBean.item.vendas}"
+		var="item" editable="true" editMode="cell" style="margin-top: 30px"
+		reflow="true">
+
+		<f:facet name="header">
+			<p:commandButton value="Adicionar produto" process="@this"
+				onclick="PF('dlgVenda').show()" />
+		</f:facet>
+
+		<p:column headerText="Produto"
+			style="font-size: small; text-align: center; width: 15%">
+			<h:outputText value="#{item.produto.nome}" />
+		</p:column>
+
+		<p:column headerText="Histórioco de vendas"
+			style="font-size: small; text-align: center; width: 10%">
+			<h:outputText value="#{item.totalVendidos}" />
+		</p:column>
+
+		<p:column headerText="Último preço"
+			style="font-size: small; text-align: center; width: 10%">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText id="preco" value="#{item.valorUnitario}">
+						<f:convertNumber pattern="#0.00" locale="pt_BR" />
+					</h:outputText>
+				</f:facet>
+				<f:facet name="input">
+					<p:inputNumber id="preCo" value="#{item.valorUnitario}"
+						decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+						<p:ajax listener="#{vendaBean.validaPreco(item)}"
+							update="preco preCo" process="@this" partialSubmit="true" />
+
+						<p:ajax
+							listener="#{resumoOperacaoBean.alimentaListaResumoConsignacaoVenda}"
+							process="@this" partialSubmit="true"
+							update=":formOperacao:idTabView:idResumoOperacao" />
+
+						<p:ajax listener="#{receitaBean.criaListaReceitas}"
+							process="@this" partialSubmit="true"
+							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita" />
+
+					</p:inputNumber>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+
+
+		<p:column headerText="Vendidos"
+			style="font-size: small; text-align: center; width: 10%">
+			<p:cellEditor>
+				<f:facet name="output">
+					<h:outputText value="#{item.quantidade}" id="outPutQuantidadeV" />
+
+				</f:facet>
+				<f:facet name="input">
+					<p:inputText value="#{item.quantidade}" id="idInputQuantidade">
+						<p:ajax process="@this" partialSubmit="true"
+							update="outPutQuantidadeV idInputQuantidade" />
+
+						<p:ajax
+							listener="#{resumoOperacaoBean.alimentaListaResumoConsignacaoVenda}"
+							process="@this" partialSubmit="true"
+							update=":formOperacao:idTabView:idResumoOperacao" />
+
+						<p:ajax listener="#{receitaBean.criaListaReceitas}"
+							process="@this" partialSubmit="true"
+							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita" />
+					</p:inputText>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+		<p:column headerText="Devolvidos"
+			style="font-size: small; text-align: center; width: 10%">
+			<p:cellEditor>
+				<f:facet name="output" style="width: 60px">
+					<h:outputText value="#{item.devolvidos}" />
+				</f:facet>
+				<f:facet name="input" style="width: 60px">
+					<p:inputNumber value="#{item.devolvidos}" minValue="0" />
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+		<p:column headerText="Repostos"
+			style="font-size: small; text-align: center; width: 7%">
+			<p:cellEditor>
+				<f:facet name="output" style="width: 60px">
+					<h:outputText value="#{item.repostos}" />
+				</f:facet>
+				<f:facet name="input" style="width: 60px">
+					<p:inputNumber value="#{item.repostos}" minValue="0" />
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+
+		<p:column headerText="Pronta entrega"
+			style="font-size: small; width: 10%; text-align: center">
+			<p:selectBooleanCheckbox value="#{item.prontaEntrega}">
+				<p:ajax listener="#{vendaBean.taxaComissao(item)}"
+					update="outPutTaxa inputTaxa :formOperacao:idTabView:idResumoOperacao"
+					process="@this" partialSubmit="true" />
+
+			</p:selectBooleanCheckbox>
+		</p:column>
+
+		<p:column headerText="Comissão - %"
+			style="font-size: small; text-align: center; width: 10%">
+			<p:cellEditor>
+				<f:facet name="output" style="width: 60px">
+					<h:outputText id="outPutTaxa" value="#{item.taxaComissao}">
+						<f:convertNumber pattern="#0.00" locale="pt_BR" />
+					</h:outputText>
+				</f:facet>
+				<f:facet name="input" style="width: 60px">
+					<p:inputNumber id="inputTaxa" value="#{item.taxaComissao}"
+						immediate="true" decimalSeparator="," thousandSeparator=".">
+						<p:ajax
+							listener="#{vendaBean.alteraTaxa(item)}" update="outPutTaxa inputTaxa" />
+							
+						<p:ajax
+							listener="#{resumoOperacaoBean.alimentaListaResumoConsignacaoVenda}"
+							process="@this" partialSubmit="true"
+							update=":formOperacao:idTabView:idResumoOperacao outPutTaxa inputTaxa" />	
+						
+							
+					</p:inputNumber>
+				</f:facet>
+			</p:cellEditor>
+		</p:column>
+		<p:column headerText="Nota Fiscal"
+			style="font-size: small;  text-align: center; width: 10%"
+			styleClass="semBorda">
+			<h:panelGrid columns="2">
+				<h:panelGroup>
+					<h:outputText value="Nota" />
+					<p:selectBooleanCheckbox value="#{item.nota}"
+						style="margin-left: 6px">
+						<p:ajax listener="#{vendaBean.nota(item)}" process="@this"
+							partialSubmit="true" update="Emitida" />
+					</p:selectBooleanCheckbox>
+				</h:panelGroup>
+				<h:panelGroup id="Emitida">
+					<h:outputText value="Emitida" />
+					<p:selectBooleanCheckbox value="#{item.notaEmitida}"
+						id="emitidaVenda" style="margin-left: 6px"
+						disabled="#{vendaBean.notaFiscal(item)}">
+						<p:ajax process="@this" partialSubmit="true" update="emitidaVenda" />
+					</p:selectBooleanCheckbox>
+				</h:panelGroup>
+			</h:panelGrid>
+
+		</p:column>
+
+		<p:column headerText=" " style="text-align: center; width: 7%">
+			<p:commandButton icon="ui-icon-trash"
+				style="margin-left: 4px; width: 60%" process="@this"
+				partialSubmit="true" actionListener="#{vendaBean.trocaItem(item)}"
+				oncomplete="PF('confirmExclusaoVenda').show();"
+				update=":formOperacao:idTabView:idexlusaoVenda" />
+		</p:column>
+
+	</p:dataTable>
+
+	<!-- Diálogo para Venda de um novo produto -->
+	<p:dialog header="Nova venda" widgetVar="dlgVenda" modal="true">
+		<p:panelGrid id="pnlNovaVenda" columns="4" styleClass="semBorda">
+
+			<p:outputLabel value="Produto" for="produtoVenda" />
+			<p:selectOneMenu id="produtoVenda" immediate="true"
+				value="#{vendaBean.venda.produto}"
+				converter="omnifaces.SelectItemsConverter" required="true"
+				requiredMessage="Produto não informado!">
+				<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+				<f:selectItems value="#{vendaBean.listaProdutos}" var="produto"
+					itemValue="#{produto}" itemLabel="#{produto.nome}" />
+				<p:ajax update="minVendaV precoV" />
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Menor valor para venda" />
+			<p:outputLabel id="minVendaV"
+				value="#{vendaBean.venda.produto.minValorVenda}">
+			</p:outputLabel>
+
+			<p:outputLabel value="Valor Unitário" for="precoV" />
+			<p:inputNumber id="precoV"
+				disabled="#{vendaBean.habilitaPrecoUnitario()}" required="true"
+				requiredMessage="Preço não informado!"
+				value="#{vendaBean.venda.valorUnitario}" decimalSeparator=","
+				thousandSeparator="." decimalPlaces="2">
+				<p:ajax listener="#{vendaBean.validaPrecoNovaVenda()}"
+					update="precoV" process="@this" partialSubmit="true" />
+			</p:inputNumber>
+
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+
+			<p:outputLabel value="Quantidade" for="quantV" />
+			<p:inputNumber id="quantV" value="#{vendaBean.venda.quantidade}"
+				required="true" requiredMessage="Quantidade não informada!"
+				minValue="0" decimalPlaces="0" />
+
+
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+
+			<p:outputLabel value="Pronta entrega" />
+			<p:selectBooleanCheckbox style="margin-left: 10px"
+				value="#{vendaBean.venda.prontaEntrega}">
+			</p:selectBooleanCheckbox>
+
+			<p:outputLabel value="" />
+			<p:outputLabel value="" />
+
+
+			<p:outputLabel value="Nota fiscal" />
+			<h:panelGroup>
+				<p:panelGrid columns="3">
+
+					<p:selectBooleanCheckbox immediate="true"
+						value="#{vendaBean.venda.nota}">
+						<p:ajax update="notaEmitidaV" />
+					</p:selectBooleanCheckbox>
+
+					<p:outputLabel value="Emitida" />
+					<p:selectBooleanCheckbox id="notaEmitidaV"
+						value="#{vendaBean.venda.notaEmitida}"
+						disabled="#{vendaBean.notaEmitidaNovo()}">
+					</p:selectBooleanCheckbox>
+				</p:panelGrid>
+			</h:panelGroup>
+
+		</p:panelGrid>
+		<p:commandButton value="Confirmar"
+			actionListener="#{vendaBean.adicionaVenda}"
+			update="idTabVenda pnlNovaVenda :formOperacao:idTabView:idResumoOperacao :formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita"
+			process="@this pnlNovaVenda" partialSubmit="true"
+			oncomplete="PF('dlgVenda').hide(); return false;">
+
+		</p:commandButton>
+	</p:dialog>
+
+
+	<p:confirmDialog id="idexlusaoVenda" widgetVar="confirmExclusaoVenda"
+		header="Exclusão de Venda"
+		message="Quer realmente excluir o produto : #{vendaBean.venda.produto.nome}?">
+
+		<p:commandButton value="Sim" actionListener="#{vendaBean.removeVenda}"
+			update="idTabVenda :formOperacao:idTabView:idResumoOperacao :formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita"
+			process="@this" partialSubmit="true"
+			oncomplete="PF('confirmExclusaoVenda').hide(); return false;" />
+		<p:button value="Não"
+			onclick="PF('confirmExclusaoVenda').hide(); return false;" />
+
+	</p:confirmDialog>
+
+
+
+</ui:composition>

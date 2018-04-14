@@ -1,0 +1,174 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Resumo da Operação por Período</h1>
+
+		<h:form id="form">
+			<p:toolbar style="margin-top: 20px; margin-top: 20px">
+
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Pesquisar"
+						actionListener="#{resumoVendedorBean.pesquisa}" update="@form" process="form pnlNovo" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+
+			<p:messages autoUpdate="true" />
+
+			<p:panelGrid columns="6" id="pnlNovo" styleClass="semBorda"
+				style="margin-top: 10px">
+
+				<p:outputLabel value="Vendedor" for="idVendedor"
+					rendered="#{resumoVendedorBean.isAdministrador()}" />
+				<p:selectOneMenu id="idVendedor" required="true"
+					rendered="#{resumoVendedorBean.isAdministrador()}"
+					requiredMessage="Vendedor Não informado!"
+					value="#{resumoVendedorBean.fechamentoGeral.funcionario}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{resumoVendedorBean.listaFuncionarios}"
+						var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Data inicial" for="dataInicio" />
+				<p:calendar style="vertical-align:middle" id="dataInicio"
+					locale="pt" value="#{resumoVendedorBean.fechamentoGeral.inicio}" required="true"
+					pattern="dd/MM/yyyy" requiredMessage="Data inicial não informada!">
+				</p:calendar>
+
+				<p:outputLabel value="Data Final" for="dataFim" />
+				<p:calendar style="vertical-align:middle" id="dataFim" locale="pt"
+					value="#{resumoVendedorBean.fechamentoGeral.fim}" required="true"
+					pattern="dd/MM/yyyy" requiredMessage="Data final não informada!">
+				</p:calendar>
+
+			</p:panelGrid>
+
+			<div id="conteudo-left">
+
+				<p:dataTable id="idTab"
+					value="#{resumoVendedorBean.fechamentoGeral.listaProdutoQuantidade}"
+					var="item" style="margin-top: 5px ; width: 99%; margin-left: 3px"
+					reflow="true">
+
+					<p:column headerText="Produto"
+						style="text-align: center; width: 60%">
+						<h:outputText value="#{item.produto.nome}" />
+					</p:column>
+
+					<p:column headerText="Quantidade"
+						style="text-align: center; width: 20%">
+						<h:outputText value="#{item.vendidos}" />
+					</p:column>
+
+
+					<p:column headerText="Receita"
+						style="text-align: center; width: 20%">
+						<h:outputText value="#{item.receita}" />
+					</p:column>
+
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column colspan="3"
+								footerText="Faturamento bruto: #{resumoVendedorBean.fechamentoGeral.faturamento}"
+								style="text-align: right">
+
+							</p:column>
+
+						</p:row>
+					</p:columnGroup>
+
+
+				</p:dataTable>
+			</div>
+
+			<div id="conteudo-right">
+				<p:dataTable id="idTabReceita"
+					value="#{resumoVendedorBean.fechamentoGeral.listaReceitaFormaPagamento}"
+					var="item" style="margin-top: 5px ; width: 40%; margin-left: 3px"
+					reflow="true">
+					<f:facet name="header">
+            		 Formas de pagamento
+        			</f:facet>
+
+					<p:column headerText="Forma" style="text-align: center; width: 20%">
+						<h:outputText value="#{item.formaPag.descricao}" />
+					</p:column>
+
+					<p:column headerText="Receita"
+						style="text-align: center; width: 20%">
+						<h:outputText value="#{item.receita}" />
+					</p:column>
+
+				</p:dataTable>
+
+				<p:panelGrid columns="2" styleClass="semBorda" 
+				style="margin-left: 3px; margin-top: 5px">
+					<p:outputLabel value="Aberturas 1p : " />
+					<p:outputLabel
+						value="#{resumoVendedorBean.fechamentoGeral.aberturas1p}" />
+					
+					<p:outputLabel value="Aberturas 2p : " />
+					<p:outputLabel
+						value="#{resumoVendedorBean.fechamentoGeral.aberturas2p}" />
+
+					<p:outputLabel value="Aberturas 3p : " />
+					<p:outputLabel
+						value="#{resumoVendedorBean.fechamentoGeral.aberturas3p}" />
+						
+					<p:outputLabel value="Comissão Vendas : " />
+					<p:outputLabel
+						value="#{resumoVendedorBean.fechamentoGeral.comissaoVendas}" />
+						
+					<p:outputLabel value="Comissão Aberturas : " />
+					<p:outputLabel
+						value="#{resumoVendedorBean.fechamentoGeral.comissaoAberturas}" />
+					
+					<p:outputLabel value="Comissão Colocação : " />
+					<p:outputLabel
+						value="#{resumoVendedorBean.fechamentoGeral.comissaoColocacao}" />
+						
+					<p:outputLabel value="Comissão Total : " style="color: green"/>
+					<p:outputLabel style="color: green"
+						value="#{resumoVendedorBean.fechamentoGeral.comissoesTotais}" />
+					
+					<p:outputLabel value="Premiação Aberturas : " />
+					<p:outputLabel
+						value="#{resumoVendedorBean.fechamentoGeral.premiacaoAberturas}" />
+						
+					<p:outputLabel value="Premiação Colocações : " />
+					<p:outputLabel
+						value="#{resumoVendedorBean.fechamentoGeral.premiacaoColocacao}" />		
+						
+					<p:outputLabel value="Faturamento Premiação : " style="color: green" />
+					<p:outputLabel style="color: green"
+						value="#{resumoVendedorBean.fechamentoGeral.faturamentoPremiacao}" />	
+					
+					<p:outputLabel value="Custos de Viagem : " />
+					<p:outputLabel
+						value="#{resumoVendedorBean.fechamentoGeral.custosViagem}" />	
+					
+					<p:outputLabel value="Faturamento Líquido : " style="color: green"/>
+					<p:outputLabel style="color: green"
+						value="#{resumoVendedorBean.fechamentoGeral.faturamentoLiquido}" />	
+					
+					
+				</p:panelGrid>
+
+
+			</div>
+
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

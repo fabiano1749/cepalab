@@ -1,0 +1,107 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui">
+
+
+
+	<p:panelGrid columns="4" id="idpngAcertoProduto" styleClass="semBorda">
+
+		<p:outputLabel value="Expedição iniciada em :" />
+
+		<h:outputText
+			value="#{fechamentoAcertoProdutoBean.expedicao.abertura}">
+			<f:convertDateTime pattern="dd/MM/yyy" />
+		</h:outputText>
+
+		<p:outputLabel value="e fechada em :" />
+
+		<h:outputText value="#{fechamentoAcertoProdutoBean.expedicao.acerto}">
+			<f:convertDateTime pattern="dd/MM/yyy" />
+		</h:outputText>
+
+	</p:panelGrid>
+
+
+	<p:dataTable id="idTabAcertoProduto"
+		value="#{fechamentoAcertoProdutoBean.listaAcertoProduto}" var="item"
+		style="margin-top: 20px" reflow="true">
+		
+		<p:column headerText="Produto"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.expedProduto.produto.nome}" />
+		</p:column>
+		
+		<p:column headerText="Quant-Saída"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.expedProduto.saida}" />
+		</p:column>
+
+		<p:column headerText="consignados"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.consignados}" />
+		</p:column>
+
+		<p:column headerText="Vendidos"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.vendidos}" />
+		</p:column>
+		
+		<p:column headerText="Devolvidos"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.devolvidos}" />
+		</p:column>
+		
+		<p:column headerText="Repostos"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.repostos}" />
+		</p:column>
+		
+		<p:column headerText="Amostras"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.amostras}" />
+		</p:column>
+		
+		<p:column headerText="Estoque-Esperado"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.estoqueEsperado}" />
+		</p:column>
+		
+		<p:column headerText="Estoque-Real"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.expedProduto.chegada}" />
+		</p:column>
+
+		<p:column headerText="Diferença"
+			style="font-size: small; text-align: center; color: red">
+			<h:outputText value="#{item.diferenca}" />
+		</p:column>
+
+		<p:column headerText="Valor Unitário"
+			style="font-size: small; text-align: center; color: red">
+			<h:outputText value="#{item.expedProduto.produto.minValorVenda}" />
+		</p:column>
+		
+		
+		<p:column headerText="Descontar"
+			style="font-size: small; text-align: center; color: red">
+			<h:outputText value="#{item.desconto}" />
+		</p:column>
+		
+		<p:columnGroup type="footer">
+			<p:row>
+				<p:column colspan="12"
+					footerText="Descontos Totais: #{fechamentoAcertoProdutoBean.descontoTotal}"
+					style="text-align: right">
+				
+				</p:column>
+				
+			</p:row>
+		</p:columnGroup>
+		
+
+	</p:dataTable>
+
+</ui:composition>

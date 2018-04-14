@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Resumo da operação por período</h1>
+
+		<h:form id="idForm">
+
+			<p:messages id="mensagem" autoUpdate="true" />
+			<p:toolbar
+				style="margin-top: 5px; background-color: white">
+				<p:toolbarGroup>
+					<p:panelGrid id="pnlFechamento" columns="6" styleClass="semBorda">
+						<p:outputLabel value="Vendedor" for="idVendedor"
+							rendered="#{fechamentoBean.isAdministrador()}" />
+						<p:selectOneMenu id="idVendedor" required="true"
+							rendered="#{fechamentoBean.isAdministrador()}"
+							requiredMessage="Vendedor Não informado!"
+							value="#{fechamentoBean.item.funcionario}"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+							<f:selectItems value="#{fechamentoBean.listaFuncionarios}"
+								var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Data inicial" for="dataInicio" />
+						<p:calendar style="vertical-align:middle" id="dataInicio"
+							locale="pt" value="#{fechamentoBean.item.inicio}" required="true"
+							pattern="dd/MM/yyyy"
+							requiredMessage="Data inicial não informada!">
+						</p:calendar>
+
+						<p:outputLabel value="Data Final" for="dataFim" />
+						<p:calendar style="vertical-align:middle" id="dataFim" locale="pt"
+							value="#{fechamentoBean.item.fim}" required="true"
+							pattern="dd/MM/yyyy" requiredMessage="Data final não informada!">
+						</p:calendar>
+					</p:panelGrid>
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Pesquisar"
+						actionListener="#{fechamentoBean.criaListaOperacoes}"
+						style="height:40px;"
+						update="idTabView:idPainelResumo idTabView:idPainelOutros idTabView:idTabelaVendas idTabView:idTabelaAbertura idTabView:idTabelaColocacao idTabView:idTabelaCustos idTabView:idTabelaDespesas idTabView:idTabelaRecRess idTabView:idTabelaDescontos idTabView:idTabelaRecebimentoInad idTabView:idpngAcertoProduto idTabView:idTabAcertoProduto" />
+				</p:toolbarGroup>
+			</p:toolbar>
+
+
+			<p:tabView id="idTabView" style="margin-top: 30px">
+
+				<p:tab title="Resumo">
+					<ui:include src="/fechamento/fechamentoResumo.xhtml" />
+				</p:tab>
+
+				<p:tab title="Vendas">
+					<ui:include src="/fechamento/fechamentoVendas.xhtml" />
+				</p:tab>
+
+				<p:tab title="Aberturas">
+					<ui:include src="/fechamento/fechamentoAberturas.xhtml" />
+				</p:tab>
+
+				<p:tab title="Colocações">
+					<ui:include src="/fechamento/fechamentoColocacao.xhtml" />
+				</p:tab>
+
+				<p:tab title="Custos">
+					<ui:include src="/fechamento/custos.xhtml" />
+				</p:tab>
+
+				<p:tab title="Despesas">
+					<ui:include src="/fechamento/despesas.xhtml" />
+				</p:tab>
+
+				<p:tab title="Reolhidas-Ressarcidas">
+					<ui:include src="/fechamento/recolhidaRessarcida.xhtml" />
+				</p:tab>
+
+				<p:tab title="Descontos de Salário">
+					<ui:include src="/fechamento/descontoSalario.xhtml" />
+				</p:tab>
+
+				<p:tab title="Recebimento Inadimplente">
+					<ui:include src="/fechamento/recebimentoInadimplente.xhtml" />
+				</p:tab>
+				
+				<p:tab title="Acerto de produtos">
+					<ui:include src="/fechamento/acertoProduto.xhtml" />
+				</p:tab>
+
+				<p:tab title="Premiação"
+					rendered="#{fechamentoBean.isAdministrador()}">
+					<ui:include src="/fechamento/fechamentoPremiacao.xhtml" />
+				</p:tab>
+
+
+			</p:tabView>
+
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>

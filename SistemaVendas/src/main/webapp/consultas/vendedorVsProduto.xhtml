@@ -1,0 +1,200 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h:form id="idForm">
+
+			<p:messages autoUpdate="true" />
+
+			<p:panelGrid columns="5" id="pnlNovo" styleClass="semBorda"
+				style="margin-top: 10px">
+
+				<p:outputLabel value="Data inicial" for="dataInicio" />
+				<p:calendar style="vertical-align:middle" id="dataInicio"
+					locale="pt"
+					value="#{consolidadoProdutoVendedorBean.consolidado.inicio}"
+					required="true" pattern="dd/MM/yyyy"
+					requiredMessage="Data inicial não informada!">
+				</p:calendar>
+
+				<p:outputLabel value="Data Final" for="dataFim" />
+				<p:calendar style="vertical-align:middle" id="dataFim" locale="pt"
+					value="#{consolidadoProdutoVendedorBean.consolidado.fim}"
+					required="true" pattern="dd/MM/yyyy"
+					requiredMessage="Data final não informada!">
+				</p:calendar>
+
+				<p:commandButton value="Pesquisar"
+					actionListener="#{consolidadoProdutoVendedorBean.pesquisa}"
+					update="@form" process="idForm pnlNovo" />
+
+			</p:panelGrid>
+
+
+			<p:dataTable var="produto"
+				id="tbl"				
+				value="#{consolidadoProdutoVendedorBean.listaProdutos}"
+				style="margin-top:10px; font-size: 10px">
+
+				<p:columnGroup type="header">
+					<p:row>
+						<p:column rowspan="2" headerText="Produtos" style="width: 13%" />
+						<p:column
+							colspan="#{consolidadoProdutoVendedorBean.quantFuncionarios()}"
+							headerText="Funcionários" />
+					</p:row>
+					<p:row>
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.listaFuncionarios}"
+							var="fun">
+							<p:column headerText="#{fun.nome}" />
+						</ui:repeat>
+					</p:row>
+				</p:columnGroup>
+
+				<p:column>
+					<h:outputText value="#{produto.nome}" />
+				</p:column>
+
+				<p:columns
+					value="#{consolidadoProdutoVendedorBean.listaFuncionarios}"
+					var="fun">
+					<h:outputText
+						value="#{consolidadoProdutoVendedorBean.consolidado.quantidadeReceita(fun, produto)}" />
+				</p:columns>
+
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column colspan="1" style="text-align:left"
+							footerText="Faturamento" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="R$ #{fecha.faturamento}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left" footerText="Boleto" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="R$ #{fecha.receitaBoleto()}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left" footerText="Cheque" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="R$ #{fecha.receitaCheque()}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left"
+							footerText="Dinheiro" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="R$ #{fecha.receitaDinheiro()}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left"
+							footerText="Comissão Final" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="R$ #{fecha.comissoesTotais}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left"
+							footerText="Despesas de viagem" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="R$ #{fecha.custosViagem}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left"
+							footerText="Faturamento líquido" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="R$ #{fecha.faturamentoLiquido}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left"
+							footerText="Faturamento Premiação" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="R$ #{fecha.faturamentoPremiacao}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left"
+							footerText="Aberturas 1p" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="#{fecha.aberturas1p}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left"
+							footerText="Aberturas 2p" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="#{fecha.aberturas2p}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+					<p:row>
+						<p:column colspan="1" style="text-align:left"
+							footerText="Aberturas 3p" />
+						<ui:repeat
+							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
+							var="fecha">
+							<p:column footerText="#{fecha.aberturas3p}"
+								style="text-align:left" />
+						</ui:repeat>
+					</p:row>
+
+
+				</p:columnGroup>
+
+			</p:dataTable>
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>

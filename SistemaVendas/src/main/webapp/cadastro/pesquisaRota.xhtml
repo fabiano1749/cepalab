@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Pesquisa Rotas</h1>
+
+		<h:form id="idFormPesquisa">
+			<p:messages autoUpdate="true" />
+			<p:toolbar style="width: 100%; margin-top: 20px">
+
+				<p:toolbarGroup>
+					<p:commandButton value="Pesquisar"
+						actionListener="#{pesquisaRotaBean.pesquisa}"
+						process="pnlPesquisaRota @this" update="idTabRota" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:button value="Novo" outcome="/cadastro/rota" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+			<p:panelGrid id="pnlPesquisaRota" columns="6"
+				style="margin-top: 20px" styleClass="semBorda">
+
+				<p:outputLabel value="Vendedor" for="idVendedor" />
+				<p:selectOneMenu id="idVendedor" required="true"
+					requiredMessage="Vendedor Não informado!"
+					value="#{pesquisaRotaBean.funcionario}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{pesquisaRotaBean.funcionarios}" var="fun"
+						itemValue="#{fun}" itemLabel="#{fun.nome}" />
+				</p:selectOneMenu>
+
+			</p:panelGrid>
+
+			<p:dataTable id="idTabRota" value="#{pesquisaRotaBean.listaRotas}"
+				var="item" style="margin-top: 20px ; width: 70% " reflow="true">
+
+				<p:column headerText="Número" style="text-align: center">
+					<h:outputText value="#{item.numero}" />
+				</p:column>
+
+				<p:column headerText="Descrição" style="text-align: center">
+					<h:outputText value="#{item.descricao}" />
+				</p:column>
+
+				<p:column headerText="Clientes" style="text-align: center">
+					<h:outputText value="#{item.numeroClientes()}" />
+				</p:column>
+
+				<p:column headerText="Ações" style="text-align: center">
+					<p:commandButton icon="ui-icon-pencil" title="Editar"
+						process="@this" update="@none"
+						style="margin-left: 4px; width: 70%"
+						action="#{pesquisaRotaBean.abrirDialogo(item)}">
+
+						<p:ajax event="dialogReturn"
+							listener="#{pesquisaRotaBean.pesquisa}" process="@this"
+							update="idTabRota" />
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+
+
+
+
+
+	</ui:define>
+</ui:composition>

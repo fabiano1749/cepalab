@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+		<f:metadata>
+			<o:viewParam name="item" value="#{recebimentoInadiplenteBean.item}" />
+		</f:metadata>
+
+		<h1 class="fa-page-title">Cadastro de Recebimentos Inadimplentes</h1>
+
+		<h:form>
+
+			<p:toolbar style="width: 80%; margin-top: 20px ">
+
+				<p:toolbarGroup>
+
+					<p:button value="Novo"
+						outcome="/operacao/recebimentoInadimplentes" />
+
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:button value="Pesquisar"
+						outcome="/operacao/pesquisaRecebimentoInadimplente" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+			<p:messages id="mensagem" autoUpdate="true" />
+
+			<p:panelGrid id="pnlDados" columns="6" styleClass="semBorda"
+				style="margin-top: 30px; text-align: center">
+
+				<p:outputLabel value="Cliente" for="cliente" />
+				<p:outputLabel value="Data" style="margin: 20px" for="data" />
+				<p:outputLabel value="Valor" for="valor" />
+				<p:outputLabel value="Nota" for="nota" />
+				<p:outputLabel value="Observação" />
+				<p:outputLabel value=" " />
+
+				<p:selectOneMenu id="cliente" style="width:300px"
+					value="#{recebimentoInadiplenteBean.item.cliente}"
+					converter="omnifaces.SelectItemsConverter" filter="true"
+					filterMatchMode="contains" required="true"
+					requiredMessage="Cliente não Selecionado!">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{recebimentoInadiplenteBean.listaClientes}"
+						var="cliente" itemValue="#{cliente}"
+						itemLabel="#{cliente.nome} - #{cliente.codigo}" />
+				</p:selectOneMenu>
+
+
+				<p:calendar style="vertical-align:middle" id="data" locale="pt"
+					value="#{recebimentoInadiplenteBean.item.data}" required="true"
+					pattern="dd/MM/yyyy" requiredMessage="Data não informada!">
+				</p:calendar>
+
+
+				<p:inputNumber id="valor"
+					value="#{recebimentoInadiplenteBean.item.valor}" required="true"
+					requiredMessage="Valor não informado!" decimalSeparator=","
+					thousandSeparator=".">
+				</p:inputNumber>
+
+
+				<p:inputText id="nota"
+					value="#{recebimentoInadiplenteBean.item.nota}" />
+
+				<p:inputTextarea
+					value="#{recebimentoInadiplenteBean.item.observacao}" rows="1" />
+
+				<p:commandButton value="Salvar"
+					actionListener="#{recebimentoInadiplenteBean.salvar}" />
+
+			</p:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

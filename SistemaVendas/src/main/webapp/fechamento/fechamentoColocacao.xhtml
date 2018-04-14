@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui">
+
+	<p:panel header="Resumo das Aberturas"
+		style="margin-top:20px; width: 90%; text-align: center">
+
+		<p:dataTable id="idTabelaColocacao"
+			value="#{fechamentoAberturaBean.listaColocacao}" style="width: 100%"
+			var="item" rows="10" paginator="true" paginatorPosition="bottom"
+			paginatorAlwaysVisible="false"
+			sortBy="#{item.operacao.cliente.codigo}">
+
+			<p:column headerText="Código" style="text-align: center"
+				sortBy="#{item.operacao.cliente.codigo}">
+				<h:outputText value="#{item.operacao.cliente.codigo}" />
+			</p:column>
+
+
+			<p:column headerText="Cliente" style="text-align: center; width: 30%">
+				<h:outputText value="#{item.operacao.cliente.nome}" />
+			</p:column>
+
+			<p:column headerText="Data" style="text-align: center">
+				<h:outputText value="#{item.operacao.data}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+			</p:column>
+
+			<p:column headerText="Produto" style="text-align: center">
+				<h:outputText value="#{item.produto.nome}" />
+			</p:column>
+
+			<p:column headerText="Quantidade" style="text-align: center">
+				<h:outputText value="#{item.quantidade}" />
+			</p:column>
+
+
+		</p:dataTable>
+
+	</p:panel>
+
+</ui:composition>

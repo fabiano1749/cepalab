@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+		<f:metadata>
+			<o:viewParam name="item" value="#{tipoProdutoBean.item}" />
+		</f:metadata>
+
+		<h1 class="fa-page-title">Cadastro de Tipos de Produtos</h1>
+
+		<p:toolbar style="width: 50%; margin-top: 20px">
+			<p:toolbarGroup>
+				<p:button value="Novo" outcome="/cadastro/tipoProduto" />
+			</p:toolbarGroup>
+
+			<p:toolbarGroup align="right">
+				<p:button value="Pesquisar" outcome="/cadastro/pesquisaTipoProduto" />
+			</p:toolbarGroup>
+
+		</p:toolbar>
+
+
+
+		<h:form id="idForm">
+			<p:messages autoUpdate="true" />
+
+			<p:panelGrid id="idPnl" columns="2" styleClass="semBorda"
+				style="margin-top: 10px">
+
+				<p:outputLabel value="Nome" for="idNome" />
+				<p:inputText id="idNome" value="#{tipoProdutoBean.item.nome}"
+					required="true" requiredMessage="Nome não informado!" />
+
+				<p:outputLabel value="Comissão abertura" for="idCA" />
+				<p:inputNumber id="idCA"
+					value="#{tipoProdutoBean.item.comissaoAbertura}"
+					style="width:100px" decimalSeparator="," thousandSeparator="."
+					decimalPlaces="2" />
+
+				<p:outputLabel value="Premiação abertura" for="idPA" />
+				<p:inputNumber id="idPA"
+					value="#{tipoProdutoBean.item.premiacaoAbertura}"
+					style="width:100px" decimalSeparator="," thousandSeparator="."
+					decimalPlaces="2" />
+
+				<p:outputLabel value="Comissão colocação" for="idCC" />
+				<p:inputNumber id="idCC"
+					value="#{tipoProdutoBean.item.comissaoColocacao}"
+					style="width:100px" decimalSeparator="," thousandSeparator="."
+					decimalPlaces="2" />
+
+
+				<p:outputLabel value="Premiação colocação" for="idPC" />
+				<p:inputNumber id="idPC"
+					value="#{tipoProdutoBean.item.premiacaoColocacao}"
+					style="width:100px" decimalSeparator="," thousandSeparator="."
+					decimalPlaces="2" />
+
+				<p:commandButton value="Salvar"
+					actionListener="#{tipoProdutoBean.salvar}" update="idPnl"
+					process="idPnl @this" partialSubmit="true" />
+
+			</p:panelGrid>
+
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

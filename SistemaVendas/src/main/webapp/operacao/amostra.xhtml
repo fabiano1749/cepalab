@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+
+	<p:panelGrid id="pnlAmostra" columns="7" styleClass="semBorda"
+		style="margin-top: 20px">
+		<p:outputLabel value="Produto" for="produto" />
+		<p:selectOneMenu id="produto" value="#{amostraBean.amostra.produto}"
+			converter="omnifaces.SelectItemsConverter" required="true"
+			requiredMessage="Produto não informado!">
+			<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+			<f:selectItems value="#{amostraBean.listaProdutos}" var="produto"
+				itemValue="#{produto}" itemLabel="#{produto.nome}" />
+		</p:selectOneMenu>
+
+		<p:outputLabel value="Quantidade" for="quantAmostra" />
+		<p:inputText id="quantAmostra"
+			requiredMessage="Quantidade não informada!"
+			value="#{amostraBean.amostra.quantidade}" required="true">
+			<f:validateLongRange minimum="1" />
+		</p:inputText>
+
+		<p:outputLabel value="Observação" />
+		<p:inputTextarea value="#{amostraBean.amostra.observacao}" rows="1" />
+
+		<p:commandButton value="Salvar"
+			actionListener="#{amostraBean.AdicionaAmostra}"
+			process="@this pnlAmostra" partialSubmit="true"
+			update="idTabAmostra pnlAmostra" />
+
+	</p:panelGrid>
+
+
+
+
+	<p:dataTable id="idTabAmostra" value="#{operacaoBean.item.amostras}"
+		var="item" editable="true" editMode="cell" style="margin-top: 30px"
+		reflow="true">
+
+		<p:column headerText="Produto"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.produto.nome}" />
+		</p:column>
+
+		<p:column headerText="Quantidade"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.quantidade}" />
+		</p:column>
+
+		<p:column headerText="Observação"
+			style="font-size: small; text-align: center">
+			<h:outputText value="#{item.observacao}" />
+		</p:column>
+
+		<p:column style="text-align: center">
+			<p:commandButton icon="ui-icon-trash"
+				style="margin-left: 4px; width: 60%" process="@this"
+				partialSubmit="true" actionListener="#{amostraBean.trocaItem(item)}"
+				oncomplete="PF('confirmExclusaoAmostra').show();"
+				update=":formOperacao:idTabView:idexlusaoAmostra" />
+		</p:column>
+
+	</p:dataTable>
+
+	<p:confirmDialog id="idexlusaoAmostra" widgetVar="confirmExclusaoAmostra"
+		header="Exclusão de Amostra"
+		message="Quer realmente excluir o produto : #{amostraBean.amostra.produto.nome}?">
+
+		<p:commandButton value="Sim" actionListener="#{amostraBean.removeAmostra}"
+			update="idTabAmostra"
+			process="@this" partialSubmit="true"
+			oncomplete="PF('confirmExclusaoAmostra').hide(); return false;" />
+		<p:button value="Não"
+			onclick="PF('confirmExclusaoAmostra').hide(); return false;" />
+
+	</p:confirmDialog>
+</ui:composition>

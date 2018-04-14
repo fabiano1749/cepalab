@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui">
+
+	<p:panel header="Vendas do período"
+		style="margin-top:20px; width: 95%; text-align: center">
+
+		<p:dataTable id="idTabelaVendas"
+			value="#{fechamentoVendasBean.listaResumoConsignacaoVenda}"
+			style="width: 100%" var="item"
+			sortBy="#{item.operacao.cliente.codigo}">
+
+			<p:column headerText="Código" style="text-align: center"
+				sortBy="#{item.operacao.cliente.codigo}">
+				<h:outputText value="#{item.operacao.cliente.codigo}" />
+			</p:column>
+
+			<p:column headerText="Cliente" style="text-align: center; width:30%">
+				<h:outputText value="#{item.operacao.cliente.nome}" />
+			</p:column>
+
+			<p:column headerText="Data" style="text-align: center">
+				<h:outputText value="#{item.operacao.data}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+			</p:column>
+
+			<p:column headerText="Produto" style="text-align: center">
+				<h:outputText value="#{item.produto.nome}" />
+			</p:column>
+
+			<p:column headerText="Quantidade" style="text-align: center">
+				<h:outputText value="#{item.vendidos}" />
+			</p:column>
+
+			<p:column headerText="Receita" style="text-align: center">
+				<h:outputText value="#{item.receita}">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</h:outputText>
+			</p:column>
+
+			<p:column headerText="Comissão %" style="text-align: center">
+				<h:outputText value="#{item.taxaComissao}">
+					<f:convertNumber pattern="#0.00" />
+				</h:outputText>
+			</p:column>
+
+			<p:column headerText="Comissão R$" style="text-align: center">
+				<h:outputText value="#{item.comissao}">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</h:outputText>
+			</p:column>
+
+			<p:columnGroup type="footer">
+				<p:row>
+					<p:column colspan="8"
+						footerText="Total: #{fechamentoVendasBean.comissao}"
+						style="text-align: right">
+
+					</p:column>
+
+				</p:row>
+			</p:columnGroup>
+
+
+
+		</p:dataTable>
+
+	</p:panel>
+
+</ui:composition>

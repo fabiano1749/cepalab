@@ -1,0 +1,152 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Pesquisa Operações</h1>
+
+		<h:form id="idFormPesquisa">
+			<p:messages autoUpdate="true" />
+			<p:toolbar style="width: 100%; margin-top: 15px">
+
+				<p:toolbarGroup>
+					<p:commandButton value="Pesquisar"
+						actionListener="#{pesquisaOperacaoBean.pesquisar}"
+						process="pnlPesquisaOperacao @this" update="idTabOperacao" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:button value="Novo" outcome="/operacao/operacao" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+			<p:panelGrid id="pnlPesquisaOperacao" columns="4"
+				style="margin-top: 15px" styleClass="semBorda">
+
+				<p:outputLabel value="Vendedor" for="idVendedor"
+					rendered="#{pesquisaOperacaoBean.isAdministrador()}" />
+				<p:selectOneMenu id="idVendedor"
+					rendered="#{pesquisaOperacaoBean.isAdministrador()}"
+					value="#{pesquisaOperacaoBean.filtro.funcionario}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{pesquisaOperacaoBean.listaFuncionarios}"
+						var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+				</p:selectOneMenu>
+
+
+				<p:outputLabel value="Data inicial" for="inicio" />
+				<p:calendar id="inicio" pattern="dd/MM/yyyy" locale="pt"
+					value="#{pesquisaOperacaoBean.filtro.inicio}" />
+
+				<p:outputLabel value="Código - cliente" />
+				<p:inputNumber value="#{pesquisaOperacaoBean.filtro.codigoCliente}"
+					thousandSeparator="" decimalSeparator="" decimalPlaces="0" />
+
+
+				<p:outputLabel value="Data final" for="fim" />
+				<p:calendar id="fim" value="#{pesquisaOperacaoBean.filtro.fim}"
+					pattern="dd/MM/yyyy" locale="pt" />
+
+
+
+			</p:panelGrid>
+
+			<p:dataTable id="idTabOperacao" sortBy="#{item.cliente.codigo}"
+				value="#{pesquisaOperacaoBean.operacoesFiltradas}" var="item"
+				style="margin-top: 15px ; width: 99% " reflow="true" editable="true"
+				editMode="cell">
+
+				<p:column headerText="Código" sortBy="#{item.cliente.codigo}"
+					style="text-align: center; width: 5%">
+					<h:outputText value="#{item.cliente.codigo}" />
+				</p:column>
+
+				<p:column headerText="Cliente"
+					style="text-align: center; width: 30%">
+					<h:outputText value="#{item.cliente.nome}" />
+				</p:column>
+
+				<p:column headerText="Funcionário"
+					style="text-align: center; width: 15%">
+					<h:outputText value="#{item.funcionario.nome}" />
+				</p:column>
+
+				<p:column headerText="Data" style="text-align: center; width: 7%">
+					<h:outputText value="#{item.data}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Tipo" style="text-align: center">
+					<h:outputText value="#{item.tipo.descricao}" />
+				</p:column>
+
+				<p:column headerText="Receita-Total" style="text-align: center">
+					<h:outputText value="#{item.ReceitaTotal()}" />
+				</p:column>
+
+				<p:column headerText="Comissão-Total" style="text-align: center">
+					<h:outputText value="#{item.comissaoTotal()}" />
+				</p:column>
+
+				<p:column headerText="Conferido"
+					style="font-size: small; text-align: center">
+					<p:selectBooleanCheckbox value="#{item.checado}">
+						<p:ajax listener="#{pesquisaOperacaoBean.editaChecado(item)}"
+							process="@this" partialSubmit="true" />
+					</p:selectBooleanCheckbox>
+				</p:column>
+
+
+
+
+				<p:column headerText="Ações" style="text-align: center; width: 10%">
+					<p:commandButton icon="ui-icon-pencil"
+						style="margin-left: 4px; width: 30%" process="@this"
+						update="@none" action="#{pesquisaOperacaoBean.abrirDialogo(item)}">
+
+						<p:ajax event="dialogReturn"
+							listener="#{pesquisaOperacaoBean.pesquisar}" process="@this"
+							update="idTabOperacao" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-trash"
+						style="margin-left: 20px; width: 30%"
+						actionListener="#{pesquisaOperacaoBean.troca(item)}"
+						process="@this" oncomplete="PF('confirmExclusao').show()"
+						update="idConfirmDialogExlusao" />
+
+
+				</p:column>
+			</p:dataTable>
+
+		</h:form>
+
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao" header="Exclusão de produto"
+			message="Quer realmente excluir a operação do cliente : #{pesquisaOperacaoBean.operacao.cliente.codigo}?">
+			<h:form id="formExclusao">
+				<p:messages />
+
+				<p:commandButton value="Sim"
+					actionListener="#{pesquisaOperacaoBean.excluir}"
+					update="idFormPesquisa:idTabOperacao" process="@this"
+					oncomplete="PF('confirmExclusao').hide(); return false;" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
+
+			</h:form>
+		</p:confirmDialog>
+
+
+
+
+	</ui:define>
+</ui:composition>

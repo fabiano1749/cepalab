@@ -1,0 +1,196 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+		<h1 class="fa-page-title">Cadastro de Despesas dos Vendedores</h1>
+
+
+
+		<p:toolbar style="width: 100%; margin-top: 20px">
+			<p:toolbarGroup>
+				<p:commandButton value="Novo" onclick="PF('NovaDespesa').show()"
+					actionListener="#{despesaVendedorBean.limpar()}"
+					update="formPnlNovo:pnlnovo" />
+			</p:toolbarGroup>
+		</p:toolbar>
+
+
+
+		<h:form id="idFormTab">
+			<p:messages autoUpdate="true" />
+			<p:dataTable id="idTabela" value="#{despesaVendedorBean.itens}"
+				var="item" style="margin-top: 20px ; width: 80% " reflow="true">
+
+				<p:column headerText="Código" style="width: 10%; text-align: center">
+					<h:outputText value="#{item.id}" />
+				</p:column>
+
+				<p:column headerText="Despesa"
+					style="width: 10%; text-align: center">
+					<h:outputText value="#{item.tipoDespesa.descricao}" />
+				</p:column>
+
+				<p:column headerText="Funcionário"
+					style="width: 10%; text-align: center">
+					<h:outputText value="#{item.funcionario.nome}" />
+				</p:column>
+
+				<p:column headerText="Data" style="width: 10%; text-align: center">
+					<h:outputText value="#{item.data}">
+						<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Valor" style="width: 10%; text-align: center">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Observação"
+					style="width: 30%; text-align: center">
+					<h:outputText value="#{item.observacao}" />
+				</p:column>
+
+
+				<p:column headerText="Ações" style="width: 15%; text-align: center">
+					<p:commandButton icon="ui-icon-pencil"
+						style="margin-left: 4px; width: 40%"
+						onclick="PF('dlgEditar').show()"
+						update="#{p:component('pnlEdita')}"
+						actionListener="#{despesaVendedorBean.troca(item)}" />
+					<p:commandButton icon="ui-icon-trash"
+						style="margin-left: 20px; width: 40%"
+						actionListener="#{despesaVendedorBean.troca(item)}"
+						oncomplete="PF('confirmExclusao').show()" process="@this"
+						update="idConfirmDialogExlusao" />
+				</p:column>
+
+
+			</p:dataTable>
+		</h:form>
+
+
+		<p:dialog widgetVar="NovaDespesa" header="Nova Despesa do Vendedor"
+			resizable="false" modal="true">
+			<h:form id="formPnlNovo">
+				<p:panelGrid columns="2" id="pnlnovo" styleClass="semBorda">
+
+					<p:outputLabel value="Despesa" for="despesa" />
+					<p:selectOneMenu id="despesa"
+						value="#{despesaVendedorBean.item.tipoDespesa}" style="width: 80%"
+						required="true"
+						requiredMessage="Uma despesa deve ser Selecionada!">
+						<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+						<f:selectItems value="#{despesaVendedorBean.tiposDespesas()}"
+							var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+					</p:selectOneMenu>
+
+
+					<p:outputLabel value="Data" for="data" />
+					<p:calendar id="data" value="#{despesaVendedorBean.item.data}"
+						required="true" requiredMessage="Data não informada!"
+						pattern="dd/MM/yyyy" />
+
+					<p:outputLabel value="Valor" for="valor" />
+					<p:inputNumber id="valor" value="#{despesaVendedorBean.item.valor}"
+						required="true" requiredMessage="Valor não informado!"
+						decimalSeparator="," thousandSeparator="." />
+
+
+					<p:outputLabel value="Funcionário" for="idfun" />
+					<p:selectOneMenu id="idfun" required="true"
+						requiredMessage="Funcionário não selecionado!"
+						value="#{despesaVendedorBean.item.funcionario}" style="width: 80%"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+						<f:selectItems value="#{despesaVendedorBean.funcionarios}"
+							var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Observação" />
+					<p:inputTextarea value="#{despesaVendedorBean.item.observacao}" />
+
+				</p:panelGrid>
+
+				<p:commandButton value="Salvar"
+					style="margin-left: 30%; width: 40%; margin-top: 30px"
+					actionListener="#{despesaVendedorBean.salvar()}"
+					update="idFormTab:idTabela pnlnovo"
+					oncomplete="PF('NovaDespesa').hide()" />
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgEditar" header="Alterar Custo de Viagem"
+			resizable="false" modal="true">
+			<h:form id="formPnlEditar">
+				<p:panelGrid columns="2" id="pnlEdita" styleClass="semBorda">
+
+					<p:outputLabel value="Despesa" for="despesa" />
+					<p:selectOneMenu id="despesa"
+						value="#{despesaVendedorBean.itemAux.tipoDespesa}"
+						style="width: 80%" required="true"
+						requiredMessage="Despesa não informada!">
+						<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+						<f:selectItems value="#{despesaVendedorBean.tiposDespesas()}"
+							var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Data" for="data" />
+					<p:calendar id="data" value="#{despesaVendedorBean.itemAux.data}"
+						required="true" requiredMessage="Data não informada!"
+						pattern="dd/MM/yyyy" />
+
+					<p:outputLabel value="Valor" for="valor" />
+					<p:inputNumber id="valor"
+						value="#{despesaVendedorBean.itemAux.valor}" required="true"
+						requiredMessage="Valor não informado!" decimalSeparator="," thousandSeparator="." />
+						
+					<p:outputLabel value="Funcionário" for="idfun" />
+					<p:selectOneMenu id="idfun" required="true"
+						requiredMessage="Funcionário não selecionado!"
+						value="#{despesaVendedorBean.itemAux.funcionario}"
+						style="width: 80%" converter="omnifaces.SelectItemsConverter">
+						<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+						<f:selectItems value="#{despesaVendedorBean.funcionarios}"
+							var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Observação" />
+					<p:inputTextarea value="#{despesaVendedorBean.itemAux.observacao}" />
+
+				</p:panelGrid>
+
+				<p:commandButton value="Salvar"
+					style="margin-left: 30%; width: 40%; margin-top: 30px"
+					actionListener="#{despesaVendedorBean.editar()}"
+					update="idFormTab:idTabela pnlEdita"
+					oncomplete="PF('dlgEditar').hide()" />
+			</h:form>
+		</p:dialog>
+
+
+
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao" header="Exclusão de Despesa do Vendedor"
+			message="Quer realmente excluir a despesa : #{despesaVendedorBean.itemAux.id}?">
+			<h:form id="formExclusao">
+				<p:messages />
+
+				<p:commandButton value="Sim"
+					actionListener="#{despesaVendedorBean.excluir}"
+					update="idFormTab:idTabela" process="@this"
+					oncomplete="PF('confirmExclusao').hide(); return false;" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
+			</h:form>
+		</p:confirmDialog>
+
+
+	</ui:define>
+</ui:composition>

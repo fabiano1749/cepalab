@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+
+	<h1 class="fa-page-title">Cadastro de Custos de Viagem</h1>
+	<h:outputStylesheet library="css" name="sistema.css" />
+
+	<f:metadata>
+		<o:viewParam name="item" value="#{custoViagemBean.item}" />
+	</f:metadata>
+
+</h:head>
+
+<h:body>
+
+
+	<h:form id="form">
+
+		<p:toolbar style="width: 90%">
+			<p:toolbarGroup>
+				<p:commandButton value="Salvar"
+					actionListener="#{custoViagemBean.salvar}" process="@form"
+					action="#{pesquisaCustosBean.fechaDialogo}" />
+
+			</p:toolbarGroup>
+		</p:toolbar>
+
+
+		<p:panelGrid columns="2" id="pnlnovo" styleClass="semBorda">
+
+			<p:outputLabel value="Vendedor" for="idVendedor"
+				rendered="#{custoViagemBean.isAdministrador()}" />
+			<p:selectOneMenu id="idVendedor" required="true"
+				rendered="#{custoViagemBean.isAdministrador()}"
+				requiredMessage="Vendedor Não informado!"
+				value="#{custoViagemBean.item.funcionario}"
+				converter="omnifaces.SelectItemsConverter">
+				<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+				<f:selectItems value="#{custoViagemBean.listaFuncionarios}"
+					var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+			</p:selectOneMenu>
+
+
+			<p:outputLabel value="Custo" for="custo" />
+			<p:selectOneMenu id="custo" value="#{custoViagemBean.item.tipo}"
+				style="width: 80%" required="true"
+				requiredMessage="Um custo deve ser informado!">
+				<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+				<f:selectItems value="#{custoViagemBean.tiposCustos()}" var="tipo"
+					itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Data" for="data" />
+			<p:calendar id="data" value="#{custoViagemBean.item.data}"
+				required="true" requiredMessage="Data não informada!"
+				pattern="dd/MM/yyyy" />
+
+			<p:outputLabel value="Valor" for="valor" />
+			<p:inputNumber id="valor" value="#{custoViagemBean.item.valor}"
+				required="true" requiredMessage="Valor não informado!"
+				decimalSeparator="," thousandSeparator=".">
+			</p:inputNumber>
+
+			<p:outputLabel value="Observação" />
+			<p:inputTextarea value="#{custoViagemBean.item.observacao}" />
+
+		</p:panelGrid>
+
+	</h:form>
+</h:body>
+
+
+
+</html>
