@@ -1,13 +1,13 @@
 package com.cepalab.sistemaVendas.cadastro.dominio;
 
-public enum TipoCalculoDeComissao {
+public enum TipoCalculoAberturaColocacao {
 	
 	PRODUTO("Produto"),
 	TIPO("Tipo");
 	
 	private String descricao;
 	
-	TipoCalculoDeComissao (String descricao){
+	TipoCalculoAberturaColocacao (String descricao){
 		this.descricao = descricao;
 	}
 	

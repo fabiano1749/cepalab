@@ -7,7 +7,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaTipoVendedorProduto;
+import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaVendaConsignacaoTipoVendedorProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoVendedor;
 import com.cepalab.sistemaVendas.repository.TiposVendedores;
 
@@ -27,12 +27,14 @@ public class TesteBean implements Serializable {
 	public void inicio() {
 		tipo = tipos.porNome("Vendedor-1");
 	}
-	
+
+	/*
 	public void teste() {
 		
-		for(PoliticaTipoVendedorProduto c : tipo.getComissaoTipoVendedor()) {
+		for(PoliticaVendaConsignacaoTipoVendedorProduto c : tipo.getComissaoTipoVendedor()) {
 			System.out.println(c.getProduto().getNome() + " "+c.getTaxaComissao());
 		}
 	}
 	
+	*/
 }

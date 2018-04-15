@@ -27,8 +27,11 @@ public class TipoVendedor extends GenericDTO {
 	}
 
 	private String nome;
-	private List<PoliticaTipoVendedorProduto> politicaTipoVendedor = new ArrayList<PoliticaTipoVendedorProduto>();
-
+	private List<PoliticaVendaConsignacaoTipoVendedorProduto> politicasVendaConsignacaoTipoVendedorProduto = new ArrayList<>();
+	private List<PoliticaAberturaTipoVendedorTipoProduto> listaPoliticaAberturaTipoProduto = new ArrayList<>();
+	private List<PoliticaColocacaoTipoVendedorTipoProduto> listaPoliticaColocacaoTipoProduto = new ArrayList<>();
+	
+	
 	@Column(nullable = false, length = 20)
 	public String getNome() {
 		return nome;
@@ -39,18 +42,38 @@ public class TipoVendedor extends GenericDTO {
 	}
 
 	@OneToMany(mappedBy = "tipoVendedor", cascade = CascadeType.ALL, orphanRemoval = true)
-	public List<PoliticaTipoVendedorProduto> getPoliticaTipoVendedor() {
-		return politicaTipoVendedor;
+	public List<PoliticaVendaConsignacaoTipoVendedorProduto> getPoliticasVendaConsignacaoTipoVendedorProduto() {
+		return politicasVendaConsignacaoTipoVendedorProduto;
 	}
 
-	public void setPoliticaTipoVendedor(List<PoliticaTipoVendedorProduto> politicaTipoVendedor) {
-		this.politicaTipoVendedor = politicaTipoVendedor;
+	public void setPoliticasVendaConsignacaoTipoVendedorProduto(List<PoliticaVendaConsignacaoTipoVendedorProduto> politicasVendaConsignacaoTipoVendedorProduto) {
+		this.politicasVendaConsignacaoTipoVendedorProduto = politicasVendaConsignacaoTipoVendedorProduto;
+	}
+	
+	@OneToMany(mappedBy = "tipoVendedor", cascade = CascadeType.ALL, orphanRemoval = true)
+	public List<PoliticaAberturaTipoVendedorTipoProduto> getListaPoliticaAberturaTipoProduto() {
+		return listaPoliticaAberturaTipoProduto;
+	}
+
+	public void setListaPoliticaAberturaTipoProduto(
+			List<PoliticaAberturaTipoVendedorTipoProduto> listaPoliticaAberturaTipoProduto) {
+		this.listaPoliticaAberturaTipoProduto = listaPoliticaAberturaTipoProduto;
+	}
+	
+	@OneToMany(mappedBy = "tipoVendedor", cascade = CascadeType.ALL, orphanRemoval = true)
+	public List<PoliticaColocacaoTipoVendedorTipoProduto> getListaPoliticaColocacaoTipoProduto() {
+		return listaPoliticaColocacaoTipoProduto;
+	}
+
+	public void setListaPoliticaColocacaoTipoProduto(
+			List<PoliticaColocacaoTipoVendedorTipoProduto> listaPoliticaColocacaoTipoProduto) {
+		this.listaPoliticaColocacaoTipoProduto = listaPoliticaColocacaoTipoProduto;
 	}
 
 	@Transient
 	public BigDecimal taxaComissao(Produto produto, int quantidade, boolean prontaEntrega) {
 
-		for (PoliticaTipoVendedorProduto p : politicaTipoVendedor) {
+		for (PoliticaVendaConsignacaoTipoVendedorProduto p : politicasVendaConsignacaoTipoVendedorProduto) {
 			if (p.getProduto().equals(produto)) {
 				p.taxaComissao(quantidade, prontaEntrega);
 			}
@@ -62,7 +85,7 @@ public class TipoVendedor extends GenericDTO {
 	@Transient
 	public BigDecimal minVenda(Produto produto, int quantidade) {
 
-		for (PoliticaTipoVendedorProduto p : politicaTipoVendedor) {
+		for (PoliticaVendaConsignacaoTipoVendedorProduto p : politicasVendaConsignacaoTipoVendedorProduto) {
 			if (p.getProduto().equals(produto)) {
 				p.minVenda(quantidade);
 			}
@@ -74,7 +97,7 @@ public class TipoVendedor extends GenericDTO {
 	@Transient
 	public BigDecimal minConsignacao(Produto produto, int quantidade) {
 
-		for (PoliticaTipoVendedorProduto p : politicaTipoVendedor) {
+		for (PoliticaVendaConsignacaoTipoVendedorProduto p : politicasVendaConsignacaoTipoVendedorProduto) {
 			if (p.getProduto().equals(produto)) {
 				p.minConsignacao(quantidade);
 			}

@@ -11,7 +11,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaTipoVendedorProduto;
+import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaVendaConsignacaoTipoVendedorProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.fechamento.dominio.Premiacao;
 import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
@@ -37,7 +37,7 @@ public class FechamentoPremiacaoBean implements Serializable {
 	private List<AberturaProduto> listaAberturas = new ArrayList<>();
 	private List<AberturaProduto> listaColocacao = new ArrayList<>();
 	private List<AberturaProduto> listaGeral = new ArrayList<>();
-	private List<PoliticaTipoVendedorProduto> listacomissaoTipoVendedorProduto = new ArrayList<>();
+	private List<PoliticaVendaConsignacaoTipoVendedorProduto> listacomissaoTipoVendedorProduto = new ArrayList<>();
 
 	@Inject
 	private Funcionarios funcionarios;
@@ -135,7 +135,7 @@ public class FechamentoPremiacaoBean implements Serializable {
 	public void calculaComissaoAberturas() {
 		premiacaoAbertura = BigDecimal.ZERO;
 
-		for (PoliticaTipoVendedorProduto c : listacomissaoTipoVendedorProduto) {
+		for (PoliticaVendaConsignacaoTipoVendedorProduto c : listacomissaoTipoVendedorProduto) {
 			for (AberturaProduto a : listaAberturas) {
 				if (c.getProduto().getNome().equals(a.getProduto().getNome())) {
 
@@ -149,7 +149,7 @@ public class FechamentoPremiacaoBean implements Serializable {
 
 	public void calculaComissaoColocacao() {
 		premiacaoColocacao = BigDecimal.ZERO;
-		for (PoliticaTipoVendedorProduto c : listacomissaoTipoVendedorProduto) {
+		for (PoliticaVendaConsignacaoTipoVendedorProduto c : listacomissaoTipoVendedorProduto) {
 			for (AberturaProduto a : listaColocacao) {
 				if (c.getProduto().getNome().equals(a.getProduto().getNome())) {
 					premiacaoColocacao = premiacaoColocacao.add(c.getColocacaoPremiacao());

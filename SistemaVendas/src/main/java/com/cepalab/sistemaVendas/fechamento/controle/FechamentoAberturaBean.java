@@ -9,7 +9,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaTipoVendedorProduto;
+import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaVendaConsignacaoTipoVendedorProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
 import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
@@ -26,7 +26,7 @@ public class FechamentoAberturaBean implements Serializable {
 	private List<AberturaProduto> listaAberturas = new ArrayList<>();
 	private List<AberturaProduto> listaColocacao = new ArrayList<>();
 	private List<AberturaProduto> listaGeral = new ArrayList<>();
-	private List<PoliticaTipoVendedorProduto> listacomissaoTipoVendedorProduto = new ArrayList<>();
+	private List<PoliticaVendaConsignacaoTipoVendedorProduto> listacomissaoTipoVendedorProduto = new ArrayList<>();
 	private BigDecimal comissaoColocacao = BigDecimal.ZERO;
 	private BigDecimal premiacaoColocacao = BigDecimal.ZERO;
 	private BigDecimal comissaoAberturas = BigDecimal.ZERO;

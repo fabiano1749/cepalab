@@ -26,7 +26,7 @@ public class Produto extends GenericDTO{
 	private BigDecimal minValorConsignacao = BigDecimal.ZERO;
 	private PodeConsignar podeConsignar;
 	private TipoProduto tipo = new TipoProduto();
-	private TipoCalculoDeComissao calculoComissao;  
+	private TipoCalculoAberturaColocacao calculoComissao;  
 	
 	@Override
 	@Id
@@ -91,11 +91,11 @@ public class Produto extends GenericDTO{
 
 	@Enumerated(EnumType.STRING)
 	@Column(name= "calculo_comissao", length=10)
-	public TipoCalculoDeComissao getCalculoComissao() {
+	public TipoCalculoAberturaColocacao getCalculoComissao() {
 		return calculoComissao;
 	}
 
-	public void setCalculoComissao(TipoCalculoDeComissao calculoComissao) {
+	public void setCalculoComissao(TipoCalculoAberturaColocacao calculoComissao) {
 		this.calculoComissao = calculoComissao;
 	}
 

@@ -10,7 +10,7 @@ import javax.inject.Named;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.PodeConsignar;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
-import com.cepalab.sistemaVendas.cadastro.dominio.TipoCalculoDeComissao;
+import com.cepalab.sistemaVendas.cadastro.dominio.TipoCalculoAberturaColocacao;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoProduto;
 import com.cepalab.sistemaVendas.repository.Produtos;
 import com.cepalab.sistemaVendas.repository.TiposProdutos;
@@ -118,8 +118,8 @@ public class ProdutoBean implements Serializable {
 		return PodeConsignar.values();
 	}
 	
-	public TipoCalculoDeComissao[] calculoComissao(){
-		return TipoCalculoDeComissao.values();
+	public TipoCalculoAberturaColocacao[] calculoComissao(){
+		return TipoCalculoAberturaColocacao.values();
 	}
 	
 

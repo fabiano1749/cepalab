@@ -18,8 +18,8 @@ import javax.persistence.Transient;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "comissao_tipovendedor_produto")
-public class PoliticaTipoVendedorProduto extends GenericDTO {
+@Table(name = "politica_venda_comissao_tipovendedor_produto")
+public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 
 	@Override
 	@Id
@@ -33,10 +33,13 @@ public class PoliticaTipoVendedorProduto extends GenericDTO {
 	private BigDecimal aberturaPremiacao = BigDecimal.ZERO;
 	private BigDecimal colocacao = BigDecimal.ZERO;
 	private BigDecimal colocacaoPremiacao = BigDecimal.ZERO;
+	private boolean aberturaPorProduto = true;
+	private boolean premioAberturaPorProduto = true;
+	private boolean colocacaoPorProduto = true;
+	private boolean premioColocacaoPorProduto = true;
 	private TipoVendedor tipoVendedor;
 	private Produto produto = new Produto();
-	private List<PoliticaVendaConsignacao> listaPoliticas = new ArrayList<>();
-	
+	private List<IntervaloVendaConsignacaoProduto> listaIntervalos = new ArrayList<>();
 	
 	
 	@ManyToOne
@@ -95,20 +98,56 @@ public class PoliticaTipoVendedorProduto extends GenericDTO {
 		this.colocacaoPremiacao = colocacaoPremiacao;
 	}
 
-	@OneToMany(mappedBy = "comissaoTipoVendedorProduto", cascade = CascadeType.ALL, orphanRemoval = true)
-	public List<PoliticaVendaConsignacao> getListaPoliticas() {
-		return listaPoliticas;
+	@OneToMany(mappedBy = "politicaTipoVendedorProduto", cascade = CascadeType.ALL, orphanRemoval = true)
+	public List<IntervaloVendaConsignacaoProduto> getListaIntervalos() {
+		return listaIntervalos;
 	}
 
-	public void setListaPoliticas(List<PoliticaVendaConsignacao> listaPoliticas) {
-		this.listaPoliticas = listaPoliticas;
+	public void setListaIntervalos(List<IntervaloVendaConsignacaoProduto> listaIntervalos) {
+		this.listaIntervalos = listaIntervalos;
 	}
 	
+	@Column(name = "abertura_por_produto")
+	public boolean isAberturaPorProduto() {
+		return aberturaPorProduto;
+	}
+
+	public void setAberturaPorProduto(boolean aberturaPorProduto) {
+		this.aberturaPorProduto = aberturaPorProduto;
+	}
+
+	@Column(name = "premiacao_abertura_por_produto")
+	public boolean isPremioAberturaPorProduto() {
+		return premioAberturaPorProduto;
+	}
+	
+	public void setPremioAberturaPorProduto(boolean premioAberturaPorProduto) {
+		this.premioAberturaPorProduto = premioAberturaPorProduto;
+	}
+
+	@Column(name = "colocacao_por_produto")
+	public boolean isColocacaoPorProduto() {
+		return colocacaoPorProduto;
+	}
+
+	public void setColocacaoPorProduto(boolean colocacaoPorProduto) {
+		this.colocacaoPorProduto = colocacaoPorProduto;
+	}
+
+	@Column(name = "premiacao_colocacao_por_produto")
+	public boolean isPremioColocacaoPorProduto() {
+		return premioColocacaoPorProduto;
+	}
+
+	public void setPremioColocacaoPorProduto(boolean premioColocacaoPorProduto) {
+		this.premioColocacaoPorProduto = premioColocacaoPorProduto;
+	}
+
 	@Transient
 	public BigDecimal taxaComissao(int quantidade, boolean prontaEntrega) {
-		for(PoliticaVendaConsignacao p : listaPoliticas) {
-			if(p.estaNoIntervalo(quantidade)) {
-				return p.taxaComissao(prontaEntrega);
+		for(IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+			if(i.estaNoIntervalo(quantidade)) {
+				return i.taxaComissao(prontaEntrega);
 			}
 		}
 		return BigDecimal.ZERO;
@@ -116,9 +155,9 @@ public class PoliticaTipoVendedorProduto extends GenericDTO {
 	
 	@Transient
 	public BigDecimal minVenda(int quantidade) {
-		for(PoliticaVendaConsignacao p : listaPoliticas) {
-			if(p.estaNoIntervalo(quantidade)) {
-				return p.getMinVenda();
+		for(IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+			if(i.estaNoIntervalo(quantidade)) {
+				return i.getMinVenda();
 			}
 		}
 		return BigDecimal.ZERO;
@@ -126,9 +165,9 @@ public class PoliticaTipoVendedorProduto extends GenericDTO {
 	
 	@Transient
 	public BigDecimal minConsignacao(int quantidade) {
-		for(PoliticaVendaConsignacao p : listaPoliticas) {
-			if(p.estaNoIntervalo(quantidade)) {
-				return p.getMinConsignacao();
+		for(IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+			if(i.estaNoIntervalo(quantidade)) {
+				return i.getMinConsignacao();
 			}
 		}
 		return BigDecimal.ZERO;

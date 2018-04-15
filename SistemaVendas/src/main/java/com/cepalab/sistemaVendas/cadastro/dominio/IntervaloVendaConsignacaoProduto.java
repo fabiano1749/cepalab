@@ -14,8 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name="politica_venda_consignacao")
-public class PoliticaVendaConsignacao extends GenericDTO{
+@Table(name="intervalo_venda_consignacao")
+public class IntervaloVendaConsignacaoProduto extends GenericDTO{
 
 	private static final long serialVersionUID = 1L;
 		
@@ -25,7 +25,7 @@ public class PoliticaVendaConsignacao extends GenericDTO{
 	private BigDecimal minConsignacao = BigDecimal.ZERO;
 	private BigDecimal comissaoProntaEntrega = BigDecimal.ZERO;
 	private BigDecimal comissaoTransportadora = BigDecimal.ZERO;
-	private PoliticaTipoVendedorProduto comissaoTipoVendedorProduto;
+	private PoliticaVendaConsignacaoTipoVendedorProduto politicaTipoVendedorProduto;
 	
 	@Override
 	@Id
@@ -90,12 +90,12 @@ public class PoliticaVendaConsignacao extends GenericDTO{
 
 	@ManyToOne
 	@JoinColumn(name = "comissao_tipo_vendedor_id", nullable = false)
-	public PoliticaTipoVendedorProduto getComissaoTipoVendedorProduto() {
-		return comissaoTipoVendedorProduto;
+	public PoliticaVendaConsignacaoTipoVendedorProduto getPoliticaTipoVendedorProduto() {
+		return politicaTipoVendedorProduto;
 	}
 
-	public void setComissaoTipoVendedorProduto(PoliticaTipoVendedorProduto comissaoTipoVendedorProduto) {
-		this.comissaoTipoVendedorProduto = comissaoTipoVendedorProduto;
+	public void setComissaoTipoVendedorProduto(PoliticaVendaConsignacaoTipoVendedorProduto politicaTipoVendedorProduto) {
+		this.politicaTipoVendedorProduto = politicaTipoVendedorProduto;
 	}
 	
 	@Transient
