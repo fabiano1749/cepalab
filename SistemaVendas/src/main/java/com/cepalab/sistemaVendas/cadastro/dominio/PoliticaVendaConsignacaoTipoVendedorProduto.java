@@ -7,6 +7,9 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +21,7 @@ import javax.persistence.Transient;
 
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "politica_venda_comissao_tipovendedor_produto")
+@Table(name = "politica_venda_consignacao_tipovendedor_produto")
 public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 
 	@Override
@@ -33,10 +36,10 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 	private BigDecimal aberturaPremiacao = BigDecimal.ZERO;
 	private BigDecimal colocacao = BigDecimal.ZERO;
 	private BigDecimal colocacaoPremiacao = BigDecimal.ZERO;
-	private boolean aberturaPorProduto = true;
-	private boolean premioAberturaPorProduto = true;
-	private boolean colocacaoPorProduto = true;
-	private boolean premioColocacaoPorProduto = true;
+	private TipoCalculoAberturaColocacao tipoAbertura = TipoCalculoAberturaColocacao.PRODUTO;  
+	private TipoCalculoAberturaColocacao tipoPremioAbertura = TipoCalculoAberturaColocacao.PRODUTO;
+	private TipoCalculoAberturaColocacao tipoColocacao = TipoCalculoAberturaColocacao.PRODUTO;
+	private TipoCalculoAberturaColocacao tipoPremioColocacao = TipoCalculoAberturaColocacao.PRODUTO;
 	private TipoVendedor tipoVendedor;
 	private Produto produto = new Produto();
 	private List<IntervaloVendaConsignacaoProduto> listaIntervalos = new ArrayList<>();
@@ -98,7 +101,7 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 		this.colocacaoPremiacao = colocacaoPremiacao;
 	}
 
-	@OneToMany(mappedBy = "politicaTipoVendedorProduto", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "politicaTipoVendedorProduto", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.EAGER)
 	public List<IntervaloVendaConsignacaoProduto> getListaIntervalos() {
 		return listaIntervalos;
 	}
@@ -107,40 +110,45 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 		this.listaIntervalos = listaIntervalos;
 	}
 	
-	@Column(name = "abertura_por_produto")
-	public boolean isAberturaPorProduto() {
-		return aberturaPorProduto;
+
+	@Enumerated(EnumType.STRING)
+	@Column(length = 20, nullable=false, name="tipo_abertura")
+	public TipoCalculoAberturaColocacao getTipoAbertura() {
+		return tipoAbertura;
 	}
 
-	public void setAberturaPorProduto(boolean aberturaPorProduto) {
-		this.aberturaPorProduto = aberturaPorProduto;
+	public void setTipoAbertura(TipoCalculoAberturaColocacao tipoAbertura) {
+		this.tipoAbertura = tipoAbertura;
 	}
 
-	@Column(name = "premiacao_abertura_por_produto")
-	public boolean isPremioAberturaPorProduto() {
-		return premioAberturaPorProduto;
-	}
-	
-	public void setPremioAberturaPorProduto(boolean premioAberturaPorProduto) {
-		this.premioAberturaPorProduto = premioAberturaPorProduto;
+	@Enumerated(EnumType.STRING)
+	@Column(length = 20, nullable=false, name="tipo_premio_abertura")
+	public TipoCalculoAberturaColocacao getTipoPremioAbertura() {
+		return tipoPremioAbertura;
 	}
 
-	@Column(name = "colocacao_por_produto")
-	public boolean isColocacaoPorProduto() {
-		return colocacaoPorProduto;
+	public void setTipoPremioAbertura(TipoCalculoAberturaColocacao tipoPremioAbertura) {
+		this.tipoPremioAbertura = tipoPremioAbertura;
 	}
 
-	public void setColocacaoPorProduto(boolean colocacaoPorProduto) {
-		this.colocacaoPorProduto = colocacaoPorProduto;
+	@Enumerated(EnumType.STRING)
+	@Column(length = 20, nullable=false, name="tipo_colocacao")
+	public TipoCalculoAberturaColocacao getTipoColocacao() {
+		return tipoColocacao;
 	}
 
-	@Column(name = "premiacao_colocacao_por_produto")
-	public boolean isPremioColocacaoPorProduto() {
-		return premioColocacaoPorProduto;
+	public void setTipoColocacao(TipoCalculoAberturaColocacao tipoColocacao) {
+		this.tipoColocacao = tipoColocacao;
 	}
 
-	public void setPremioColocacaoPorProduto(boolean premioColocacaoPorProduto) {
-		this.premioColocacaoPorProduto = premioColocacaoPorProduto;
+	@Enumerated(EnumType.STRING)
+	@Column(length = 20, nullable=false, name="tipo_premio_colocacao")
+	public TipoCalculoAberturaColocacao getTipoPremioColocacao() {
+		return tipoPremioColocacao;
+	}
+
+	public void setTipoPremioColocacao(TipoCalculoAberturaColocacao tipoPremioColocacao) {
+		this.tipoPremioColocacao = tipoPremioColocacao;
 	}
 
 	@Transient
@@ -173,6 +181,18 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 		return BigDecimal.ZERO;
 	}
 	
-	
+	@Transient
+	public boolean adicionaIntervalo(IntervaloVendaConsignacaoProduto intervalo) {
+		int inicio = intervalo.getInicio();
+		if(listaIntervalos.size() !=0) {
+			for(IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+				if(inicio <= i.getFim()) {
+					return false;
+				}
+			}	
+		}
+		listaIntervalos.add(intervalo);
+		return true;
+	}
 
 }

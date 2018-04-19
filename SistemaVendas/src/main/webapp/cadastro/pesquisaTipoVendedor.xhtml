@@ -21,7 +21,7 @@
 
 
 			<p:dataTable id="idTab" style="margin-top:10px; width: 50%"
-				value="#{tipoVendedorBean.itens}" var="item">
+				value="#{pesquisaTipoVendedorBean.tiposVendedores}" var="item">
 
 				<p:column headerText="Código" style="text-align: center">
 					<h:outputText value="#{item.id}" />
@@ -40,7 +40,7 @@
 					</p:button>
 
 					<p:commandButton icon="ui-icon-trash"
-						actionListener="#{tipoVendedorBean.troca(item)}"
+						actionListener="#{pesquisaTipoVendedorBean.troca(item)}"
 						update="idConfirmDialogExlusao" process="@this"
 						oncomplete="PF('confirmExclusao').show()" />
 				</p:column>
@@ -50,12 +50,12 @@
 
 		<p:confirmDialog id="idConfirmDialogExlusao"
 			widgetVar="confirmExclusao" header="Exclusão de tipo de Vendedor"
-			message="Quer realmente excluir o tipo de Vendedor : #{tipoVendedorBean.itemAux.nome}?">
+			message="Quer realmente excluir o tipo de Vendedor : #{pesquisaTipoVendedorBean.tipoVendedor.nome}?">
 			<h:form id="formExclusao">
 				<p:messages />
 
 				<p:commandButton value="Sim"
-					actionListener="#{tipoVendedorBean.excluir}"
+					actionListener="#{pesquisaTipoVendedorBean.excluir}"
 					update="idFormPesquisa:idTab" process="@this"
 					oncomplete="PF('confirmExclusao').hide() return false;" />
 				<p:commandButton value="Não"

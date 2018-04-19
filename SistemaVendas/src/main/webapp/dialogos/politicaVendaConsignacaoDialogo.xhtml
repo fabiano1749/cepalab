@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+
+	<title> Política de Venda e Consignação </title>
+	<h:outputStylesheet library="css" name="sistema.css" />
+
+	<f:metadata>
+		<o:viewParam name="item"
+			value="#{politicaVendaConsignacaoBean.item}" />
+	</f:metadata>
+
+</h:head>
+
+<h:body>
+	<h:form>
+
+		<p:panelGrid id="idPnlIntervalo" columns="6" styleClass="semBorda"
+			style="margin-top: 10px; margin-left: 10px">
+			<p:outputLabel value="Inicio" />
+			<p:inputNumber
+				value="#{politicaVendaConsignacaoBean.intervalo.inicio}"
+				decimalPlaces="0"/>
+			<p:outputLabel value="menor valor de venda" />
+			<p:inputNumber
+				value="#{politicaVendaConsignacaoBean.intervalo.minVenda}" />
+			<p:outputLabel value="Comissão Pronta Entrega" />
+			<p:inputNumber
+				value="#{politicaVendaConsignacaoBean.intervalo.comissaoProntaEntrega}" />
+
+			<p:outputLabel value="Fim" />
+			<p:inputNumber value="#{politicaVendaConsignacaoBean.intervalo.fim}"
+				decimalPlaces="0" />
+			<p:outputLabel value="menor valor de consignação" />
+			<p:inputNumber
+				value="#{politicaVendaConsignacaoBean.intervalo.minConsignacao}" />
+			<p:outputLabel value="Comissão Transportadora" />
+			<p:inputNumber
+				value="#{politicaVendaConsignacaoBean.intervalo.comissaoTransportadora}" />
+
+			<p:outputLabel value="" />
+			<p:commandButton value="Inserir Intervalo"
+				actionListener="#{politicaVendaConsignacaoBean.adicionar()}"
+				process="@this idPnlIntervalo" partialSubmit="true" update="idTab" />
+
+		</p:panelGrid>
+
+
+		<p:dataTable id="idTab"
+			value="#{politicaVendaConsignacaoBean.item.listaIntervalos}"
+			var="item" style="margin-top: 15px ; width: 90%; margin-left: 10px " reflow="true">
+
+
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column colspan="2" headerText="Intervalos" />
+					<p:column colspan="2" headerText="Valores" />
+					<p:column colspan="2" headerText="Comissões" />
+				</p:row>
+
+				<p:row>
+					<p:column headerText="Inicio" />
+					<p:column headerText="Fim" />
+
+					<p:column headerText="Mínimo Venda" />
+					<p:column headerText="Mínimo Consignação" />
+
+					<p:column headerText="Pronta Entrega" />
+					<p:column headerText="Transportadora" />
+				</p:row>
+
+			</p:columnGroup>
+
+
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.inicio}" />
+			</p:column>
+
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.fim}" />
+			</p:column>
+
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.minVenda}">
+					<f:convertNumber pattern="#0.00" locale="pt_BR" />
+				</h:outputText>
+			</p:column>
+			
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.minConsignacao}">
+					<f:convertNumber pattern="#0.00" locale="pt_BR" />
+				</h:outputText>
+			</p:column>
+
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.comissaoProntaEntrega}">
+					<f:convertNumber pattern="#0.00" locale="pt_BR" />
+				</h:outputText>
+			</p:column>
+
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.comissaoTransportadora}">
+					<f:convertNumber pattern="#0.00" locale="pt_BR" />
+				</h:outputText>
+			</p:column>
+					
+		</p:dataTable>
+		
+		<p:commandButton value="Confirmar Política"
+				actionListener="#{politicaVendaConsignacaoBean.confirmarCriacaoDePolitica}"
+				process="@this" partialSubmit="true"/>
+		
+		
+
+	</h:form>
+</h:body>
+
+
+
+</html>

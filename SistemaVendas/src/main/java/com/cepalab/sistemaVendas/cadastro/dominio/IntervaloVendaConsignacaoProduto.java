@@ -89,15 +89,15 @@ public class IntervaloVendaConsignacaoProduto extends GenericDTO{
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "comissao_tipo_vendedor_id", nullable = false)
+	@JoinColumn(name = "politica_vc_tv_produto_id", nullable=false)
 	public PoliticaVendaConsignacaoTipoVendedorProduto getPoliticaTipoVendedorProduto() {
 		return politicaTipoVendedorProduto;
 	}
 
-	public void setComissaoTipoVendedorProduto(PoliticaVendaConsignacaoTipoVendedorProduto politicaTipoVendedorProduto) {
+	public void setPoliticaTipoVendedorProduto(PoliticaVendaConsignacaoTipoVendedorProduto politicaTipoVendedorProduto) {
 		this.politicaTipoVendedorProduto = politicaTipoVendedorProduto;
 	}
-	
+
 	@Transient
 	public boolean estaNoIntervalo(int quantidade) {
 		if(quantidade >= inicio && quantidade <= fim) {

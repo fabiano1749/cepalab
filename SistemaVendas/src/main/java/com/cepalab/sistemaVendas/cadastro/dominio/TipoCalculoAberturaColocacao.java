@@ -3,7 +3,7 @@ package com.cepalab.sistemaVendas.cadastro.dominio;
 public enum TipoCalculoAberturaColocacao {
 	
 	PRODUTO("Produto"),
-	TIPO("Tipo");
+	TIPO("Tipo-Produto");
 	
 	private String descricao;
 	

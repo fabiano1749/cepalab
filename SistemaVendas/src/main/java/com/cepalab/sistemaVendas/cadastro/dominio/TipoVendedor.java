@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
+
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "tipo_vendedor")
@@ -27,11 +29,10 @@ public class TipoVendedor extends GenericDTO {
 	}
 
 	private String nome;
-	private List<PoliticaVendaConsignacaoTipoVendedorProduto> politicasVendaConsignacaoTipoVendedorProduto = new ArrayList<>();
+	private List<PoliticaVendaConsignacaoTipoVendedorProduto> politicasVCTVP = new ArrayList<>();
 	private List<PoliticaAberturaTipoVendedorTipoProduto> listaPoliticaAberturaTipoProduto = new ArrayList<>();
 	private List<PoliticaColocacaoTipoVendedorTipoProduto> listaPoliticaColocacaoTipoProduto = new ArrayList<>();
-	
-	
+
 	@Column(nullable = false, length = 20)
 	public String getNome() {
 		return nome;
@@ -42,14 +43,15 @@ public class TipoVendedor extends GenericDTO {
 	}
 
 	@OneToMany(mappedBy = "tipoVendedor", cascade = CascadeType.ALL, orphanRemoval = true)
-	public List<PoliticaVendaConsignacaoTipoVendedorProduto> getPoliticasVendaConsignacaoTipoVendedorProduto() {
-		return politicasVendaConsignacaoTipoVendedorProduto;
+	public List<PoliticaVendaConsignacaoTipoVendedorProduto> getPoliticasVCTVP() {
+		return politicasVCTVP;
 	}
 
-	public void setPoliticasVendaConsignacaoTipoVendedorProduto(List<PoliticaVendaConsignacaoTipoVendedorProduto> politicasVendaConsignacaoTipoVendedorProduto) {
-		this.politicasVendaConsignacaoTipoVendedorProduto = politicasVendaConsignacaoTipoVendedorProduto;
+	public void setPoliticasVCTVP(
+			List<PoliticaVendaConsignacaoTipoVendedorProduto> politicas) {
+		this.politicasVCTVP = politicas;
 	}
-	
+
 	@OneToMany(mappedBy = "tipoVendedor", cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<PoliticaAberturaTipoVendedorTipoProduto> getListaPoliticaAberturaTipoProduto() {
 		return listaPoliticaAberturaTipoProduto;
@@ -59,7 +61,7 @@ public class TipoVendedor extends GenericDTO {
 			List<PoliticaAberturaTipoVendedorTipoProduto> listaPoliticaAberturaTipoProduto) {
 		this.listaPoliticaAberturaTipoProduto = listaPoliticaAberturaTipoProduto;
 	}
-	
+
 	@OneToMany(mappedBy = "tipoVendedor", cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<PoliticaColocacaoTipoVendedorTipoProduto> getListaPoliticaColocacaoTipoProduto() {
 		return listaPoliticaColocacaoTipoProduto;
@@ -73,7 +75,7 @@ public class TipoVendedor extends GenericDTO {
 	@Transient
 	public BigDecimal taxaComissao(Produto produto, int quantidade, boolean prontaEntrega) {
 
-		for (PoliticaVendaConsignacaoTipoVendedorProduto p : politicasVendaConsignacaoTipoVendedorProduto) {
+		for (PoliticaVendaConsignacaoTipoVendedorProduto p : politicasVCTVP) {
 			if (p.getProduto().equals(produto)) {
 				p.taxaComissao(quantidade, prontaEntrega);
 			}
@@ -81,11 +83,11 @@ public class TipoVendedor extends GenericDTO {
 
 		return BigDecimal.ZERO;
 	}
-	
+
 	@Transient
 	public BigDecimal minVenda(Produto produto, int quantidade) {
 
-		for (PoliticaVendaConsignacaoTipoVendedorProduto p : politicasVendaConsignacaoTipoVendedorProduto) {
+		for (PoliticaVendaConsignacaoTipoVendedorProduto p : politicasVCTVP) {
 			if (p.getProduto().equals(produto)) {
 				p.minVenda(quantidade);
 			}
@@ -97,7 +99,7 @@ public class TipoVendedor extends GenericDTO {
 	@Transient
 	public BigDecimal minConsignacao(Produto produto, int quantidade) {
 
-		for (PoliticaVendaConsignacaoTipoVendedorProduto p : politicasVendaConsignacaoTipoVendedorProduto) {
+		for (PoliticaVendaConsignacaoTipoVendedorProduto p : politicasVCTVP) {
 			if (p.getProduto().equals(produto)) {
 				p.minConsignacao(quantidade);
 			}
@@ -106,7 +108,32 @@ public class TipoVendedor extends GenericDTO {
 		return BigDecimal.ZERO;
 	}
 
-	
-	
+	// falta implementar
+	@Transient
+	public BigDecimal valorAbertura(List<AberturaProduto> lista) {
+		return BigDecimal.ZERO;
+
+	}
+
+	// falta implementar
+	@Transient
+	public BigDecimal premiacaoAbertura(List<AberturaProduto> lista) {
+		return BigDecimal.ZERO;
+
+	}
+
+	// falta implementar
+	@Transient
+	public BigDecimal valorColocacao(List<AberturaProduto> lista) {
+		return BigDecimal.ZERO;
+
+	}
+
+	// falta implementar
+	@Transient
+	public BigDecimal premiacaocolocacao(List<AberturaProduto> lista) {
+		return BigDecimal.ZERO;
+
+	}
 
 }
