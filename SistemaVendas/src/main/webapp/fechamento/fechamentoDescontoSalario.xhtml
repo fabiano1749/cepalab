@@ -5,26 +5,18 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:o="http://omnifaces.org/ui">
 
-	<p:panel header="Recebimentos de inadimplentes"
+	<p:panel header="Descontos de Salário"
 		style="margin-top:20px; width: 70%; text-align: center">
 
-		<p:dataTable id="idTabelaRecebimentoInad"
-			value="#{fechamentoRecebimentoInadimplenteBean.listaRecebimentos}"
-			style="width: 100%" var="item">
+		<p:dataTable id="idTabelaDescontos"
+			value="#{fechamentoBean.item.listaDescontosSalarios}" style="width: 100%"
+			var="item">
 			<p:column headerText="Data" style="text-align: center; width: 20%">
 				<h:outputText value="#{item.data}">
 					<f:convertDateTime pattern="dd/MM/yyyy" />
 				</h:outputText>
 			</p:column>
 
-			<p:column headerText="Cliente" style="text-align: center; width: 20%">
-				<h:outputText value="#{item.cliente.nome}"/>
-			</p:column>
-
-			<p:column headerText="Nota" style="text-align: center; width: 20%">
-				<h:outputText value="#{item.nota}"/>
-			</p:column>
-			
 			<p:column headerText="Valor" style="text-align: center; width: 20%">
 				<h:outputText value="#{item.valor}">
 					<f:convertNumber type="currency" locale="pt_BR" />
@@ -35,7 +27,7 @@
 				style="text-align: center; width: 60%">
 				<h:outputText value="#{item.observacao}" />
 			</p:column>
-
+			
 		</p:dataTable>
 
 	</p:panel>

@@ -10,7 +10,6 @@ import javax.persistence.NoResultException;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.ComissaoRecolhidaRessarcida;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
-import com.cepalab.sistemaVendas.operacao.dominio.DespesaVendedor;
 
 
 public class ComissoesRecolhidasRessarcidas implements Serializable {

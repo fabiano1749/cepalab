@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,6 +38,7 @@ public class RecebimentoInadiplente extends GenericDTO {
 	private Cliente cliente;
 	private Funcionario funcionario;
 	private String observacao;
+	private FormaPagamento formaPagamento;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "data", nullable = false)
@@ -93,5 +96,17 @@ public class RecebimentoInadiplente extends GenericDTO {
 	public void setFuncionario(Funcionario funcionario) {
 		this.funcionario = funcionario;
 	}
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name="forma_pagamento")
+	public FormaPagamento getFormaPagamento() {
+		return formaPagamento;
+	}
 
+	public void setFormaPagamento(FormaPagamento formaPagamento) {
+		this.formaPagamento = formaPagamento;
+	}
+
+	
+	
 }

@@ -11,6 +11,7 @@ import javax.persistence.PersistenceException;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.operacao.dominio.DespesaVendedor;
+import com.cepalab.sistemaVendas.repository.filter.DespesaVendedorFilter;
 import com.cepalab.sistemaVendas.service.NegocioException;
 import com.cepalab.sistemaVendas.util.jpa.Transactional;
 
@@ -47,16 +48,27 @@ public class DespesasVendedores implements Serializable {
 	}
 	
 
-public List<DespesaVendedor> porFuncionario(Funcionario fun, Date inicio, Date fim) {
+public List<DespesaVendedor> despesasFiltradas(DespesaVendedorFilter filtro) {
 		
 		try {
 			return  manager.createQuery(
 					"FROM DespesaVendedor  WHERE funcionario= :fun AND data >= :inicio AND data <= :fim ORDER BY tipoDespesa",
-					DespesaVendedor.class).setParameter("fun", fun).setParameter("inicio", inicio).setParameter("fim", fim).getResultList();
+					DespesaVendedor.class).setParameter("fun", filtro.getFuncionario()).setParameter("inicio", filtro.getInicio()).setParameter("fim", filtro.getFim()).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}
 	}
 	
+public List<DespesaVendedor> porFuncionario(Funcionario fun, Date inicio, Date fim) {
+	
+	try {
+		return  manager.createQuery(
+				"FROM DespesaVendedor  WHERE funcionario= :fun AND data >= :inicio AND data <= :fim ORDER BY tipoDespesa",
+				DespesaVendedor.class).setParameter("fun", fun).setParameter("inicio", inicio).setParameter("fim", fim).getResultList();
+	} catch (NoResultException e) {
+		return null;
+	}
+}
+
 	
 }

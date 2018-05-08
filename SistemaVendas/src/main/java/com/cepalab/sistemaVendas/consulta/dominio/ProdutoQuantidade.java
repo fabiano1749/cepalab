@@ -2,6 +2,7 @@ package com.cepalab.sistemaVendas.consulta.dominio;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 
@@ -60,7 +61,9 @@ public class ProdutoQuantidade implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "QT: "+" "+vendidos + "    " +"R$ :"+ " "+receita; 
+		DecimalFormat decF = new java.text.DecimalFormat("#,###,##0.00");
+		
+		return "QT: "+" "+vendidos + "    " +"R$ :"+ " "+decF.format(receita); 
 	}
 	
 }

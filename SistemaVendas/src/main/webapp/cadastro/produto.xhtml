@@ -37,22 +37,6 @@
 					</h:outputText>
 				</p:column>
 
-				<p:column headerText="Minimo valor venda"
-					style="width:20%; text-align: center">
-					<h:outputText value="#{produto.minValorVenda}">
-						<f:convertNumber type="currency" locale="pt_BR"
-							maxFractionDigits="2" />
-					</h:outputText>
-				</p:column>
-
-				<p:column headerText="Minimo valor consignação"
-					style="width:20%; text-align: center">
-					<h:outputText value="#{produto.minValorConsignacao}">
-						<f:convertNumber type="currency" locale="pt_BR"
-							maxFractionDigits="2" />
-					</h:outputText>
-				</p:column>
-
 				<p:column headerText="Pode consignar"
 					style="width:20%; text-align: center">
 					<h:outputText value="#{produto.podeConsignar.descricao}" />
@@ -60,10 +44,6 @@
 
 				<p:column headerText="Tipo" style="width:20%; text-align: center">
 					<h:outputText value="#{produto.tipo.nome}" />
-				</p:column>
-
-				<p:column headerText="Cálculo de comissao" style="width:20%; text-align: center">
-					<h:outputText value="#{produto.calculoComissao.descricao}" />
 				</p:column>
 
 
@@ -102,13 +82,6 @@
 								itemValue="#{tipo}" itemLabel="#{tipo.nome}" />
 						</p:selectOneMenu>
 
-						<p:outputLabel value="Cálculo de Comissão" />
-						<p:selectOneMenu value="#{produtoBean.item.calculoComissao}"
-							converter="omnifaces.SelectItemsConverter">
-							<f:selectItems value="#{produtoBean.calculoComissao()}" var="calculo"
-								itemValue="#{calculo}" itemLabel="#{calculo.descricao}" />
-						</p:selectOneMenu>
-
 						<p:outputLabel value="Custo" for="idCusto" />
 						<p:inputNumber id="idCusto" value="#{produtoBean.item.custo}"
 							required="true" style="width:100px"
@@ -116,30 +89,15 @@
 							decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
 
 
-						<p:outputLabel value="Minvenda" for="MinVenda" />
-						<p:inputNumber id="MinVenda"
-							value="#{produtoBean.item.minValorVenda}" required="true"
-							style="width:100px"
-							requiredMessage="O menor valor para venda deve ser informado!"
-							decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
-
+						
 
 						<p:outputLabel value="Pode consignar" />
 						<p:selectOneMenu value="#{produtoBean.item.podeConsignar}"
 							converter="omnifaces.SelectItemsConverter">
 							<f:selectItems value="#{produtoBean.podeConsignar()}" var="pode"
 								itemValue="#{pode}" itemLabel="#{pode.descricao}" />
-							<p:ajax listener="#{produtoBean.podeConsignarValor}"
-								update="MinConsignacao" />
+							
 						</p:selectOneMenu>
-
-						<p:outputLabel value="MinConsignação" id="MinConsignacaoLabel" />
-						<p:inputNumber value="#{produtoBean.item.minValorConsignacao}"
-							id="MinConsignacao" style="width:100px"
-							disabled="#{produtoBean.podeConsignar}" decimalSeparator=","
-							thousandSeparator="." decimalPlaces="2" />
-
-
 
 
 					</h:panelGrid>
@@ -176,27 +134,11 @@
 								itemValue="#{tipo}" itemLabel="#{tipo.nome}" />
 						</p:selectOneMenu>
 
-						<p:outputLabel value="Cálculo de Comissão" />
-						<p:selectOneMenu value="#{produtoBean.itemAuxiliar.calculoComissao}"
-							converter="omnifaces.SelectItemsConverter">
-							<f:selectItems value="#{produtoBean.calculoComissao()}" var="calculo"
-								itemValue="#{calculo}" itemLabel="#{calculo.descricao}" />
-						</p:selectOneMenu>
-
 						<p:outputLabel value="Custo" for="idCusto" />
 						<p:inputNumber id="idCusto"
 							value="#{produtoBean.itemAuxiliar.custo}" required="true"
 							style="width:100px" requiredMessage="O Custo deve ser informado!"
 							decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
-
-
-						<p:outputLabel value="Minvenda" for="MinVenda" />
-						<p:inputNumber id="MinVenda"
-							value="#{produtoBean.itemAuxiliar.minValorVenda}" required="true"
-							style="width:100px"
-							requiredMessage="O menor valor para venda deve ser informado!"
-							decimalSeparator="," thousandSeparator="." decimalPlaces="2" />
-
 
 						<p:outputLabel value="Pode consignar" />
 						<p:selectOneMenu value="#{produtoBean.itemAuxiliar.podeConsignar}"
@@ -204,14 +146,6 @@
 							<f:selectItems value="#{produtoBean.podeConsignar()}" var="pode"
 								itemValue="#{pode}" itemLabel="#{pode.descricao}" />
 						</p:selectOneMenu>
-
-						<p:outputLabel value="MinConsignação" />
-						<p:inputNumber
-							value="#{produtoBean.itemAuxiliar.minValorConsignacao}"
-							styleClass="moeda" style="width:100px" decimalSeparator=","
-							thousandSeparator="." decimalPlaces="2" />
-
-
 
 					</h:panelGrid>
 

@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
-import com.cepalab.sistemaVendas.cadastro.dominio.TipoProduto;
 import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
 import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
 

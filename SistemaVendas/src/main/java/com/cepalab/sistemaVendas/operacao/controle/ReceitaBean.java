@@ -10,6 +10,8 @@ import javax.inject.Named;
 
 import com.cepalab.sistemaVendas.operacao.dominio.FormaPagamento;
 import com.cepalab.sistemaVendas.operacao.dominio.Receita;
+import com.cepalab.sistemaVendas.repository.TiposProdutos;
+import com.cepalab.sistemaVendas.security.Seguranca;
 import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
 
 @Named
@@ -29,6 +31,16 @@ public class ReceitaBean implements Serializable {
 	@Inject
 	private OperacaoBean operacao;
 
+	//Faz parte do teste
+	@Inject
+	private Seguranca seg;
+	
+	@Inject
+	private TiposProdutos tiposProdutos;
+	
+
+	//Fim do teste
+	
 	public void iniciaReceitaTotal() {
 		receitaTotal = resumo.getReceitatotal();
 		receitaRestante = new BigDecimal("0");

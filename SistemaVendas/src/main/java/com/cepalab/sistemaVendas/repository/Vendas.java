@@ -44,6 +44,7 @@ public class Vendas implements Serializable {
 				v.setProduto(c.getProduto());
 				v.setTotalVendidos(c.getTotalProduto());
 				v.setValorUnitario(porId(c.getMaxId()));
+				v.setTaxaComissao(BigDecimal.ZERO);
 				listaVenda.add(v);
 			}
 			return listaVenda;

@@ -28,16 +28,16 @@ public class Venda extends GenericDTO{
 	}
 
 	private int quantidade = 0;
-	private BigDecimal valorUnitario;
+	private BigDecimal valorUnitario = BigDecimal.ZERO;
 	private boolean prontaEntrega = true;
 	private BigDecimal taxaComissao = BigDecimal.ZERO;
 	private Boolean nota = true;
 	private Boolean notaEmitida = false;
 	private Produto produto = new Produto();
 	private Operacao operacao;
-	private Long totalVendidos;
-	private Long devolvidos;
-	private Long repostos;
+	private Long totalVendidos = 0L;
+	private Long devolvidos = 0L;
+	private Long repostos =0L; 
 	private BigDecimal freteDiluido = BigDecimal.ZERO;
 	
 	

@@ -12,7 +12,6 @@ import javax.inject.Named;
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
 import com.cepalab.sistemaVendas.operacao.dominio.RecebimentoInadiplente;
 import com.cepalab.sistemaVendas.repository.Clientes;
-import com.cepalab.sistemaVendas.repository.Rotas;
 import com.cepalab.sistemaVendas.security.Seguranca;
 import com.cepalab.sistemaVendas.service.CadastroRecebimentoInadiplente;
 import com.cepalab.sistemaVendas.service.NegocioException;
@@ -33,8 +32,6 @@ public class RecebimentoInadiplenteBean implements Serializable{
 	@Inject
 	private Seguranca seg;
 	
-	@Inject
-	private Rotas rotas;
 	
 	@Inject
 	private CadastroRecebimentoInadiplente cadastro;

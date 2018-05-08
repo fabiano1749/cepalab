@@ -1,10 +1,12 @@
 package com.cepalab.sistemaVendas.cadastro.dominio;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Fetch;
 
 
 @SuppressWarnings("serial")
@@ -51,7 +56,8 @@ public class PoliticaAberturaTipoVendedorTipoProduto extends GenericDTO {
 		this.tipoProduto = tipoProduto;
 	}
 
-	@OneToMany(mappedBy = "politicaAberturaTipoVendedorTipoProduto", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "politicaAberturaTipoVendedorTipoProduto", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.EAGER)
+	@Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
 	public List<IntervaloAberturaTipoProduto> getListaIntervalos() {
 		return listaIntervalos;
 	}
@@ -59,4 +65,53 @@ public class PoliticaAberturaTipoVendedorTipoProduto extends GenericDTO {
 	public void setListaIntervalos(List<IntervaloAberturaTipoProduto> listaIntervalos) {
 		this.listaIntervalos = listaIntervalos;
 	}
+	
+	@Transient
+	public boolean adicionaIntervaloAbertura(IntervaloAberturaTipoProduto intervalo) {
+		//Verifica se o novo intervalo esta dentro de um intervalo maior.
+		if (listaIntervalos.size() != 0) {
+			for (IntervaloAberturaTipoProduto i : listaIntervalos) {
+				if (i.estaNoIntervalo(intervalo.getInicio())  || i.estaNoIntervalo(intervalo.getFim())) {
+					return false;
+				}
+			}
+		}
+		//Verifica se o novo intervalo engloba os demais
+		if(listaIntervalos.size() != 0) {
+			for (IntervaloAberturaTipoProduto i : listaIntervalos) {
+				if(i.getInicio() >= intervalo.getInicio() && i.getFim() <= intervalo.getFim()) {
+					return false;
+				}
+			}
+		}
+		
+		listaIntervalos.add(intervalo);
+		return true;
+	}
+	
+	//Retorna a comissão dado um intervalo
+	public BigDecimal comissao(int quantidade) {
+		for(IntervaloAberturaTipoProduto i : listaIntervalos) {
+			if(i.estaNoIntervalo(quantidade)) {
+				return i.getValor();
+			}
+		}
+		return BigDecimal.ZERO;
+		
+	}
+	
+	//Retorna a premiacao dado um intervalo
+		public BigDecimal premiacao(int quantidade) {
+			for(IntervaloAberturaTipoProduto i : listaIntervalos) {
+				if(i.estaNoIntervalo(quantidade)) {
+					return i.getPremiacao();
+				}
+			}
+			return BigDecimal.ZERO;
+			
+		}
+	
+	
+	
+	
 }

@@ -29,7 +29,7 @@ public class AcertoProduto implements Serializable {
 
 	public void calculaDesconto() {
 		if (diferenca > 0) {
-			setDesconto(new BigDecimal(diferenca).multiply(expedProduto.getProduto().getMinValorVenda()));
+			setDesconto(new BigDecimal(diferenca).multiply(expedProduto.getProduto().getCusto()));
 		}
 	}
 

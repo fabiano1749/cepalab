@@ -25,10 +25,13 @@ import javax.persistence.Transient;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
 import com.cepalab.sistemaVendas.cadastro.dominio.GenericDTO;
+import com.cepalab.sistemaVendas.cadastro.dominio.TipoProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.Transportadora;
 import com.cepalab.sistemaVendas.consulta.dominio.FechamentoGeral;
 import com.cepalab.sistemaVendas.consulta.dominio.ProdutoQuantidade;
 import com.cepalab.sistemaVendas.consulta.dominio.ReceitaFormaPagamento;
+import com.cepalab.sistemaVendas.fechamento.dominio.Fechamento;
+import com.cepalab.sistemaVendas.fechamento.dominio.FormaPagamentoValor;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 
 @SuppressWarnings("serial")
@@ -237,7 +240,7 @@ public class Operacao extends GenericDTO {
 
 		return comissao;
 	}
-
+/*
 	@Transient
 	public BigDecimal comisaoAbertura() {
 		int quantProd = 0;
@@ -258,26 +261,16 @@ public class Operacao extends GenericDTO {
 		}
 		return new BigDecimal("10").multiply(new BigDecimal(quantProd));
 	}
-
+*/
+	
+	// Falta implementar esse método
 	@Transient
-	public BigDecimal premiacaoColocacaoFita() {
-		int numFitas = 0;
-		BigDecimal premio = BigDecimal.ZERO;
-		if (tipo == TipoOperacao.VISITA && aberturasProdutos != null) {
-			for (AberturaProduto a : aberturasProdutos) {
-				if (a.getProduto().getTipo().getNome().equals("Fita")) {
-					numFitas++;
-				}
-			}
-			if (numFitas >= 1) {
-				premio = premio.add(new BigDecimal("100"));
-			}
-		}
-		return premio;
+	public BigDecimal premiacaoColocacao() {
+		return BigDecimal.ZERO;
 	}
 
 	@Transient
-	public void valoresResumoVendedor(FechamentoGeral f) {
+	public void valoresResumoVendedor(FechamentoGeral f, List<TipoProduto> tiposProdutos) {
 		if (consignacoes != null && consignacoes.size() != 0) {
 			for (Consignacao c : consignacoes) {
 				for (ProdutoQuantidade p : f.getListaProdutoQuantidade()) {
@@ -326,9 +319,95 @@ public class Operacao extends GenericDTO {
 		}
 
 		f.incrementaComissaoVendas(comissaoTotal());
-		f.incrementaComissaoAberturas(comisaoAbertura());
-		f.incrementaPremiacaoAberturas(comisaoAbertura().multiply(new BigDecimal(10)));
-		f.incrementaPremiacaoColocacao(premiacaoColocacaoFita());
+		f.incrementaComissaoAberturas(funcionario.getTipoVendedor().comissaoAbertura(aberturasProdutos, tiposProdutos));
+		f.incrementaPremiacaoAberturas(funcionario.getTipoVendedor().premiacaoAbertura(aberturasProdutos, tiposProdutos));
+		f.incrementaPremiacaoColocacao(premiacaoColocacao());
+		f.incrementaFaturamento(ReceitaTotal());
+	}
+
+	@Transient
+	public void valoresFechamentoVendedor(Fechamento f, List<TipoProduto> tiposProdutos) {
+		// Insere as consignações na lista de resumo
+		if (consignacoes != null && consignacoes.size() != 0) {
+			for (Consignacao c : consignacoes) {
+				if (c.getVendidos() > 0) {
+					ResumoConsignacaoVenda r = new ResumoConsignacaoVenda();
+					r.setComissao(c.comissao());
+					r.setOperacao(c.getOperacao());
+					r.setProduto(c.getProduto());
+					r.setReceita(c.receita());
+					r.setTaxaComissao(c.getTaxaComissao());
+					r.setVendidos(c.getVendidos());
+					f.getListaResumoConsignacaoVenda().add(r);
+				}
+			}
+		}
+
+		// Insere as Vendas na lista de resumo
+		if (vendas != null && vendas.size() != 0) {
+			for (Venda v : vendas) {
+				if (v.getQuantidade() > 0) {
+					ResumoConsignacaoVenda r = new ResumoConsignacaoVenda();
+					r.setComissao(v.comissao());
+					r.setOperacao(v.getOperacao());
+					r.setProduto(v.getProduto());
+					r.setReceita(v.receita());
+					r.setTaxaComissao(v.getTaxaComissao());
+					r.setVendidos(v.getQuantidade());
+					f.getListaResumoConsignacaoVenda().add(r);
+				}
+			}
+		}
+
+		// Alimenta a lista de receitas por forma de pagamento
+		if (receitas != null && receitas.size() != 0) {
+			for (Receita r : receitas) {
+				for (FormaPagamentoValor rfp : f.getListaReceitaFormaPagamento()) {
+					if (r.getFormaPagamento().equals(rfp.getForma())) {
+						rfp.incrementaReceita(r.getValor());
+						break;
+					}
+				}
+			}
+		}
+
+		//Essalista é utilizada para calcular as comissões e premiações de abertura
+		List<AberturaProduto> aberturasAuxiliares = new ArrayList<>();
+		
+		// Alimenta a lista de abertura de produtos / Clientes
+		if (aberturasProdutos != null && aberturasProdutos.size() > 0 && tipo.equals(TipoOperacao.ABERTURA))
+			for (AberturaProduto a : aberturasProdutos) {
+				f.getListaAberturas().add(a);
+				aberturasAuxiliares.add(a);
+			}
+
+		//Essalista é utilizada para calcular as comissões e premiações de colocacoes
+		List<AberturaProduto> colocacoesAuxiliares = new ArrayList<>();
+		
+		// Alimenta a lista de colocação de produtos
+		if (aberturasProdutos != null && aberturasProdutos.size() > 0 && tipo.equals(TipoOperacao.VISITA))
+			for (AberturaProduto a : aberturasProdutos) {
+				f.getListaColocacao().add(a);
+				colocacoesAuxiliares.add(a);
+			}
+		
+		// Alimenta o número de aberturas
+		if (tipo.equals(TipoOperacao.ABERTURA) && aberturasProdutos != null) {
+			if (aberturasProdutos.size() == 1) {
+				f.incrementaAberturas1p();
+
+			} else if (aberturasProdutos.size() == 2) {
+				f.incrementaAberturas2p();
+			} else if (aberturasProdutos.size() >= 3) {
+				f.incrementaAberturas3p();
+			}
+		}
+
+		f.incrementaComissaoVendas(comissaoTotal());
+		f.incrementaComissaoAberturas(funcionario.getTipoVendedor().comissaoAbertura(aberturasAuxiliares, tiposProdutos));
+		f.incrementaPremiacaoAberturas(funcionario.getTipoVendedor().premiacaoAbertura(aberturasAuxiliares, tiposProdutos));
+		f.incrementaComissaoColocacao(funcionario.getTipoVendedor().comissaoColocacao(colocacoesAuxiliares, tiposProdutos));
+		f.incrementaPremiacaoColocacao(funcionario.getTipoVendedor().premiacaoColocacao(colocacoesAuxiliares, tiposProdutos));
 		f.incrementaFaturamento(ReceitaTotal());
 	}
 

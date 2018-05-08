@@ -37,14 +37,13 @@
 			</p:panelGrid>
 
 
-			<p:dataTable var="produto"
-				id="tbl"				
+			<p:dataTable var="produto" id="tbl"
 				value="#{consolidadoProdutoVendedorBean.listaProdutos}"
-				style="margin-top:10px; font-size: 10px">
+				style="margin-top:10px; font-size: 9px">
 
 				<p:columnGroup type="header">
 					<p:row>
-						<p:column rowspan="2" headerText="Produtos" style="width: 13%" />
+						<p:column rowspan="2" headerText="Produtos" style="width: 10%" />
 						<p:column
 							colspan="#{consolidadoProdutoVendedorBean.quantFuncionarios()}"
 							headerText="Funcionários" />
@@ -76,7 +75,7 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.faturamento}"
+							<p:column footerText="R$ #{fecha.faturamentoString()}"
 								style="text-align:left" />
 						</ui:repeat>
 					</p:row>
@@ -86,7 +85,7 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.receitaBoleto()}"
+							<p:column footerText="R$ #{fecha.receitaBoletoString()}"
 								style="text-align:left" />
 						</ui:repeat>
 					</p:row>
@@ -96,7 +95,7 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.receitaCheque()}"
+							<p:column footerText="R$ #{fecha.receitaChequeString()}"
 								style="text-align:left" />
 						</ui:repeat>
 					</p:row>
@@ -107,7 +106,7 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.receitaDinheiro()}"
+							<p:column footerText="R$ #{fecha.receitaDinheiroString()}"
 								style="text-align:left" />
 						</ui:repeat>
 					</p:row>
@@ -118,7 +117,7 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.comissoesTotais}"
+							<p:column footerText="R$ #{fecha.comissoesTotaisString()}"
 								style="text-align:left" />
 						</ui:repeat>
 					</p:row>
@@ -129,7 +128,7 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.custosViagem}"
+							<p:column footerText="R$ #{fecha.custoViagemString()}"
 								style="text-align:left" />
 						</ui:repeat>
 					</p:row>
@@ -140,7 +139,7 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.faturamentoLiquido}"
+							<p:column footerText="R$ #{fecha.faturamentoLiquidoString()}"
 								style="text-align:left" />
 						</ui:repeat>
 					</p:row>
@@ -151,8 +150,10 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.faturamentoPremiacao}"
-								style="text-align:left" />
+							<p:column footerText="R$ #{fecha.faturamentoPremiacaoString()}"
+								style="text-align:left">
+								
+							</p:column>
 						</ui:repeat>
 					</p:row>
 

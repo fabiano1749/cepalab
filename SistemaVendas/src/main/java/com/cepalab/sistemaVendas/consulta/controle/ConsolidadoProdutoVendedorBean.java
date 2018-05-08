@@ -9,6 +9,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 import com.cepalab.sistemaVendas.consulta.dominio.Consolidado;
@@ -16,6 +17,7 @@ import com.cepalab.sistemaVendas.repository.CustosViagens;
 import com.cepalab.sistemaVendas.repository.Funcionarios;
 import com.cepalab.sistemaVendas.repository.Operacoes;
 import com.cepalab.sistemaVendas.repository.Produtos;
+import com.cepalab.sistemaVendas.repository.TiposProdutos;
 
 @ViewScoped
 @Named
@@ -41,6 +43,8 @@ public class ConsolidadoProdutoVendedorBean implements Serializable {
 	@Inject
 	private CustosViagens custos;
 		
+	@Inject
+	private TiposProdutos tiposProdutos;
 	
 	@PostConstruct
 	public void inicio() {
@@ -52,8 +56,16 @@ public class ConsolidadoProdutoVendedorBean implements Serializable {
 	}
 
 	public void pesquisa() {
-		consolidado.criaListaFechamentos(listaFuncionarios, operacoes, custos, produtos);
+		//teste
+		retiraTiposFuncionários();
+		
+		consolidado.criaListaFechamentos(listaFuncionarios, operacoes, custos, produtos, tiposProdutos.tipos());
+		Funcionario fun = new Funcionario();
+		fun.setNome("TOTAL");
+		listaFuncionarios.add(fun);
 	}
+	
+	
 	
 	
 	public int quantFuncionarios() {
@@ -64,7 +76,7 @@ public class ConsolidadoProdutoVendedorBean implements Serializable {
 	private void retiraTiposFuncionários() {
 		listaFuncionarios = new ArrayList<>();
 		for(Funcionario f : listaFun) {
-			if(!f.getTipoVendedor().getNome().equals("Interno-0")) {
+			if(!f.getTipoVendedor().getNome().equals("Interno-0") && !f.getNome().equals("TOTAL")) {
 				listaFuncionarios.add(f);
 			}
 		}

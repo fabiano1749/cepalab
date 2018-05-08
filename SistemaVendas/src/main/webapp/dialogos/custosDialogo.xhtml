@@ -8,7 +8,7 @@
 
 <h:head>
 
-	<h1 class="fa-page-title">Cadastro de Custos de Viagem</h1>
+	<title> Edição de Custos de Viagem </title>
 	<h:outputStylesheet library="css" name="sistema.css" />
 
 	<f:metadata>
@@ -22,7 +22,7 @@
 
 	<h:form id="form">
 
-		<p:toolbar style="width: 90%">
+		<p:toolbar style="width: 98%">
 			<p:toolbarGroup>
 				<p:commandButton value="Salvar"
 					actionListener="#{custoViagemBean.salvar}" process="@form"
@@ -32,7 +32,7 @@
 		</p:toolbar>
 
 
-		<p:panelGrid columns="2" id="pnlnovo" styleClass="semBorda">
+		<p:panelGrid columns="2" id="pnlnovo" styleClass="semBorda" style="margin-top: 10px">
 
 			<p:outputLabel value="Vendedor" for="idVendedor"
 				rendered="#{custoViagemBean.isAdministrador()}" />

@@ -13,10 +13,8 @@ import com.cepalab.sistemaVendas.cadastro.dominio.PodeConsignar;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
 import com.cepalab.sistemaVendas.operacao.dominio.Consignacao;
-import com.cepalab.sistemaVendas.repository.ComissoesTipoVendedores;
 import com.cepalab.sistemaVendas.repository.Consignados;
 import com.cepalab.sistemaVendas.repository.Produtos;
-import com.cepalab.sistemaVendas.security.Seguranca;
 import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
 
 @Named
@@ -31,12 +29,6 @@ public class ConsignacaoBean implements Serializable {
 
 	@Inject
 	private OperacaoBean operacao;
-
-	@Inject
-	private Seguranca seg;
-
-	@Inject
-	private ComissoesTipoVendedores taxaComissao;
 
 	@Inject
 	private Consignados consignados;
@@ -59,7 +51,6 @@ public class ConsignacaoBean implements Serializable {
 		inicio();
 		operacao.getItem().setConsignacoes((consignados.porCliente(operacao.getItem().getCliente())));
 		for (Consignacao c : operacao.getItem().getConsignacoes()) {
-			c.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), c.getProduto()));
 			c.setOperacao(operacao.getItem());
 		}
 	}
@@ -71,7 +62,6 @@ public class ConsignacaoBean implements Serializable {
 		if (operacao.getItem().getConsignacoes().isEmpty() && listaAux != null) {
 			for (Consignacao c : listaAux) {
 				c.setOperacao(operacao.getItem());
-				c.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), c.getProduto()));
 			}
 			operacao.getItem().setConsignacoes(listaAux);
 
@@ -81,8 +71,6 @@ public class ConsignacaoBean implements Serializable {
 				for (Consignacao c : listaAux) {
 					if (!pertenceListaConsignados(c)) {
 						c.setOperacao(operacao.getItem());
-						c.setTaxaComissao(
-								taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), c.getProduto()));
 						operacao.getItem().getConsignacoes().add(c);
 					}
 				}
@@ -136,13 +124,12 @@ public class ConsignacaoBean implements Serializable {
 
 			else {
 				aux.setTotalConsignado(resul);
-				for(AberturaProduto a : operacao.getItem().getAberturasProdutos()) {
-					if(a.getProduto().getNome().equals(aux.getProduto().getNome())) {
+				for (AberturaProduto a : operacao.getItem().getAberturasProdutos()) {
+					if (a.getProduto().getNome().equals(aux.getProduto().getNome())) {
 						a.setQuantidade(aux.getConsignados());
 					}
-					System.out.println("Chegou");
 				}
-				
+
 			}
 
 		}
@@ -169,8 +156,8 @@ public class ConsignacaoBean implements Serializable {
 	public void adicionaConsignacao() {
 		if (!isConsignado(consignacao.getProduto())) {
 			consignacao.setTotalConsignado(consignacao.getConsignados());
-			consignacao.setTaxaComissao(
-					taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), consignacao.getProduto()));
+			consignacao.setTaxaComissao(operacao.getTipoVendedor().taxaComissaoConsignacao(consignacao));
+
 			consignacao.setOperacao(operacao.getItem());
 			operacao.getItem().getConsignacoes().add(consignacao);
 
@@ -189,14 +176,14 @@ public class ConsignacaoBean implements Serializable {
 
 	public void removeConsignacao() {
 		List<Consignacao> listaConsignacao = new ArrayList<>();
-		for(Consignacao c : operacao.getItem().getConsignacoes()) {
-			if(!c.getProduto().getNome().equals(consignacao.getProduto().getNome())) {
+		for (Consignacao c : operacao.getItem().getConsignacoes()) {
+			if (!c.getProduto().getNome().equals(consignacao.getProduto().getNome())) {
 				listaConsignacao.add(c);
 			}
 		}
-		
+
 		operacao.getItem().setConsignacoes(listaConsignacao);
-		
+
 		if (consignacao.getVendidos() != 0) {
 			resumoOperacaoBean.alimentaListaResumoConsignacaoVenda();
 			receitaBean.criaListaReceitas();
@@ -215,7 +202,6 @@ public class ConsignacaoBean implements Serializable {
 		consignacao = new Consignacao();
 	}
 
-	
 	public void trocaItem(Consignacao c) {
 		consignacao = c;
 	}
@@ -250,9 +236,9 @@ public class ConsignacaoBean implements Serializable {
 	public void validaPreco(Consignacao aux) {
 		if (aux != null) {
 			BigDecimal valorInformado = aux.getValorUnitario();
-			BigDecimal minValorConsignacao = aux.getProduto().getMinValorConsignacao();
+			BigDecimal minValorConsignacao = operacao.getTipoVendedor().minConsignacao(aux);
 			if (valorInformado == null || valorInformado.compareTo(minValorConsignacao) < 0) {
-				//aux.setValorUnitario(minValorConsignacao);
+				aux.setValorUnitario(minValorConsignacao);
 				FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para esse produto!");
 			}
 		}
@@ -265,18 +251,14 @@ public class ConsignacaoBean implements Serializable {
 			return false;
 		}
 	}
-
-	
-	
-	
 	public void validaPrecoNovaConsignacao() {
 		BigDecimal valor = consignacao.getValorUnitario();
-		BigDecimal minConsignacao = consignacao.getProduto().getMinValorConsignacao();
+		BigDecimal minConsignacao = operacao.getTipoVendedor().minConsignacao(consignacao);
 
 		int resul = valor.compareTo(minConsignacao);
 		if (resul < 0) {
 			FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para esse produto!");
-			//consignacao.setValorUnitario(minConsignacao);
+			consignacao.setValorUnitario(minConsignacao);
 		}
 
 	}
@@ -290,8 +272,34 @@ public class ConsignacaoBean implements Serializable {
 
 	public void taxaComissao(Consignacao c) {
 		if (c != null) {
-			c.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), c.getProduto()));
+			c.setTaxaComissao(operacao.getTipoVendedor().taxaComissaoConsignacao(c));
+			resumoOperacaoBean.alimentaListaResumoConsignacaoVenda();
 		}
+	}
+
+	public void alteraTaxa(Consignacao c) {
+		if (c != null) {
+			BigDecimal maiorComissaoCadastrada = operacao.getTipoVendedor().maiorTaxaComissaoConsignacao(c);
+			if (c.getTaxaComissao().compareTo(maiorComissaoCadastrada) > 0) {
+				taxaComissao(c);
+			}else {
+				resumoOperacaoBean.alimentaListaResumoConsignacaoVenda();
+			}
+		}
+
+	}
+
+	public BigDecimal menorValorConsignacao() {
+
+		if (consignacao.getProduto() != null) {
+
+			return operacao.getTipoVendedor().minConsignacao(consignacao);
+		}
+		return BigDecimal.ZERO;
+	}
+
+	public void ataulizaValorConsignacao() {
+		consignacao.setValorUnitario(menorValorConsignacao());
 	}
 
 	public List<Produto> getListaProdutos() {

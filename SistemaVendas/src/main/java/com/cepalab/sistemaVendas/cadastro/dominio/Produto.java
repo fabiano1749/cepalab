@@ -22,11 +22,8 @@ public class Produto extends GenericDTO{
 		
 	private String nome;
 	private BigDecimal custo = BigDecimal.ZERO;
-	private BigDecimal minValorVenda = BigDecimal.ZERO;
-	private BigDecimal minValorConsignacao = BigDecimal.ZERO;
 	private PodeConsignar podeConsignar;
 	private TipoProduto tipo = new TipoProduto();
-	private TipoCalculoAberturaColocacao calculoComissao;  
 	
 	@Override
 	@Id
@@ -52,23 +49,7 @@ public class Produto extends GenericDTO{
 		this.custo = custo;
 	}
 	
-	@Column(name= "min_valor_venda", nullable=false, precision=10, scale=2)
-	public BigDecimal getMinValorVenda() {
-		return minValorVenda;
-	}
-	public void setMinValorVenda(BigDecimal minValorVenda) {
-		this.minValorVenda = minValorVenda;
-	}
-
-	@Column(name= "min_valor_consignacao", precision=10, scale=2)
-	public BigDecimal getMinValorConsignacao() {
-		return minValorConsignacao;
-	}
-
-	public void setMinValorConsignacao(BigDecimal minValorConsignacao) {
-		this.minValorConsignacao = minValorConsignacao;
-	}
-
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name= "pode_consignar", length=5, nullable=false)
 	public PodeConsignar getPodeConsignar() {
@@ -89,17 +70,4 @@ public class Produto extends GenericDTO{
 		this.tipo = tipo;
 	}
 
-	@Enumerated(EnumType.STRING)
-	@Column(name= "calculo_comissao", length=10)
-	public TipoCalculoAberturaColocacao getCalculoComissao() {
-		return calculoComissao;
-	}
-
-	public void setCalculoComissao(TipoCalculoAberturaColocacao calculoComissao) {
-		this.calculoComissao = calculoComissao;
-	}
-
-	
-	
-	
 }

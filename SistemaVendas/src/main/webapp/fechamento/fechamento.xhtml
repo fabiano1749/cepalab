@@ -13,47 +13,67 @@
 		<h:form id="idForm">
 
 			<p:messages id="mensagem" autoUpdate="true" />
-			<p:toolbar
-				style="margin-top: 5px; background-color: white">
+			<p:toolbar style="margin-top: 3px; background-color: white">
 				<p:toolbarGroup>
-					<p:panelGrid id="pnlFechamento" columns="6" styleClass="semBorda">
+					<p:panelGrid id="pnlFechamento" columns="9" styleClass="semBorda">
 						<p:outputLabel value="Vendedor" for="idVendedor"
 							rendered="#{fechamentoBean.isAdministrador()}" />
 						<p:selectOneMenu id="idVendedor" required="true"
 							rendered="#{fechamentoBean.isAdministrador()}"
 							requiredMessage="Vendedor Não informado!"
-							value="#{fechamentoBean.item.funcionario}"
+							value="#{fechamentoBean.funcionario}"
 							converter="omnifaces.SelectItemsConverter">
 							<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
 							<f:selectItems value="#{fechamentoBean.listaFuncionarios}"
 								var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+
+							<p:ajax
+								listener="#{fechamentoAcertoProdutoBean.criaListaExpedicao}"
+								process="@this" partialSubmit="true" update="exped" />
+
 						</p:selectOneMenu>
 
 						<p:outputLabel value="Data inicial" for="dataInicio" />
 						<p:calendar style="vertical-align:middle" id="dataInicio"
-							locale="pt" value="#{fechamentoBean.item.inicio}" required="true"
+							locale="pt" value="#{fechamentoBean.inicio}" required="true"
 							pattern="dd/MM/yyyy"
 							requiredMessage="Data inicial não informada!">
 						</p:calendar>
 
 						<p:outputLabel value="Data Final" for="dataFim" />
 						<p:calendar style="vertical-align:middle" id="dataFim" locale="pt"
-							value="#{fechamentoBean.item.fim}" required="true"
+							value="#{fechamentoBean.fim}" required="true"
 							pattern="dd/MM/yyyy" requiredMessage="Data final não informada!">
 						</p:calendar>
+
+						<p:outputLabel value="Expedição" for="exped" />
+						<p:selectOneMenu id="exped" required="true"
+							rendered="#{fechamentoBean.isAdministrador()}"
+							requiredMessage="Expedição não informada!"
+							value="#{fechamentoAcertoProdutoBean.expedicao}"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+							<f:selectItems
+								value="#{fechamentoAcertoProdutoBean.listaExpedicao}"
+								var="exped" itemValue="#{exped}"
+								itemLabel="Fechada em - #{exped.acerto}" />
+						</p:selectOneMenu>
+
+						<p:commandButton value="Pesquisar"
+							actionListener="#{fechamentoBean.criaFechamento}"
+							style="height:40px;"
+							update="idTabView:idTabelaVendas idTabView:idTabelaAberturas 
+						idTabView:idTabelaColocacao idTabView:idTabelaCustos idTabView:idTabelaDespesas
+						idTabView:idTabelaRecRess idTabView:idTabelaDescontos idTabView:idTabelaRecebimentoInad
+						idTabView:idpngAcertoProduto idTabView:idTabAcertoProduto idTabView:idPainelResumo 
+						idTabView:idPainelOutros idTabView:idAberturas "/>
+
 					</p:panelGrid>
 				</p:toolbarGroup>
 
-				<p:toolbarGroup align="right">
-					<p:commandButton value="Pesquisar"
-						actionListener="#{fechamentoBean.criaListaOperacoes}"
-						style="height:40px;"
-						update="idTabView:idPainelResumo idTabView:idPainelOutros idTabView:idTabelaVendas idTabView:idTabelaAbertura idTabView:idTabelaColocacao idTabView:idTabelaCustos idTabView:idTabelaDespesas idTabView:idTabelaRecRess idTabView:idTabelaDescontos idTabView:idTabelaRecebimentoInad idTabView:idpngAcertoProduto idTabView:idTabAcertoProduto" />
-				</p:toolbarGroup>
 			</p:toolbar>
 
-
-			<p:tabView id="idTabView" style="margin-top: 30px">
+			<p:tabView id="idTabView" style="margin-top: 20px; overflow: hidden;">
 
 				<p:tab title="Resumo">
 					<ui:include src="/fechamento/fechamentoResumo.xhtml" />
@@ -72,36 +92,33 @@
 				</p:tab>
 
 				<p:tab title="Custos">
-					<ui:include src="/fechamento/custos.xhtml" />
+					<ui:include src="/fechamento/fechamentoCustos.xhtml" />
 				</p:tab>
 
 				<p:tab title="Despesas">
-					<ui:include src="/fechamento/despesas.xhtml" />
+					<ui:include src="/fechamento/fechamentoDespesas.xhtml" />
 				</p:tab>
 
 				<p:tab title="Reolhidas-Ressarcidas">
-					<ui:include src="/fechamento/recolhidaRessarcida.xhtml" />
+					<ui:include src="/fechamento/fechamentoRecolhidaRessarcida.xhtml" />
 				</p:tab>
 
 				<p:tab title="Descontos de Salário">
-					<ui:include src="/fechamento/descontoSalario.xhtml" />
+					<ui:include src="/fechamento/fechamentoDescontoSalario.xhtml" />
 				</p:tab>
 
 				<p:tab title="Recebimento Inadimplente">
-					<ui:include src="/fechamento/recebimentoInadimplente.xhtml" />
-				</p:tab>
-				
-				<p:tab title="Acerto de produtos">
-					<ui:include src="/fechamento/acertoProduto.xhtml" />
+					<ui:include
+						src="/fechamento/fechamentoRecebimentoInadimplente.xhtml" />
 				</p:tab>
 
-				<p:tab title="Premiação"
-					rendered="#{fechamentoBean.isAdministrador()}">
-					<ui:include src="/fechamento/fechamentoPremiacao.xhtml" />
+				<p:tab title="Acerto de produtos">
+					<ui:include src="/fechamento/fechamentoAcertoProduto.xhtml" />
 				</p:tab>
 
 
 			</p:tabView>
+
 
 		</h:form>
 

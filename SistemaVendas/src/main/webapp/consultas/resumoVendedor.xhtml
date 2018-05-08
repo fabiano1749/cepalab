@@ -16,7 +16,8 @@
 
 				<p:toolbarGroup align="right">
 					<p:commandButton value="Pesquisar"
-						actionListener="#{resumoVendedorBean.pesquisa}" update="@form" process="form pnlNovo" />
+						actionListener="#{resumoVendedorBean.pesquisa}" update="@form"
+						process="form pnlNovo" />
 				</p:toolbarGroup>
 
 			</p:toolbar>
@@ -41,8 +42,9 @@
 
 				<p:outputLabel value="Data inicial" for="dataInicio" />
 				<p:calendar style="vertical-align:middle" id="dataInicio"
-					locale="pt" value="#{resumoVendedorBean.fechamentoGeral.inicio}" required="true"
-					pattern="dd/MM/yyyy" requiredMessage="Data inicial não informada!">
+					locale="pt" value="#{resumoVendedorBean.fechamentoGeral.inicio}"
+					required="true" pattern="dd/MM/yyyy"
+					requiredMessage="Data inicial não informada!">
 				</p:calendar>
 
 				<p:outputLabel value="Data Final" for="dataFim" />
@@ -73,7 +75,9 @@
 
 					<p:column headerText="Receita"
 						style="text-align: center; width: 20%">
-						<h:outputText value="#{item.receita}" />
+						<p:outputLabel value="#{item.receita}">
+							<f:convertNumber type="currency" locale="pt_BR" />
+						</p:outputLabel>
 					</p:column>
 
 					<p:columnGroup type="footer">
@@ -106,17 +110,19 @@
 
 					<p:column headerText="Receita"
 						style="text-align: center; width: 20%">
-						<h:outputText value="#{item.receita}" />
+						<p:outputLabel value="#{item.receita}">
+							<f:convertNumber type="currency" locale="pt_BR" />
+						</p:outputLabel>
 					</p:column>
 
 				</p:dataTable>
 
-				<p:panelGrid columns="2" styleClass="semBorda" 
-				style="margin-left: 3px; margin-top: 5px">
+				<p:panelGrid columns="2" styleClass="semBorda"
+					style="margin-left: 3px; margin-top: 5px">
 					<p:outputLabel value="Aberturas 1p : " />
 					<p:outputLabel
 						value="#{resumoVendedorBean.fechamentoGeral.aberturas1p}" />
-					
+
 					<p:outputLabel value="Aberturas 2p : " />
 					<p:outputLabel
 						value="#{resumoVendedorBean.fechamentoGeral.aberturas2p}" />
@@ -124,44 +130,63 @@
 					<p:outputLabel value="Aberturas 3p : " />
 					<p:outputLabel
 						value="#{resumoVendedorBean.fechamentoGeral.aberturas3p}" />
-						
+
 					<p:outputLabel value="Comissão Vendas : " />
 					<p:outputLabel
-						value="#{resumoVendedorBean.fechamentoGeral.comissaoVendas}" />
-						
+						value="#{resumoVendedorBean.fechamentoGeral.comissaoVendas}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+
 					<p:outputLabel value="Comissão Aberturas : " />
 					<p:outputLabel
-						value="#{resumoVendedorBean.fechamentoGeral.comissaoAberturas}" />
-					
+						value="#{resumoVendedorBean.fechamentoGeral.comissaoAberturas}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+
 					<p:outputLabel value="Comissão Colocação : " />
 					<p:outputLabel
-						value="#{resumoVendedorBean.fechamentoGeral.comissaoColocacao}" />
-						
-					<p:outputLabel value="Comissão Total : " style="color: green"/>
+						value="#{resumoVendedorBean.fechamentoGeral.comissaoColocacao}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+
+					<p:outputLabel value="Comissão Total : " style="color: green" />
 					<p:outputLabel style="color: green"
-						value="#{resumoVendedorBean.fechamentoGeral.comissoesTotais}" />
-					
+						value="#{resumoVendedorBean.fechamentoGeral.comissoesTotais}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+
 					<p:outputLabel value="Premiação Aberturas : " />
 					<p:outputLabel
-						value="#{resumoVendedorBean.fechamentoGeral.premiacaoAberturas}" />
-						
+						value="#{resumoVendedorBean.fechamentoGeral.premiacaoAberturas}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+
 					<p:outputLabel value="Premiação Colocações : " />
 					<p:outputLabel
-						value="#{resumoVendedorBean.fechamentoGeral.premiacaoColocacao}" />		
-						
-					<p:outputLabel value="Faturamento Premiação : " style="color: green" />
+						value="#{resumoVendedorBean.fechamentoGeral.premiacaoColocacao}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+
+					<p:outputLabel value="Faturamento Premiação : "
+						style="color: green" />
 					<p:outputLabel style="color: green"
-						value="#{resumoVendedorBean.fechamentoGeral.faturamentoPremiacao}" />	
-					
+						value="#{resumoVendedorBean.fechamentoGeral.faturamentoPremiacao}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+
 					<p:outputLabel value="Custos de Viagem : " />
 					<p:outputLabel
-						value="#{resumoVendedorBean.fechamentoGeral.custosViagem}" />	
-					
-					<p:outputLabel value="Faturamento Líquido : " style="color: green"/>
+						value="#{resumoVendedorBean.fechamentoGeral.custosViagem}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+
+					<p:outputLabel value="Faturamento Líquido : " style="color: green" />
 					<p:outputLabel style="color: green"
-						value="#{resumoVendedorBean.fechamentoGeral.faturamentoLiquido}" />	
-					
-					
+						value="#{resumoVendedorBean.fechamentoGeral.faturamentoLiquido}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</p:outputLabel>
+
+
 				</p:panelGrid>
 
 

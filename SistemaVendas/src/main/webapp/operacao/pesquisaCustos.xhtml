@@ -26,7 +26,8 @@
 			<p:panelGrid columns="6" style="margin-top: 10px"
 				styleClass="semBorda" id="idPnlPesquisa">
 
-				<p:outputLabel value="Funcionário" rendered="#{pesquisaCustosBean.isAdministrador()}"/>
+				<p:outputLabel value="Funcionário"
+					rendered="#{pesquisaCustosBean.isAdministrador()}" />
 				<p:selectOneMenu value="#{pesquisaCustosBean.filtro.funcionario}"
 					rendered="#{pesquisaCustosBean.isAdministrador()}"
 					converter="omnifaces.SelectItemsConverter">
@@ -79,13 +80,34 @@
 							listener="#{pesquisaCustosBean.pesquisar}" process="@this"
 							update="idTabela" />
 					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{pesquisaCustosBean.troca(item)}"
+						style="margin-left: 4px; width: 40%" process="@this"
+						update="idConfirmDialogExlusao" oncomplete="PF('confirmExclusao').show()">
+					</p:commandButton>
+
 				</p:column>
 
 			</p:dataTable>
 
 		</h:form>
 
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao" header="Exclusão de custos"
+			message="Quer realmente excluir o custos : #{pesquisaCustosBean.custo.valor} ?">
+			<h:form id="formExclusao">
+				<p:messages />
+				<p:commandButton value="Sim"
+					actionListener="#{pesquisaCustosBean.excluir}"
+					update="idFormPesquisa:idTabela" process="@this"
+					oncomplete="PF('confirmExclusao').hide(); return false;" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
 
+			</h:form>
+		</p:confirmDialog>
 
 
 

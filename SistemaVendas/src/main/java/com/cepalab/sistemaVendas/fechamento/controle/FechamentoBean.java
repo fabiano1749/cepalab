@@ -3,6 +3,7 @@ package com.cepalab.sistemaVendas.fechamento.controle;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -13,12 +14,14 @@ import javax.inject.Named;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.Grupo;
 import com.cepalab.sistemaVendas.fechamento.dominio.Fechamento;
-import com.cepalab.sistemaVendas.fechamento.dominio.FormaPagamentoValor;
-import com.cepalab.sistemaVendas.operacao.dominio.FormaPagamento;
-import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
+import com.cepalab.sistemaVendas.repository.ComissoesRecolhidasRessarcidas;
+import com.cepalab.sistemaVendas.repository.CustosViagens;
+import com.cepalab.sistemaVendas.repository.DescontosSalarios;
+import com.cepalab.sistemaVendas.repository.DespesasVendedores;
 import com.cepalab.sistemaVendas.repository.Funcionarios;
 import com.cepalab.sistemaVendas.repository.Operacoes;
-import com.cepalab.sistemaVendas.repository.Receitas;
+import com.cepalab.sistemaVendas.repository.RecebimentosInadiplentes;
+import com.cepalab.sistemaVendas.repository.TiposProdutos;
 import com.cepalab.sistemaVendas.security.Seguranca;
 
 @ViewScoped
@@ -26,17 +29,13 @@ import com.cepalab.sistemaVendas.security.Seguranca;
 public class FechamentoBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
 	private Fechamento item;
-	private BigDecimal totalReceita = BigDecimal.ZERO;
-	private BigDecimal comissaoTotal = BigDecimal.ZERO;
-	private BigDecimal comissoesVendas = BigDecimal.ZERO;
-	private BigDecimal faturamentoPremiacao = BigDecimal.ZERO;
-	private BigDecimal repasse = BigDecimal.ZERO;
-	private BigDecimal premiacao = BigDecimal.ZERO;
-	private List<Operacao> listaOperacoes = new ArrayList<>();
+	private Funcionario funcionario = new Funcionario();
+	private Date inicio = new Date();
+	private Date fim = new Date();
 	private List<Funcionario> listaFuncionarios = new ArrayList<>();
 	private List<Funcionario> listaFun = new ArrayList<>();
-	private List<FormaPagamentoValor> formaPagValor = new ArrayList<>();
 
 	@Inject
 	private Funcionarios fun;
@@ -45,110 +44,59 @@ public class FechamentoBean implements Serializable {
 	private Operacoes operacoes;
 
 	@Inject
-	private FechamentoAberturaBean aberturaBean;
+	private CustosViagens custos;
 
 	@Inject
-	private Receitas receitas;
+	private DespesasVendedores despesas;
 
 	@Inject
-	private FechamentoCustosBean fechamentoCustoBean;
+	private ComissoesRecolhidasRessarcidas recolhidaRessarcida;
 
 	@Inject
-	private FechamentoDespesasBean fechamentoDespesaBean;
+	private DescontosSalarios descontos;
 
 	@Inject
-	private FechamentoRecolhidaRessarcidaBean recolhidaRessarcidaBean;
+	private RecebimentosInadiplentes recebimentoInadimplente;
 
 	@Inject
-	private FechamentoDescontoSalarioBean descontoSalarioBean;
+	private FechamentoAcertoProdutoBean acertoProduto;
 
 	@Inject
-	private FechamentoVendasBean fechamentoVendasBean;
-
-	@Inject
-	private FechamentoRecebimentoInadimplenteBean fechamentoRecebimentoBean;
-
-	@Inject
-	private FechamentoAcertoProdutoBean fechamentoAcertoProdutoBean;
-
+	private TiposProdutos tiposProdutos;
+	
 	@Inject
 	private Seguranca seg;
 
 	@PostConstruct
 	public void inicio() {
-		listaFun = fun.funcionarios();
-		retiraTiposFuncionários();
-		item = new Fechamento();
 
 		if (!isAdministrador()) {
-			item.setFuncionario(seg.UsuarioLogado());
+			funcionario = (seg.UsuarioLogado());
+			limpa();
+		} else {
+			listaFun = fun.funcionarios();
+			retiraTiposFuncionários();
+			limpa();
 		}
+		
+		
 
-		limpa();
 	}
 
 	public void limpa() {
-		totalReceita = new BigDecimal("0");
-		comissaoTotal = new BigDecimal("0");
-		comissoesVendas = new BigDecimal("0");
-		faturamentoPremiacao = new BigDecimal("0");
-		repasse = new BigDecimal("0");
-		premiacao = new BigDecimal("0");
-		listaOperacoes = new ArrayList<>();
+		item = new Fechamento();
 	}
 
-	public void criaListaOperacoes() {
+	public void criaFechamento() {
 		limpa();
+		item.setFuncionario(funcionario);
+		item.setInicio(inicio);
+		item.setFim(fim);
 
-		listaOperacoes = operacoes.resumo(item.getFuncionario(), item.getInicio(), item.getFim());
-		formaPagValor = receitas.resumoReceitas(item.getFuncionario(), item.getInicio(), item.getFim());
-		aberturaBean.criaListaGeral();
-		fechamentoCustoBean.criaListaCustos();
-		fechamentoDespesaBean.criaListaDespesas();
-		recolhidaRessarcidaBean.criaListaRecolhidaRessarcida();
-		descontoSalarioBean.criaListaDescontos();
-		fechamentoVendasBean.criaListaVendas();
-		fechamentoRecebimentoBean.criaListaRecebimentos();
-		fechamentoAcertoProdutoBean.inicio();
+		item.start(operacoes, custos, despesas, recolhidaRessarcida, descontos, recebimentoInadimplente, tiposProdutos.tipos());
+		acertoProduto.inicio();
+		item.calculaRepasse();
 
-		totalReceitaComissao();
-		calculaComissaoTotal();
-		calculaRepasse();
-
-	}
-
-	public void calculaRepasse() {
-		repasse = BigDecimal.ZERO;
-		for (FormaPagamentoValor f : formaPagValor) {
-			if (f.getForma().equals(FormaPagamento.DINHEIRO)) {
-				repasse = repasse.add(f.getValor());
-			}
-		}
-		if(premiacao == null) { premiacao = BigDecimal.ZERO;}
-		
-		repasse = repasse.subtract(comissaoTotal).subtract(recolhidaRessarcidaBean.getRessarcida())
-				.subtract(fechamentoCustoBean.getCustoTotal()).subtract(premiacao)
-				.add(fechamentoDespesaBean.getDespesaTotal()).add(recolhidaRessarcidaBean.getRecolhida())
-				.add(descontoSalarioBean.getDesconto()).add(fechamentoRecebimentoBean.getTotal())
-				.add(fechamentoAcertoProdutoBean.getDescontoTotal());
-
-	}
-
-	private void calculaComissaoTotal() {
-		comissaoTotal = comissaoTotal.add(comissoesVendas).add(aberturaBean.getComissaoAberturas())
-				.add(aberturaBean.getComissaoColocacao());
-	}
-
-	public void totalReceitaComissao() {
-
-		if (listaOperacoes != null) {
-			for (Operacao o : listaOperacoes) {
-				totalReceita = totalReceita.add(o.ReceitaTotal());
-				comissoesVendas = comissoesVendas.add(o.comissaoTotal());
-			
-			}
-			faturamentoPremiacao = faturamentoPremiacao.add(totalReceita);
-		}
 	}
 
 	public boolean isAdministrador() {
@@ -159,19 +107,26 @@ public class FechamentoBean implements Serializable {
 		}
 		return false;
 	}
-	
-	
-	//Melhorar isso em versões posteriores
-		private void retiraTiposFuncionários() {
-			listaFuncionarios = new ArrayList<>();
-			for(Funcionario f : listaFun) {
-				if(!f.getTipoVendedor().getNome().equals("Interno-0")) {
-					listaFuncionarios.add(f);
-				}
+
+	// Melhorar isso em versões posteriores
+	private void retiraTiposFuncionários() {
+		listaFuncionarios = new ArrayList<>();
+		for (Funcionario f : listaFun) {
+			if (!f.getTipoVendedor().getNome().equals("Interno-0")) {
+				listaFuncionarios.add(f);
 			}
 		}
-	
-	
+	}
+
+	public void atualizaRepasse() {
+		if (item.getPremiacao() == null) {
+			item.setPremiacao(BigDecimal.ZERO);
+			item.calculaRepasse();
+		} else {
+			item.calculaRepasse();
+		}
+
+	}
 
 	public List<Funcionario> getListaFuncionarios() {
 		return listaFuncionarios;
@@ -179,6 +134,14 @@ public class FechamentoBean implements Serializable {
 
 	public void setListaFuncionarios(List<Funcionario> listaFuncionarios) {
 		this.listaFuncionarios = listaFuncionarios;
+	}
+
+	public List<Funcionario> getListaFun() {
+		return listaFun;
+	}
+
+	public void setListaFun(List<Funcionario> listaFun) {
+		this.listaFun = listaFun;
 	}
 
 	public Fechamento getItem() {
@@ -189,60 +152,27 @@ public class FechamentoBean implements Serializable {
 		this.item = item;
 	}
 
-	public BigDecimal getTotalReceita() {
-		return totalReceita;
+	public Funcionario getFuncionario() {
+		return funcionario;
 	}
 
-	public void setTotalReceita(BigDecimal totalReceita) {
-		this.totalReceita = totalReceita;
+	public void setFuncionario(Funcionario funcionario) {
+		this.funcionario = funcionario;
 	}
 
-	public BigDecimal getComissoesVendas() {
-		return comissoesVendas;
+	public Date getInicio() {
+		return inicio;
 	}
 
-	public void setComissoesVendas(BigDecimal comissoesVendas) {
-		this.comissoesVendas = comissoesVendas;
+	public void setInicio(Date inicio) {
+		this.inicio = inicio;
 	}
 
-	public List<FormaPagamentoValor> getFormaPagValor() {
-		return formaPagValor;
+	public Date getFim() {
+		return fim;
 	}
 
-	public void setFormaPagValor(List<FormaPagamentoValor> formaPagValor) {
-		this.formaPagValor = formaPagValor;
+	public void setFim(Date fim) {
+		this.fim = fim;
 	}
-
-	public BigDecimal getComissaoTotal() {
-		return comissaoTotal;
-	}
-
-	public void setComissaoTotal(BigDecimal comissaoTotal) {
-		this.comissaoTotal = comissaoTotal;
-	}
-
-	public BigDecimal getFaturamentoPremiacao() {
-		return faturamentoPremiacao;
-	}
-
-	public void setFaturamentoPremiacao(BigDecimal faturamentoPremiacao) {
-		this.faturamentoPremiacao = faturamentoPremiacao;
-	}
-
-	public BigDecimal getRepasse() {
-		return repasse;
-	}
-
-	public void setRepasse(BigDecimal repasse) {
-		this.repasse = repasse;
-	}
-
-	public BigDecimal getPremiacao() {
-		return premiacao;
-	}
-
-	public void setPremiacao(BigDecimal premiacao) {
-		this.premiacao = premiacao;
-	}
-
 }

@@ -5,173 +5,175 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:o="http://omnifaces.org/ui">
 
-	<div id="container">
-
-		<div id="conteudo-left-resumo">
-			<p:panel header="Resumo da Operação" id="idPainelResumo"
-				style="width: 100%; text-align: center">
 
 
-				<p:panelGrid id="idPngResumo" columns="2"
-					style="width: 100%; margin-top: 5px; text-align: left"
-					columnClasses="grid50, grid50">
-					<h:panelGroup>
-						<p:panelGrid columns="2" columnClasses="grid50, grid50"
-							styleClass="semBorda">
-							<p:outputLabel value="Faturamento Total" />
-							<p:inputText value="#{fechamentoBean.totalReceita}"
-								style="text-align:center">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</p:inputText>
-						</p:panelGrid>
-					</h:panelGroup>
-					<h:panelGroup>
-						<p:panelGrid columns="2" columnClasses="grid50, grid50"
-							styleClass="semBorda">
-							<p:outputLabel value="Comissão Total" />
-							<p:inputText style="text-align:center; color: red"
-								value="#{fechamentoBean.comissaoTotal}">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</p:inputText>
-						</p:panelGrid>
-					</h:panelGroup>
-					<h:panelGroup style="width: 50%; margin-top: 0px">
-						<p:dataTable id="idTabela" style="width: 100%; margin-top:0px"
-							value="#{fechamentoBean.formaPagValor}" var="item">
-							<p:column headerText="Pagamento" style="text-align: center">
-								<h:outputText value="#{item.forma.descricao}" />
-							</p:column>
 
-							<p:column headerText="Valor" style="text-align: center">
-								<h:outputText value="#{item.valor}">
-									<f:convertNumber type="currency" locale="pt_BR" />
-								</h:outputText>
-							</p:column>
-						</p:dataTable>
-					</h:panelGroup>
-
-					<h:panelGroup style="width: 50%">
-						<p:panelGrid columns="2" styleClass="semBorda"
-							columnClasses="grid50, grid50" style="text-align: left">
-							<p:outputLabel value="Comissão Vendas" />
-							<p:inputText value="#{fechamentoBean.comissoesVendas}"
-								style="text-align:center">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</p:inputText>
-
-							<p:outputLabel value="Comissão Aberturas" />
-							<p:inputText value="#{fechamentoAberturaBean.comissaoAberturas}"
-								style="text-align:center">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</p:inputText>
-
-							<p:outputLabel value="Comissão Colocações" />
-							<p:inputText value="#{fechamentoAberturaBean.comissaoColocacao}"
-								style="text-align:center">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</p:inputText>
-
-							<p:separator />
-							<p:separator />
-
-							<p:outputLabel value="Premiação Aberturas" />
-							<p:inputText value="#{fechamentoAberturaBean.premiacaoAbertura}"
-								style="text-align:center">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</p:inputText>
-
-							<p:outputLabel value="Premiação Colocações" />
-							<p:inputText value="#{fechamentoAberturaBean.premiacaoColocacao}"
-								style="text-align:center">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</p:inputText>
-
-							<p:outputLabel value="Faturamento Premiação" />
-							<p:inputText value="#{fechamentoBean.faturamentoPremiacao}"
-								style="text-align:center">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</p:inputText>
-
-							<p:separator />
-							<p:separator />
+	<p:panel header="Resumo da Operação" id="idPainelResumo"
+		style="width: 68%; text-align: center; overflow: hidden; float: left">
 
 
-							<p:outputLabel value="Premiação" />
-							<p:inputNumber value="#{fechamentoBean.premiacao}"
-								style="color:red; text-align: center" decimalSeparator=","
-								thousandSeparator="." decimalPlaces="2">
-								<p:ajax listener="#{fechamentoBean.calculaRepasse}"
-									process="@this" partialSubmit="true" update="repasse" />
-							</p:inputNumber>
 
-							<p:outputLabel value="Repasse" />
-							<p:inputText value="#{fechamentoBean.repasse}" id="repasse"
-								style="text-align:center">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</p:inputText>
+		<p:panel header="Receitas" id="idPainelReceitas"
+			style="width: 40%; text-align: center; float: left">
 
-						</p:panelGrid>
-					</h:panelGroup>
+			<p:panelGrid styleClass="semBorda" columns="2" style="width: 100%">
 
-				</p:panelGrid>
+				<p:outputLabel value="Faturamento Total" />
+				<p:outputLabel value="#{fechamentoBean.item.faturamento}"
+					style="text-align:left">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</p:outputLabel>
+			</p:panelGrid>
 
-			</p:panel>
-		</div>
+			<p:dataTable id="idTabela" style="width: 100%; margin-top: 10px"
+				value="#{fechamentoBean.item.listaReceitaFormaPagamento}" var="item">
+				<p:column headerText="Pagamento" style="text-align: center">
+					<h:outputText value="#{item.forma.descricao}"/>
+				</p:column>
 
-		<div id="conteudo-right-resumo">
-			<p:panel header="Outros Valores" id="idPainelOutros"
-				style="width: 100%; text-align: center; margin-top: 0px">
-
-				<p:panelGrid columns="2" styleClass="semBorda"
-					style="text-align: left">
-
-					<p:outputLabel value="Custos Totais" />
-					<p:inputText value="#{fechamentoCustosBean.custoTotal}"
-						style="text-align:center; color: red">
+				<p:column headerText="Valor" style="text-align: center">
+					<h:outputText value="#{item.valor}">
 						<f:convertNumber type="currency" locale="pt_BR" />
-					</p:inputText>
+					</h:outputText>
+				</p:column>
+				
+			</p:dataTable>
 
-					<p:outputLabel value="Despesas Totais" />
-					<p:inputText value="#{fechamentoDespesasBean.despesaTotal}"
-						style="text-align:center; color: green">
-						<f:convertNumber type="currency" locale="pt_BR" />
-					</p:inputText>
+		</p:panel>
 
-					<p:outputLabel value="Comissão recolhida" />
-					<p:inputText value="#{fechamentoRecolhidaRessarcidaBean.recolhida}"
-						style="text-align:center; color: green">
-						<f:convertNumber type="currency" locale="pt_BR" />
-					</p:inputText>
+		<p:panel header="Comissões" id="idPainelComissoes"
+			style="width: 57%; text-align: center; float: right">
 
-					<p:outputLabel value="Comissão Ressarcida" />
-					<p:inputText
-						value="#{fechamentoRecolhidaRessarcidaBean.ressarcida}"
-						style="text-align:center; color: red">
-						<f:convertNumber type="currency" locale="pt_BR" />
-					</p:inputText>
+			<p:panelGrid columns="2" styleClass="semBorda"
+				columnClasses="grid50, grid50" style="text-align: left">
 
-					<p:outputLabel value="Salário descontado" />
-					<p:inputText value="#{fechamentoDescontoSalarioBean.desconto}"
-						style="text-align:center; color: green">
-						<f:convertNumber type="currency" locale="pt_BR" />
-					</p:inputText>
+				<p:outputLabel value="Comissões Totais" />
+				<p:outputLabel value="#{fechamentoBean.item.comissoesTotais}"
+					style="text-align:center">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</p:outputLabel>
 
-					<p:outputLabel value="Recebimento Inadimplente" />
-					<p:inputText value="#{fechamentoRecebimentoInadimplenteBean.total}"
-						style="text-align:center; color: green">
-						<f:convertNumber type="currency" locale="pt_BR" />
-					</p:inputText>
+				<p:separator />
+				<p:separator />
 
-					<p:outputLabel value="Diferença - Produtos" />
-					<p:inputText value="#{fechamentoAcertoProdutoBean.descontoTotal}"
-						style="text-align:center; color: green">
-						<f:convertNumber type="currency" locale="pt_BR" />
-					</p:inputText>
+				<p:outputLabel value="Comissões Vendas" />
+				<p:outputLabel value="#{fechamentoBean.item.comissaoVendas}"
+					style="text-align:center">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</p:outputLabel>
 
-				</p:panelGrid>
+				<p:outputLabel value="Comissões Aberturas" />
+				<p:outputLabel value="#{fechamentoBean.item.comissaoAberturas}"
+					style="text-align:center">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</p:outputLabel>
 
-			</p:panel>
-		</div>
-	</div>
+				<p:outputLabel value="Comissões Colocações" />
+				<p:outputLabel value="#{fechamentoBean.item.comissaoColocacao}"
+					style="text-align:center">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</p:outputLabel>
+
+				<p:separator />
+				<p:separator />
+
+				<p:outputLabel value="Premiação Aberturas" />
+				<p:outputLabel value="#{fechamentoBean.item.premiacaoAberturas}"
+					style="text-align:center">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</p:outputLabel>
+
+				<p:outputLabel value="Premiação Colocações" />
+				<p:outputLabel value="#{fechamentoBean.item.premiacaoColocacao}"
+					style="text-align:center">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</p:outputLabel>
+
+				<p:outputLabel value="Faturamento Premiação" />
+				<p:outputLabel value="#{fechamentoBean.item.faturamentoPremiacao}"
+					style="text-align:center">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</p:outputLabel>
+
+				<p:separator />
+				<p:separator />
+
+				<p:outputLabel value="Premiação" />
+				<p:inputNumber value="#{fechamentoBean.item.premiacao}"
+					style="text-align:center" id="premiacao">
+				<p:ajax listener="#{fechamentoBean.atualizaRepasse}" process="@this premiacao" 
+				update="repasse"/>
+				</p:inputNumber>
+
+				<p:outputLabel value="Repasse" />
+				<p:outputLabel value="#{fechamentoBean.item.repasse}" id="repasse"
+					style="text-align:center">
+					<f:convertNumber type="currency" locale="pt_BR" />
+				</p:outputLabel>
+
+
+			</p:panelGrid>
+
+		</p:panel>
+
+	</p:panel>
+
+
+
+	<p:panel header="Outros Valores" id="idPainelOutros"
+		style="width: 30%; text-align: center; margin-top: 0px; float: right">
+
+		<p:panelGrid columns="2" styleClass="semBorda"
+			style="text-align: left">
+
+			<p:outputLabel value="Custos Totais" />
+			<p:outputLabel value="#{fechamentoBean.item.custosTotais}"
+				style="text-align:center; color: red">
+				<f:convertNumber type="currency" locale="pt_BR" />
+			</p:outputLabel>
+
+			<p:outputLabel value="Despesas Totais" />
+			<p:outputLabel value="#{fechamentoBean.item.despesasTotais}"
+				style="text-align:center; color: green">
+				<f:convertNumber type="currency" locale="pt_BR" />
+			</p:outputLabel>
+
+			<p:outputLabel value="Comissão Recolhida" />
+			<p:outputLabel value="#{fechamentoBean.item.comissoesRecolhidas}"
+				style="text-align:center; color: green">
+				<f:convertNumber type="currency" locale="pt_BR" />
+			</p:outputLabel>
+
+			<p:outputLabel value="Comissão Ressarcida" />
+			<p:outputLabel value="#{fechamentoBean.item.comissoesRessarcidas}"
+				style="text-align:center; color: red">
+				<f:convertNumber type="currency" locale="pt_BR" />
+			</p:outputLabel>
+
+			<p:outputLabel value="Salário Descontado" />
+			<p:outputLabel value="#{fechamentoBean.item.salarioDescontado}"
+				style="text-align:center; color: green">
+				<f:convertNumber type="currency" locale="pt_BR" />
+			</p:outputLabel>
+
+			<p:outputLabel value="Recebimento inadimplente" />
+			<p:outputLabel value="#{fechamentoBean.item.recebimentoInadimplente}"
+				style="text-align:center; color: green">
+				<f:convertNumber type="currency" locale="pt_BR" />
+			</p:outputLabel>
+
+			<p:outputLabel value="Diferença - Produtos" />
+			<p:outputLabel value="#{fechamentoBean.item.diferencaProdutos}"
+				style="text-align:center; color: green">
+				<f:convertNumber type="currency" locale="pt_BR" />
+			</p:outputLabel>
+
+		</p:panelGrid>
+
+
+	</p:panel>
+
+
+
 
 </ui:composition>

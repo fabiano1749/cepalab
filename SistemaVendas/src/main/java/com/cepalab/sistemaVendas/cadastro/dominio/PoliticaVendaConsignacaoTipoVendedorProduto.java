@@ -31,20 +31,18 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 		return id;
 	}
 
-	
 	private BigDecimal abertura = BigDecimal.ZERO;
 	private BigDecimal aberturaPremiacao = BigDecimal.ZERO;
 	private BigDecimal colocacao = BigDecimal.ZERO;
 	private BigDecimal colocacaoPremiacao = BigDecimal.ZERO;
-	private TipoCalculoAberturaColocacao tipoAbertura = TipoCalculoAberturaColocacao.PRODUTO;  
+	private TipoCalculoAberturaColocacao tipoAbertura = TipoCalculoAberturaColocacao.PRODUTO;
 	private TipoCalculoAberturaColocacao tipoPremioAbertura = TipoCalculoAberturaColocacao.PRODUTO;
 	private TipoCalculoAberturaColocacao tipoColocacao = TipoCalculoAberturaColocacao.PRODUTO;
 	private TipoCalculoAberturaColocacao tipoPremioColocacao = TipoCalculoAberturaColocacao.PRODUTO;
 	private TipoVendedor tipoVendedor;
 	private Produto produto = new Produto();
 	private List<IntervaloVendaConsignacaoProduto> listaIntervalos = new ArrayList<>();
-	
-	
+
 	@ManyToOne
 	@JoinColumn(name = "tipo_vendedor_id", nullable = false)
 	public TipoVendedor getTipoVendedor() {
@@ -101,7 +99,7 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 		this.colocacaoPremiacao = colocacaoPremiacao;
 	}
 
-	@OneToMany(mappedBy = "politicaTipoVendedorProduto", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "politicaTipoVendedorProduto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	public List<IntervaloVendaConsignacaoProduto> getListaIntervalos() {
 		return listaIntervalos;
 	}
@@ -109,10 +107,9 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 	public void setListaIntervalos(List<IntervaloVendaConsignacaoProduto> listaIntervalos) {
 		this.listaIntervalos = listaIntervalos;
 	}
-	
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 20, nullable=false, name="tipo_abertura")
+	@Column(length = 20, nullable = false, name = "tipo_abertura")
 	public TipoCalculoAberturaColocacao getTipoAbertura() {
 		return tipoAbertura;
 	}
@@ -122,7 +119,7 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 20, nullable=false, name="tipo_premio_abertura")
+	@Column(length = 20, nullable = false, name = "tipo_premio_abertura")
 	public TipoCalculoAberturaColocacao getTipoPremioAbertura() {
 		return tipoPremioAbertura;
 	}
@@ -132,7 +129,7 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 20, nullable=false, name="tipo_colocacao")
+	@Column(length = 20, nullable = false, name = "tipo_colocacao")
 	public TipoCalculoAberturaColocacao getTipoColocacao() {
 		return tipoColocacao;
 	}
@@ -142,7 +139,7 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 20, nullable=false, name="tipo_premio_colocacao")
+	@Column(length = 20, nullable = false, name = "tipo_premio_colocacao")
 	public TipoCalculoAberturaColocacao getTipoPremioColocacao() {
 		return tipoPremioColocacao;
 	}
@@ -153,46 +150,100 @@ public class PoliticaVendaConsignacaoTipoVendedorProduto extends GenericDTO {
 
 	@Transient
 	public BigDecimal taxaComissao(int quantidade, boolean prontaEntrega) {
-		for(IntervaloVendaConsignacaoProduto i : listaIntervalos) {
-			if(i.estaNoIntervalo(quantidade)) {
+		for (IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+			if (i.estaNoIntervalo(quantidade)) {
 				return i.taxaComissao(prontaEntrega);
 			}
 		}
 		return BigDecimal.ZERO;
 	}
-	
+
+	@Transient
+	public BigDecimal taxaComissaoConsignacao(int quantidade) {
+		for (IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+			if (i.estaNoIntervalo(quantidade)) {
+				return i.getComissaoProntaEntrega();
+			}
+		}
+		return BigDecimal.ZERO;
+	}
+
 	@Transient
 	public BigDecimal minVenda(int quantidade) {
-		for(IntervaloVendaConsignacaoProduto i : listaIntervalos) {
-			if(i.estaNoIntervalo(quantidade)) {
+		for (IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+			if (i.estaNoIntervalo(quantidade)) {
 				return i.getMinVenda();
 			}
 		}
 		return BigDecimal.ZERO;
 	}
-	
+
+	public BigDecimal menorValorConsignacao() {
+		BigDecimal retorno = BigDecimal.ZERO;
+		
+			for (IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+				if (retorno.compareTo(BigDecimal.ZERO) == 0) {
+					retorno = i.getMinConsignacao();
+				}
+
+				if (retorno.compareTo(i.getMinConsignacao()) > 0) {
+					retorno = i.getMinConsignacao();
+				}
+			}
+		
+		return retorno;
+	}
+
 	@Transient
 	public BigDecimal minConsignacao(int quantidade) {
-		for(IntervaloVendaConsignacaoProduto i : listaIntervalos) {
-			if(i.estaNoIntervalo(quantidade)) {
+		if(listaIntervalos == null) {
+			return BigDecimal.ZERO;
+		}
+		else {
+			
+		for (IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+			if (i.estaNoIntervalo(quantidade)) {
+
 				return i.getMinConsignacao();
 			}
 		}
-		return BigDecimal.ZERO;
+		
+		return menorValorConsignacao();
+		
+		}
 	}
-	
+
 	@Transient
 	public boolean adicionaIntervalo(IntervaloVendaConsignacaoProduto intervalo) {
-		int inicio = intervalo.getInicio();
-		if(listaIntervalos.size() !=0) {
-			for(IntervaloVendaConsignacaoProduto i : listaIntervalos) {
-				if(inicio <= i.getFim()) {
+		//Verifica se o novo intervalo esta dentro de um intervalo maior.
+		if (listaIntervalos.size() != 0) {
+			for (IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+				if (i.estaNoIntervalo(intervalo.getInicio())  || i.estaNoIntervalo(intervalo.getFim())) {
 					return false;
 				}
-			}	
+			}
 		}
+		//Verifica se o novo intervalo engloba os demais
+		if(listaIntervalos.size() != 0) {
+			for (IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+				if(i.getInicio() >= intervalo.getInicio() && i.getFim() <= intervalo.getFim()) {
+					return false;
+				}
+			}
+		}
+		
 		listaIntervalos.add(intervalo);
 		return true;
 	}
 
+	@Transient
+	public BigDecimal maiorTaxaComissao() {
+		BigDecimal maior = BigDecimal.ZERO;
+		for (IntervaloVendaConsignacaoProduto i : listaIntervalos) {
+			if (i.getComissaoProntaEntrega().compareTo(maior) > 0) {
+				maior = i.getComissaoProntaEntrega();
+			}
+		}
+		return maior;
+	}
 }

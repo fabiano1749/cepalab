@@ -5,11 +5,11 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:o="http://omnifaces.org/ui">
 
-	<p:panel header="Resumo das Aberturas"
+	<p:panel header="Resumo das Colocações"
 		style="margin-top:20px; width: 90%; text-align: center">
 
 		<p:dataTable id="idTabelaColocacao"
-			value="#{fechamentoAberturaBean.listaColocacao}" style="width: 100%"
+			value="#{fechamentoBean.item.listaColocacao}" style="width: 100%"
 			var="item" rows="10" paginator="true" paginatorPosition="bottom"
 			paginatorAlwaysVisible="false"
 			sortBy="#{item.operacao.cliente.codigo}">
@@ -37,7 +37,6 @@
 			<p:column headerText="Quantidade" style="text-align: center">
 				<h:outputText value="#{item.quantidade}" />
 			</p:column>
-
 
 		</p:dataTable>
 

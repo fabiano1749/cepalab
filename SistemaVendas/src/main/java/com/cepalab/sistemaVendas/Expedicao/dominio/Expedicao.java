@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +20,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Fetch;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.GenericDTO;
@@ -84,7 +87,8 @@ public class Expedicao extends GenericDTO{
 		this.status = status;
 	}
 
-	@OneToMany(mappedBy = "expedicao", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "expedicao", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.EAGER)
+	@Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
 	public List<ExpedProduto> getExpedProdutos() {
 		return expedProdutos;
 	}

@@ -13,10 +13,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.operacao.dominio.CustoViagem;
-import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
 import com.cepalab.sistemaVendas.repository.filter.CustosViagemFilter;
 import com.cepalab.sistemaVendas.service.NegocioException;
 import com.cepalab.sistemaVendas.util.jpa.Transactional;

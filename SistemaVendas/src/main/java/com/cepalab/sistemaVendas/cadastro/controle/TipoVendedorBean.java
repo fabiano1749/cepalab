@@ -5,17 +5,22 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.cepalab.sistemaVendas.cadastro.dominio.IntervaloAberturaTipoProduto;
+import com.cepalab.sistemaVendas.cadastro.dominio.IntervaloColocacaoTipoProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.IntervaloVendaConsignacaoProduto;
+import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaAberturaTipoVendedorTipoProduto;
+import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaColocacaoTipoVendedorTipoProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaVendaConsignacaoTipoVendedorProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoCalculoAberturaColocacao;
+import com.cepalab.sistemaVendas.cadastro.dominio.TipoProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoVendedor;
 import com.cepalab.sistemaVendas.repository.Produtos;
+import com.cepalab.sistemaVendas.repository.TiposProdutos;
 import com.cepalab.sistemaVendas.service.CadastroTipoVendedorService;
 import com.cepalab.sistemaVendas.service.NegocioException;
 import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
@@ -27,14 +32,26 @@ public class TipoVendedorBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private TipoVendedor item;
 	private List<Produto> listaProdutos;
+	private List<TipoProduto> listaTiposProdutos;
 	private PoliticaVendaConsignacaoTipoVendedorProduto politicaVCTVP;
 	private IntervaloVendaConsignacaoProduto intervalo;
-
+	
+	private PoliticaAberturaTipoVendedorTipoProduto politicaATVTP;
+	private IntervaloAberturaTipoProduto intervaloAbertura;
+	
+	private PoliticaColocacaoTipoVendedorTipoProduto politicaCTVTP;
+	private IntervaloColocacaoTipoProduto intervaloColocacao;
+	
+	
 	@Inject
 	private CadastroTipoVendedorService cadastroTipo;
 
 	@Inject
 	private Produtos produtos;
+	
+	@Inject
+	private TiposProdutos tiposProdutos;
+
 
 	public TipoVendedorBean() {
 		limpar();
@@ -43,25 +60,29 @@ public class TipoVendedorBean implements Serializable {
 	public void limpar() {
 		item = new TipoVendedor();
 		politicaVCTVP = new PoliticaVendaConsignacaoTipoVendedorProduto();
+		intervalo = new IntervaloVendaConsignacaoProduto();
+		
+		politicaATVTP = new PoliticaAberturaTipoVendedorTipoProduto();
+		intervaloAbertura = new IntervaloAberturaTipoProduto();
+		
+		politicaCTVTP = new PoliticaColocacaoTipoVendedorTipoProduto();
+		intervaloColocacao = new IntervaloColocacaoTipoProduto();
 	}
 
-	@PostConstruct
 	public void inicio() {
 		listaProdutos = produtos.produtos();
+		listaTiposProdutos = tiposProdutos.tipos();
 		iniciaListaPoliticas();
-		politicaVCTVP = new PoliticaVendaConsignacaoTipoVendedorProduto();
-		intervalo = new IntervaloVendaConsignacaoProduto();
+		iniciaListaPoliticasAberturas();
+		iniciaListaPoliticasColocacoes();
 	}
 
-	public void teste(PoliticaVendaConsignacaoTipoVendedorProduto politica) {
-		System.out.println(politica.getListaIntervalos().size());
-	}
-
+	
 	public void salvar() {
 		try {
 			cadastroTipo.salvar(item);
 			item = new TipoVendedor();
-			inicio();
+			limpar();
 			FacesUtil.addInfoMessage("Tipo de Vendedor salvo com sucesso!");
 		} catch (NegocioException e) {
 			FacesUtil.addErrorMessage(e.getMessage());
@@ -81,13 +102,12 @@ public class TipoVendedorBean implements Serializable {
 			limpar();
 			inicio();
 		} else {
-			this.item = item;
-			if (item.getPoliticasVCTVP().size() == 0) {
-				iniciaListaPoliticas();
-			}
+				this.item = item;
+				inicio();
 		}
 	}
 
+	
 	public TipoCalculoAberturaColocacao[] tipoAberturaColocacao() {
 		return TipoCalculoAberturaColocacao.values();
 	}
@@ -116,6 +136,39 @@ public class TipoVendedorBean implements Serializable {
 		this.intervalo = intervalo;
 	}
 
+	public PoliticaAberturaTipoVendedorTipoProduto getPoliticaATVTP() {
+		return politicaATVTP;
+	}
+
+	public void setPoliticaATVTP(PoliticaAberturaTipoVendedorTipoProduto politicaATVTP) {
+		this.politicaATVTP = politicaATVTP;
+	}
+
+	public IntervaloAberturaTipoProduto getIntervaloAbertura() {
+		return intervaloAbertura;
+	}
+
+	public void setIntervaloAbertura(IntervaloAberturaTipoProduto intervaloAbertura) {
+		this.intervaloAbertura = intervaloAbertura;
+	}
+
+	
+	public PoliticaColocacaoTipoVendedorTipoProduto getPoliticaCTVTP() {
+		return politicaCTVTP;
+	}
+
+	public void setPoliticaCTVTP(PoliticaColocacaoTipoVendedorTipoProduto politicaCTVTP) {
+		this.politicaCTVTP = politicaCTVTP;
+	}
+
+	public IntervaloColocacaoTipoProduto getIntervaloColocacao() {
+		return intervaloColocacao;
+	}
+
+	public void setIntervaloColocacao(IntervaloColocacaoTipoProduto intervaloColocacao) {
+		this.intervaloColocacao = intervaloColocacao;
+	}
+
 	// Inicia a lista de politicas inserindo os produtos cadastrados
 	private void iniciaListaPoliticas() {
 		if (item.getPoliticasVCTVP().size() == 0) {
@@ -125,7 +178,7 @@ public class TipoVendedorBean implements Serializable {
 				aux.setTipoVendedor(item);
 				item.getPoliticasVCTVP().add(aux);
 
-			}
+			}//Caso haja novos produtos cadastrados
 		} else if (item.getPoliticasVCTVP().size() < listaProdutos.size()) {
 
 			for (Produto p : listaProdutos) {
@@ -148,7 +201,70 @@ public class TipoVendedorBean implements Serializable {
 
 	}
 
-	// Métodos para a criação de uma nova política
+	//Inicia a lista de politicas de Aberturas inserindo os tipos de produtos cadastrados.
+	public void iniciaListaPoliticasAberturas() {
+		
+		
+		if(item.getListaPoliticasATVTP().size() == 0) {
+			for(TipoProduto t : listaTiposProdutos) {
+				PoliticaAberturaTipoVendedorTipoProduto politica = new PoliticaAberturaTipoVendedorTipoProduto();
+				politica.setTipoProduto(t);
+				politica.setTipoVendedor(item);
+				item.getListaPoliticasATVTP().add(politica);
+			}
+		}//Caso haja novos tipos de produtos cadastrados
+		else if ( item.getListaPoliticasATVTP().size() < listaTiposProdutos.size()) {
+			for(TipoProduto t : listaTiposProdutos) {
+				PoliticaAberturaTipoVendedorTipoProduto aux = new PoliticaAberturaTipoVendedorTipoProduto();
+				int i = 0;
+				for(PoliticaAberturaTipoVendedorTipoProduto politica : item.getListaPoliticasATVTP()) {
+					if(politica.getTipoProduto().equals(t)) {
+						i = 1;
+					}
+				}
+				if(i == 0) {
+					aux.setTipoProduto(t);
+					aux.setTipoVendedor(item);
+					item.getListaPoliticasATVTP().add(aux);
+				}
+				
+			}
+		}
+	}
+	
+	
+	//Inicia a lista de politicas de colocações inserindo os tipos de produtos cadastrados.
+		public void iniciaListaPoliticasColocacoes() {
+			if(item.getListaPoliticasCTVTP().size() == 0) {
+				for(TipoProduto t : listaTiposProdutos) {
+					PoliticaColocacaoTipoVendedorTipoProduto politica = new PoliticaColocacaoTipoVendedorTipoProduto();
+					politica.setTipoProduto(t);
+					politica.setTipoVendedor(item);
+					item.getListaPoliticasCTVTP().add(politica);
+				}
+			}//Caso haja novos tipos de produtos cadastrados
+			else if ( item.getListaPoliticasCTVTP().size() < listaTiposProdutos.size()) {
+				for(TipoProduto t : listaTiposProdutos) {
+					PoliticaColocacaoTipoVendedorTipoProduto aux = new PoliticaColocacaoTipoVendedorTipoProduto();
+					int i = 0;
+					for(PoliticaColocacaoTipoVendedorTipoProduto politica : item.getListaPoliticasCTVTP()) {
+						if(politica.getTipoProduto().equals(t)) {
+							i = 1;
+						}
+					}
+					if(i == 0) {
+						aux.setTipoProduto(t);
+						aux.setTipoVendedor(item);
+						item.getListaPoliticasCTVTP().add(aux);
+					}
+					
+				}
+			}
+		}
+	
+	
+	
+	// Métodos para a criação de uma nova política de venda e consignação
 
 	public void troca(PoliticaVendaConsignacaoTipoVendedorProduto politica) {
 		politicaVCTVP = politica;
@@ -205,11 +321,109 @@ public class TipoVendedorBean implements Serializable {
 
 	public void excluiIntervalo(IntervaloVendaConsignacaoProduto intervalo) {
 		List<IntervaloVendaConsignacaoProduto> lista = new ArrayList<>();
-		for(IntervaloVendaConsignacaoProduto i : politicaVCTVP.getListaIntervalos()) {
-			if(intervalo.getInicio() != i.getInicio()) {
+		for (IntervaloVendaConsignacaoProduto i : politicaVCTVP.getListaIntervalos()) {
+			if (intervalo.getInicio() != i.getInicio()) {
 				lista.add(i);
 			}
 		}
 		politicaVCTVP.setListaIntervalos(lista);
 	}
+	
+	//métodos para criar uma nova política de Aberturas por tipo de produto
+	public void trocaPolicaAbertura(PoliticaAberturaTipoVendedorTipoProduto politica) {
+		politicaATVTP = politica;
+		intervaloAbertura = new IntervaloAberturaTipoProduto();
+	}
+	
+	public void adicionarIntervaloAbertura() {
+		int inicio = intervaloAbertura.getInicio();
+		int fim = intervaloAbertura.getFim();
+
+		if (validaComissaoAbertura() && validaPremiacaoAbertura()) {
+
+			if (fim <= inicio) {
+				FacesUtil.addErrorMessage("Intervalo inválido: Início <= Fim");
+			} else if (inicio < 1) {
+				FacesUtil.addErrorMessage("Intervalo inválido: Início < 1");
+			} else {
+
+				intervaloAbertura.setPoliticaAberturaTipoVendedorTipoProduto(politicaATVTP);
+				if (!politicaATVTP.adicionaIntervaloAbertura(intervaloAbertura)) {
+					FacesUtil.addErrorMessage("Início do intervalo é menor que o fim do último intervalo salvo!");
+				}
+				intervaloAbertura = new IntervaloAberturaTipoProduto();
+			}
+		} else {
+			FacesUtil.addErrorMessage("Há valores incorretos no intevalo !");
+		}
+	}
+	
+	public boolean validaComissaoAbertura() {
+		return intervaloAbertura.getValor().compareTo(BigDecimal.ZERO) >= 0;
+	}
+	
+	public boolean validaPremiacaoAbertura() {
+		return intervaloAbertura.getPremiacao().compareTo(BigDecimal.ZERO) >= 0;
+	}
+	
+	public void excluiIntervaloAbertura(IntervaloAberturaTipoProduto intervalo) {
+		List<IntervaloAberturaTipoProduto> lista = new ArrayList<>();
+		for (IntervaloAberturaTipoProduto i : politicaATVTP.getListaIntervalos()) {
+			if (intervalo.getInicio() != i.getInicio()) {
+				lista.add(i);
+			}
+		}
+		politicaATVTP.setListaIntervalos(lista);
+	}
+	
+
+	//métodos para criar uma nova política de colocacao por tipo de produto
+		public void trocaPolicaColocacao(PoliticaColocacaoTipoVendedorTipoProduto politica) {
+			politicaCTVTP = politica;
+			intervaloColocacao = new IntervaloColocacaoTipoProduto();
+		}
+		
+		public void adicionarIntervaloColocacao() {
+			int inicio = intervaloColocacao.getInicio();
+			int fim = intervaloColocacao.getFim();
+
+			if (validaComissaoColocacao() && validaPremiacaoColocacao()) {
+
+				if (fim <= inicio) {
+					FacesUtil.addErrorMessage("Intervalo inválido: Início <= Fim");
+				} else if (inicio < 1) {
+					FacesUtil.addErrorMessage("Intervalo inválido: Início < 1");
+				} else {
+
+					intervaloColocacao.setPoliticaColocacaoTipoVendedorTipoProduto(politicaCTVTP);
+					if (!politicaCTVTP.adicionaIntervaloColocacao(intervaloColocacao)) {
+						FacesUtil.addErrorMessage("Início do intervalo é menor que o fim do último intervalo salvo!");
+					}
+					intervaloColocacao = new IntervaloColocacaoTipoProduto();
+				}
+			} else {
+				FacesUtil.addErrorMessage("Há valores incorretos no intevalo !");
+			}
+		}
+		
+		public boolean validaComissaoColocacao() {
+			return intervaloColocacao.getValor().compareTo(BigDecimal.ZERO) >= 0;
+		}
+		
+		public boolean validaPremiacaoColocacao() {
+			return intervaloColocacao.getPremiacao().compareTo(BigDecimal.ZERO) >= 0;
+		}
+		
+		public void excluiIntervaloColocacao(IntervaloColocacaoTipoProduto intervalo) {
+			List<IntervaloColocacaoTipoProduto> lista = new ArrayList<>();
+			for (IntervaloColocacaoTipoProduto i : politicaCTVTP.getListaIntervalos()) {
+				if (intervalo.getInicio() != i.getInicio()) {
+					lista.add(i);
+				}
+			}
+			politicaCTVTP.setListaIntervalos(lista);
+		}
+
+	
+
 }

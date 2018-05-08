@@ -1,0 +1,119 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui">
+
+	<p:dataTable id="idColocacoesTab" style="margin-top:10px; width: 50%"
+		value="#{tipoVendedorBean.item.listaPoliticasCTVTP}" var="politica">
+
+		<p:column style="text-align: center" headerText="Tipo de Produto">
+			<h:outputText value="#{politica.tipoProduto.nome}" />
+		</p:column>
+
+		<p:column style="text-align: center" headerText="Políticas">
+			<p:commandButton value="Nova" process="@this"
+				actionListener="#{tipoVendedorBean.trocaPolicaColocacao(politica)}"
+				oncomplete="PF('NovaPoliticaColocacao').show()"
+				update="formPoliticas:idTabView:dialogoNovaColocacao" />
+		</p:column>
+
+	</p:dataTable>
+
+	<p:dialog widgetVar="NovaPoliticaColocacao"
+		header="Criar política de Colocacao - #{tipoVendedorBean.politicaCTVTP.tipoProduto.nome}"
+		resizable="false" width="80%" height="70%" id="dialogoNovaColocacao">
+
+
+		<p:panelGrid id="idPnlIntervaloColocacao" columns="4"
+			styleClass="semBorda" style="margin-top: 10px; margin-left: 10px">
+
+			<p:outputLabel value="Inicio" />
+			<p:inputNumber value="#{tipoVendedorBean.intervaloColocacao.inicio}"
+				decimalPlaces="0" />
+			<p:outputLabel value="Comissão" for="comissaoColocacao" />
+			<p:inputNumber value="#{tipoVendedorBean.intervaloColocacao.valor}"
+				id="comissaoColocacao" />
+			<p:outputLabel value="Fim" />
+			<p:inputNumber value="#{tipoVendedorBean.intervaloColocacao.fim}"
+				decimalPlaces="0" />
+			<p:outputLabel value="Premiação" />
+			<p:inputNumber
+				value="#{tipoVendedorBean.intervaloColocacao.premiacao}" />
+
+
+			<p:outputLabel value="" />
+			<p:commandButton value="Inserir Intervalo"
+				actionListener="#{tipoVendedorBean.adicionarIntervaloColocacao()}"
+				process="@this idPnlIntervaloColocacao" partialSubmit="true"
+				update="idTabColocacao idPnlIntervaloColocacao" />
+
+		</p:panelGrid>
+
+		<p:dataTable id="idTabColocacao"
+			value="#{tipoVendedorBean.politicaCTVTP.listaIntervalos}"
+			var="item" style="margin-top: 15px ; width: 90%; margin-left: 10px "
+			reflow="true">
+
+
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column colspan="2" headerText="Intervalos" />
+					<p:column colspan="2" headerText="Valores" />
+					<p:column rowspan="2" />
+				</p:row>
+
+				<p:row>
+					<p:column headerText="Inicio" />
+					<p:column headerText="Fim" />
+
+					<p:column headerText="Comissão" />
+					<p:column headerText="Premiação" />
+
+
+				</p:row>
+
+			</p:columnGroup>
+
+
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.inicio}" />
+			</p:column>
+
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.fim}" />
+			</p:column>
+
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.valor}">
+					<f:convertNumber pattern="#0.00" locale="pt_BR" />
+				</h:outputText>
+			</p:column>
+
+			<p:column style="text-align: center">
+				<h:outputText value="#{item.premiacao}">
+					<f:convertNumber pattern="#0.00" locale="pt_BR" />
+				</h:outputText>
+			</p:column>
+
+			<p:column style="text-align: center">
+				<p:commandButton value="Excluir"
+					actionListener="#{tipoVendedorBean.excluiIntervaloColocacao(item)}"
+					process="@this" partialSubmit="true" update="idTabColocacao" />
+			</p:column>
+
+
+		</p:dataTable>
+
+		<p:commandButton value="Fechar"
+			style="margin-left: 10px; margin-top: 10px" process="@this"
+			partialSubmit="true"
+			oncomplete="PF('NovaPoliticaColocacao').hide(); return false;" />
+
+	</p:dialog>
+
+
+
+
+</ui:composition>

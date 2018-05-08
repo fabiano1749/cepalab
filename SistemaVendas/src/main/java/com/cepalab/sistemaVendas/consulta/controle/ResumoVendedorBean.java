@@ -16,6 +16,7 @@ import com.cepalab.sistemaVendas.repository.CustosViagens;
 import com.cepalab.sistemaVendas.repository.Funcionarios;
 import com.cepalab.sistemaVendas.repository.Operacoes;
 import com.cepalab.sistemaVendas.repository.Produtos;
+import com.cepalab.sistemaVendas.repository.TiposProdutos;
 import com.cepalab.sistemaVendas.security.Seguranca;
 
 @ViewScoped
@@ -44,6 +45,9 @@ public class ResumoVendedorBean implements Serializable {
 	@Inject
 	private Produtos produtos;
 	
+	@Inject
+	private TiposProdutos tiposProdutos;
+	
 	
 	@PostConstruct
 	public void inicio() {
@@ -53,7 +57,7 @@ public class ResumoVendedorBean implements Serializable {
 	}
 
 	public void pesquisa() {
-		fechamentoGeral.criaResumo(operacoes, custos, produtos);
+		fechamentoGeral.criaResumoUnicoVendedor(operacoes, custos, produtos, tiposProdutos.tipos());
 	}
 	
 	

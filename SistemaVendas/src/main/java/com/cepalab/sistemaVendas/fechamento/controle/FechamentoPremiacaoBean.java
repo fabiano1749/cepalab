@@ -18,7 +18,7 @@ import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
 import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
 import com.cepalab.sistemaVendas.operacao.dominio.TipoOperacao;
 import com.cepalab.sistemaVendas.repository.AberturasProdutos;
-import com.cepalab.sistemaVendas.repository.ComissoesTipoVendedores;
+//import com.cepalab.sistemaVendas.repository.ComissoesTipoVendedores;
 import com.cepalab.sistemaVendas.repository.Funcionarios;
 import com.cepalab.sistemaVendas.repository.Operacoes;
 
@@ -45,8 +45,8 @@ public class FechamentoPremiacaoBean implements Serializable {
 	@Inject
 	private Operacoes operacoes;
 
-	@Inject
-	private ComissoesTipoVendedores comissoesTipoVendedor;
+	//@Inject
+	//private ComissoesTipoVendedores comissoesTipoVendedor;
 
 	@Inject
 	private AberturasProdutos aberturas;
@@ -106,12 +106,12 @@ public class FechamentoPremiacaoBean implements Serializable {
 		listaColocacao = new ArrayList<>();
 		listacomissaoTipoVendedorProduto = new ArrayList<>();
 
-		listacomissaoTipoVendedorProduto = comissoesTipoVendedor.ComissoesPorTipoVendedor(f.getTipoVendedor());
+		//listacomissaoTipoVendedorProduto = comissoesTipoVendedor.ComissoesPorTipoVendedor(f.getTipoVendedor());
 
 		listaGeral = aberturas.porFuncionarioTodas(f, inicio, fim);
 		criaListas();
 
-		premiacaoAbertura = operacoes.comissaoAberturas(f, inicio, fim).multiply(new BigDecimal(10));
+		//premiacaoAbertura = operacoes.comissaoAberturas(f, inicio, fim).multiply(new BigDecimal(10));
 
 	}
 

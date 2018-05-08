@@ -22,6 +22,10 @@ public class FormaPagamentoValor implements Serializable {
 		
 	}
 	
+	public void incrementaReceita(BigDecimal valor) {
+		this.valor = this.valor.add(valor);
+	}
+	
 	public FormaPagamento getForma() {
 		return forma;
 	}

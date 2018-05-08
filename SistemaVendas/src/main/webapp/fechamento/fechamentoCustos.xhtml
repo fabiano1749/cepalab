@@ -5,12 +5,17 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:o="http://omnifaces.org/ui">
 
-	<p:panel header="Descontos de Salário"
+	<p:panel header="Custos do período"
 		style="margin-top:20px; width: 70%; text-align: center">
 
-		<p:dataTable id="idTabelaDescontos"
-			value="#{fechamentoDescontoSalarioBean.listaDescontos}" style="width: 100%"
-			var="item">
+		<p:dataTable id="idTabelaCustos"
+			value="#{fechamentoBean.item.listaCustos}" style="width: 100%"
+			var="item" rows="10" paginator="true" paginatorPosition="bottom"
+			paginatorAlwaysVisible="false">
+			<p:column headerText="Custo" style="text-align: center; width: 20%">
+				<h:outputText value="#{item.tipo.descricao}" />
+			</p:column>
+
 			<p:column headerText="Data" style="text-align: center; width: 20%">
 				<h:outputText value="#{item.data}">
 					<f:convertDateTime pattern="dd/MM/yyyy" />
@@ -24,10 +29,10 @@
 			</p:column>
 
 			<p:column headerText="Observação"
-				style="text-align: center; width: 60%">
+				style="text-align: center; width: 40%">
 				<h:outputText value="#{item.observacao}" />
 			</p:column>
-			
+
 		</p:dataTable>
 
 	</p:panel>

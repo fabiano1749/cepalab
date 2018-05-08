@@ -12,12 +12,14 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
+import com.cepalab.sistemaVendas.cadastro.dominio.TipoVendedor;
 import com.cepalab.sistemaVendas.operacao.dominio.Consignacao;
 import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
 import com.cepalab.sistemaVendas.operacao.dominio.TipoOperacao;
 import com.cepalab.sistemaVendas.operacao.dominio.Venda;
 import com.cepalab.sistemaVendas.repository.Clientes;
 import com.cepalab.sistemaVendas.repository.Operacoes;
+import com.cepalab.sistemaVendas.repository.TiposVendedores;
 import com.cepalab.sistemaVendas.security.Seguranca;
 import com.cepalab.sistemaVendas.service.CadastroOperacao;
 import com.cepalab.sistemaVendas.service.NegocioException;
@@ -31,6 +33,7 @@ public class OperacaoBean implements Serializable {
 
 	private Operacao item;
 	private List<Cliente> listaClientes;
+	private TipoVendedor tipoVendedor;
 	
 	
 	// private List<Rota> listaRotas;
@@ -62,10 +65,14 @@ public class OperacaoBean implements Serializable {
 
 	@Inject
 	private ReceitaBean receita;
+	
+	@Inject
+	private TiposVendedores tiposVendedores;
 
 	public void inicio() {
 		item = new Operacao();
 		alimentaListaClientes();
+		tipoVendedor = tiposVendedores.porNome(seg.UsuarioLogado().getTipoVendedor().getNome());
 		// listaRotas = rotas.rotasPorFuncionario(seg.UsuarioLogado());
 	}
 
@@ -166,6 +173,14 @@ public class OperacaoBean implements Serializable {
 
 	
 	
+	public TipoVendedor getTipoVendedor() {
+		return tipoVendedor;
+	}
+
+	public void setTipoVendedor(TipoVendedor tipoVendedor) {
+		this.tipoVendedor = tipoVendedor;
+	}
+
 	public List<Cliente> getListaClientes() {
 		return listaClientes;
 	}

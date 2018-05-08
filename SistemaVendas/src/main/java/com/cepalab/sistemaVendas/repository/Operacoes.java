@@ -113,6 +113,7 @@ public class Operacoes implements Serializable {
 		}
 	}
 
+	/* 
 	public BigDecimal comissaoAberturas(Funcionario fun, Date inicio, Date fim) {
 		List<Operacao> aberturas = operacaoAberturas(fun, inicio, fim);
 		BigDecimal comissao = BigDecimal.ZERO;
@@ -123,18 +124,8 @@ public class Operacoes implements Serializable {
 		}
 		return comissao;
 	}
-
-	public BigDecimal premiacaoColocaoFitas(Funcionario fun, Date inicio, Date fim) {
-		List<Operacao> aberturas = operacaoVisitas(fun, inicio, fim);
-		BigDecimal premiacao = BigDecimal.ZERO;
-		if (aberturas != null) {
-			for (Operacao o : aberturas) {
-				premiacao = premiacao.add(o.premiacaoColocacaoFita());
-			}
-		}
-		return premiacao;
-	}
-
+*/
+	
 	public List<Operacao> operacoesFiltradas(OperacaoFilter filtro) {
 		try {
 			if (filtro.getCodigoCliente() == null) {

@@ -24,7 +24,8 @@ public class PoliticasVendasConsignacoes implements Serializable {
 
 	public List<PoliticaVendaConsignacaoTipoVendedorProduto> politicas() {
 
-		return manager.createQuery("from PoliticaVendaConsignacaoTipoVendedorProduto", PoliticaVendaConsignacaoTipoVendedorProduto.class).getResultList();
+		return manager.createQuery("from PoliticaVendaConsignacaoTipoVendedorProduto",
+				PoliticaVendaConsignacaoTipoVendedorProduto.class).getResultList();
 
 	}
 
@@ -38,14 +39,14 @@ public class PoliticasVendasConsignacoes implements Serializable {
 			throw new NegocioException("A Politica não pode ser excluída.");
 		}
 	}
-	
+
 	public PoliticaVendaConsignacaoTipoVendedorProduto porId(Long id) {
 		return manager.find(PoliticaVendaConsignacaoTipoVendedorProduto.class, id);
 	}
-	
+
 	public PoliticaVendaConsignacaoTipoVendedorProduto porId2(Long id) {
-		return manager.createQuery("from PoliticaVendaConsignacaoTipoVendedorProduto where id=:id", PoliticaVendaConsignacaoTipoVendedorProduto.class).setParameter("id", id).getSingleResult();
+		return manager.createQuery("from PoliticaVendaConsignacaoTipoVendedorProduto where id=:id",
+				PoliticaVendaConsignacaoTipoVendedorProduto.class).setParameter("id", id).getSingleResult();
 	}
-	
-	
+
 }

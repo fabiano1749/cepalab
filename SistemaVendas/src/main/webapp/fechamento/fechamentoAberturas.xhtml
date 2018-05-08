@@ -6,36 +6,51 @@
 	xmlns:o="http://omnifaces.org/ui">
 
 	<p:panel header="Resumo das Aberturas"
-		style="margin-top:20px; width: 50%; text-align: center">
+		style="margin-top:20px; width: 80%; text-align: center; overflow: hidden">
 
-		<p:dataTable id="idTabelaAbertura" value="#{fechamentoAberturaBean.listaAberturas}" style="width: 100%"
-			var="item" rows="10" paginator="true" paginatorPosition="bottom"
-			paginatorAlwaysVisible="false">
-			
-			<p:column headerText="Código" style="text-align: center">
+		<p:dataTable id="idTabelaAberturas"
+			value="#{fechamentoBean.item.listaAberturas}"
+			style="width: 80%; float: left" var="item" rows="10" paginator="true"
+			paginatorPosition="bottom" paginatorAlwaysVisible="false">
+
+			<p:column headerText="Código" style="text-align: center; width: 10%">
 				<h:outputText value="#{item.operacao.cliente.codigo}" />
 			</p:column>
-			
-			<p:column headerText="Cliente" style="text-align: center">
+
+			<p:column headerText="Cliente" style="text-align: center; width: 40%">
 				<h:outputText value="#{item.operacao.cliente.nome}" />
 			</p:column>
-			
-			<p:column headerText="Data" style="text-align: center">
+
+			<p:column headerText="Data" style="text-align: center; width: 10%">
 				<h:outputText value="#{item.operacao.data}">
-				<f:convertDateTime pattern="dd/MM/yyyy"/>
+					<f:convertDateTime pattern="dd/MM/yyyy" />
 				</h:outputText>
 			</p:column>
 
-			<p:column headerText="Produto" style="text-align: center">
+			<p:column headerText="Produto" style="text-align: center; width: 30%">
 				<h:outputText value="#{item.produto.nome}" />
 			</p:column>
 
-			<p:column headerText="Quantidade" style="text-align: center">
+			<p:column headerText="Quantidade" style="text-align: center; width: 10%">
 				<h:outputText value="#{item.quantidade}" />
 			</p:column>
 
-
 		</p:dataTable>
+
+		<p:panelGrid columns="2" styleClass="semBorda"
+			style="float: right; width: 20%" id="idAberturas">
+
+			<p:outputLabel value="Abertura com 1p : " />
+			<p:outputLabel value="#{fechamentoBean.item.aberturas1p}" />
+
+			<p:outputLabel value="Abertura com 2p : " />
+			<p:outputLabel value="#{fechamentoBean.item.aberturas2p}" />
+
+			<p:outputLabel value="Abertura com 3p : " />
+			<p:outputLabel value="#{fechamentoBean.item.aberturas3p}" />
+
+		</p:panelGrid>
+
 
 	</p:panel>
 

@@ -29,5 +29,7 @@ public class Movimento extends GenericDTO {
 	private StatusMovimento status;
 	private Funcionario funcionario;
 	
+	
+	
 		
 }

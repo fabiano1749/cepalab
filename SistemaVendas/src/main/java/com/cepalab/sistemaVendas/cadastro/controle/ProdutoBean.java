@@ -37,7 +37,7 @@ public class ProdutoBean implements Serializable {
 
 	@Inject
 	private TiposProdutos tipos;
-	
+
 	public ProdutoBean() {
 		limpar();
 	}
@@ -56,36 +56,14 @@ public class ProdutoBean implements Serializable {
 
 	public void salvar() {
 		try {
-			if (item.getPodeConsignar().equals(PodeConsignar.SIM)) {
-
-				if (item.getMinValorConsignacao().compareTo(item.getCusto()) < 0
-						|| item.getMinValorVenda().compareTo(item.getCusto()) < 0) {
-					FacesUtil.addErrorMessage(
-							"Menor valor de venda ou Menor valor de consignação é menor que o custo do produto!");
-				} else {
-					cadastroProduto.salvar(item);
-					FacesUtil.addInfoMessage("Produto salvo com sucesso!");
-					limpar();
-					inicio();
-				}
-			}
-			
-			else {
-				if ( item.getMinValorVenda().compareTo(item.getCusto()) < 0) {
-					FacesUtil.addErrorMessage(
-							"Menor valor de venda é menor que o custo do produto!");
-				} else {
-					cadastroProduto.salvar(item);
-					FacesUtil.addInfoMessage("Produto salvo com sucesso!");
-					limpar();
-					inicio();
-				}
-			}
-			
+			cadastroProduto.salvar(item);
+			FacesUtil.addInfoMessage("Produto salvo com sucesso!");
+			limpar();
+			inicio();
 
 		} catch (NegocioException e) {
 			FacesUtil.addErrorMessage(e.getMessage());
-		} 
+		}
 	}
 
 	public void editar() {
@@ -117,11 +95,10 @@ public class ProdutoBean implements Serializable {
 	public PodeConsignar[] podeConsignar() {
 		return PodeConsignar.values();
 	}
-	
-	public TipoCalculoAberturaColocacao[] calculoComissao(){
+
+	public TipoCalculoAberturaColocacao[] calculoComissao() {
 		return TipoCalculoAberturaColocacao.values();
 	}
-	
 
 	public void troca(Produto item) {
 		this.itemAuxiliar = item;
@@ -175,7 +152,5 @@ public class ProdutoBean implements Serializable {
 	public void setListaTipos(List<TipoProduto> listaTipos) {
 		this.listaTipos = listaTipos;
 	}
-	
-	
 
 }

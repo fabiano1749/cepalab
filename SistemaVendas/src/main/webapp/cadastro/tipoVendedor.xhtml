@@ -14,14 +14,15 @@
 
 		<h1 class="fa-page-title">Cadastro de Tipo de Vendedor</h1>
 
-		<h:form id="formTab">
+		<h:form id="formPoliticas">
 			<p:messages id="mensagem" autoUpdate="true" />
 			<p:toolbar style="width: 95%; margin-top: 20px">
 				<p:toolbarGroup>
 					<p:button value="Novo" outcome="/cadastro/tipoVendedor" />
 					<p:commandButton value="Salvar" id="idSalvar"
 						actionListener="#{tipoVendedorBean.salvar()}"
-						style="margin-left: 10px;" update="pnlDados idComissaoTab" />
+						style="margin-left: 10px;"
+						update="idTabView:pnlDados idTabView:idComissaoTab idTabView:idAberturasTab idTabView:idColocacoesTab" />
 				</p:toolbarGroup>
 
 				<p:toolbarGroup align="right">
@@ -30,273 +31,106 @@
 				</p:toolbarGroup>
 			</p:toolbar>
 
+			<p:tabView id="idTabView" style="margin-top: 20px">
 
 
-			<p:panelGrid id="pnlDados" columns="3" styleClass="semBorda"
-				style="margin-top: 10px">
+				<p:tab title="Dados Gerais do Tipo de Vendedor">
 
-				<p:outputLabel value="Nome" for="idNome" />
-				<p:inputText id="idNome" value="#{tipoVendedorBean.item.nome}"
-					required="true" requiredMessage="Nome não informado!" />
+					<p:panelGrid id="pnlDados" columns="2" styleClass="semBorda"
+						style="margin-top: 10px">
 
-			</p:panelGrid>
+						<p:outputLabel value="Nome" for="idNome" />
+						<p:inputText id="idNome" value="#{tipoVendedorBean.item.nome}"
+							required="true" requiredMessage="Nome não informado!" />
 
+						<p:outputLabel value="Maior taxa de comissão - %" />
+						<h:panelGroup>
+							<p:inputNumber disabled="#{!tipoVendedorBean.item.maiorTaxa}"
+								id="maiorTaxa"
+								value="#{tipoVendedorBean.item.maiorTaxaVendas}" />
+							<p:selectBooleanCheckbox itemLabel="ativado"
+								value="#{tipoVendedorBean.item.maiorTaxa}"
+								style="margin-left: 10px">
+								<p:ajax process="@this" update="maiorTaxa" />
+							</p:selectBooleanCheckbox>
 
-			<p:dataTable id="idComissaoTab" style="margin-top:10px; width: 100%"
-				value="#{tipoVendedorBean.item.politicasVCTVP}" editable="true"
-				editMode="cell" var="politica">
-
-				<p:columnGroup type="header">
-					<p:row>
-						<p:column rowspan="2" headerText="Produto" style="width: 15%" />
-						<p:column rowspan="2" headerText="Políticas" />
-						<p:column colspan="2" headerText="Aberturas" />
-						<p:column colspan="2" headerText="Premiação Aberturas" />
-						<p:column colspan="2" headerText="Colocações" />
-						<p:column colspan="2" headerText="Premiação Colocações" />
-					</p:row>
-
-					<p:row>
-						<p:column headerText="Cálculo" style="width: 10%" />
-						<p:column headerText="Valor" style="width: 5%" />
-						<p:column headerText="Cálculo" />
-						<p:column headerText="Valor" />
-						<p:column headerText="Cálculo" />
-						<p:column headerText="Valor" />
-						<p:column headerText="Cálculo" />
-						<p:column headerText="Valor" />
-					</p:row>
-
-				</p:columnGroup>
-
-				<p:column style="text-align: center">
-					<h:outputText value="#{politica.produto.nome}" />
-				</p:column>
-
-				<p:column style="text-align: center">
-					<p:commandButton value="Nova" process="@this"
-						actionListener="#{tipoVendedorBean.troca(politica)}"
-						oncomplete="PF('NovaPolitica').show()" update="dialogoNovo" />
-
-				</p:column>
-
-				<p:column style="text-align: center" id="TipoAbertura">
-					<p:selectOneMenu value="#{politica.tipoAbertura}" style="width:80%">
-						<f:selectItems value="#{tipoVendedorBean.tipoAberturaColocacao()}"
-							var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
-					</p:selectOneMenu>
-				</p:column>
-
-				<p:column style="text-align: center" id="valorAbertura">
-					<p:cellEditor>
-						<f:facet name="output">
-							<h:outputText value="#{politica.abertura}">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</h:outputText>
-						</f:facet>
-
-						<f:facet name="input">
-							<p:inputNumber value="#{politica.abertura}" decimalSeparator=","
-								thousandSeparator="." />
-						</f:facet>
-					</p:cellEditor>
-				</p:column>
+						</h:panelGroup>
 
 
+						<p:outputLabel value="Comissão máxima - Aberturas" />
+						<h:panelGroup>
+							<p:inputNumber disabled="#{!tipoVendedorBean.item.ativaMVCA}"
+								id="mvca"
+								value="#{tipoVendedorBean.item.maiorValorComissaoAbertura}" />
+							<p:selectBooleanCheckbox itemLabel="ativado"
+								value="#{tipoVendedorBean.item.ativaMVCA}"
+								style="margin-left: 10px">
+								<p:ajax process="@this" update="mvca" />
+							</p:selectBooleanCheckbox>
 
-				<p:column style="text-align: center" id="TipoPremioAbertura">
-					<p:selectOneMenu value="#{politica.tipoPremioAbertura}"
-						style="width:80%">
-						<f:selectItems value="#{tipoVendedorBean.tipoAberturaColocacao()}"
-							var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
-					</p:selectOneMenu>
-				</p:column>
+						</h:panelGroup>
 
-				<p:column style="text-align: center" id="valorPremioAbertura">
-					<p:cellEditor>
-						<f:facet name="output">
-							<h:outputText value="#{politica.aberturaPremiacao}">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</h:outputText>
-						</f:facet>
+						<p:outputLabel value="Premiação máxima - Aberturas" />
+						<h:panelGroup>
+							<p:inputNumber disabled="#{!tipoVendedorBean.item.ativaMVPA}"
+								id="mvpa"
+								value="#{tipoVendedorBean.item.maiorValorPremiacaoAbertura}" />
+							<p:selectBooleanCheckbox itemLabel="ativado"
+								value="#{tipoVendedorBean.item.ativaMVPA}"
+								style="margin-left: 10px">
+								<p:ajax process="@this" update="mvpa" />
+							</p:selectBooleanCheckbox>
+						</h:panelGroup>
 
-						<f:facet name="input">
-							<p:inputNumber value="#{politica.aberturaPremiacao}"
-								decimalSeparator="," thousandSeparator="." />
-						</f:facet>
-					</p:cellEditor>
-				</p:column>
+						<p:outputLabel value="Comissão máxima - Colocação" />
+						<h:panelGroup>
+							<p:inputNumber disabled="#{!tipoVendedorBean.item.ativaMVCC}"
+								id="mvcc"
+								value="#{tipoVendedorBean.item.maiorValorComissaoColocacao}" />
+							<p:selectBooleanCheckbox itemLabel="ativado"
+								value="#{tipoVendedorBean.item.ativaMVCC}"
+								style="margin-left: 10px">
+								<p:ajax process="@this" update="mvcc" />
+							</p:selectBooleanCheckbox>
+						</h:panelGroup>
 
+						<p:outputLabel value="Premiação máxima - Colocação" />
+						<h:panelGroup>
+							<p:inputNumber disabled="#{!tipoVendedorBean.item.ativaMVPC}"
+								id="mvpc"
+								value="#{tipoVendedorBean.item.maiorValorPremiacaoColocacao}" />
+							<p:selectBooleanCheckbox itemLabel="ativado"
+								value="#{tipoVendedorBean.item.ativaMVPC}"
+								style="margin-left: 10px">
+								<p:ajax process="@this" update="mvpc" />
+							</p:selectBooleanCheckbox>
+						</h:panelGroup>
 
+					</p:panelGrid>
 
-				<p:column style="text-align: center" id="TipoColocacao">
-					<p:selectOneMenu value="#{politica.tipoColocacao}"
-						style="width:80%">
-						<f:selectItems value="#{tipoVendedorBean.tipoAberturaColocacao()}"
-							var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
-					</p:selectOneMenu>
-				</p:column>
+				</p:tab>
 
-				<p:column style="text-align: center" id="valorColocacao">
-					<p:cellEditor>
-						<f:facet name="output">
-							<h:outputText value="#{politica.colocacao}">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</h:outputText>
-						</f:facet>
+				<p:tab title="Politicas de Vendas">
+					<ui:include
+						src="/cadastro/politicaConsignacaoVendaTipoVendedorProduto.xhtml" />
+				</p:tab>
 
-						<f:facet name="input">
-							<p:inputNumber value="#{politica.colocacao}" decimalSeparator=","
-								thousandSeparator="." />
-						</f:facet>
-					</p:cellEditor>
-				</p:column>
+				<p:tab title="Aberturas por tipos de produtos">
+					<ui:include
+						src="/cadastro/politicaAberturaTipoVendedorTipoProduto.xhtml" />
+				</p:tab>
 
+				<p:tab title="Colocações por tipos de produtos">
+					<ui:include
+						src="/cadastro/politicaColocacaoTipoVendedorTipoProduto.xhtml" />
+				</p:tab>
 
-
-				<p:column style="text-align: center" id="TipoPremioColocacao">
-					<p:selectOneMenu value="#{politica.tipoPremioColocacao}"
-						style="width:80%">
-						<f:selectItems value="#{tipoVendedorBean.tipoAberturaColocacao()}"
-							var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
-					</p:selectOneMenu>
-				</p:column>
-
-				<p:column style="text-align: center" id="valorPremioColocacao">
-					<p:cellEditor>
-						<f:facet name="output">
-							<h:outputText value="#{politica.colocacaoPremiacao}">
-								<f:convertNumber type="currency" locale="pt_BR" />
-							</h:outputText>
-						</f:facet>
-
-						<f:facet name="input">
-							<p:inputNumber value="#{politica.colocacaoPremiacao}"
-								decimalSeparator="," thousandSeparator="." />
-						</f:facet>
-					</p:cellEditor>
-				</p:column>
+			</p:tabView>
 
 
-			</p:dataTable>
 
 		</h:form>
 
-
-		<p:dialog widgetVar="NovaPolitica"
-			header="Criar política de venda - #{tipoVendedorBean.politicaVCTVP.produto.nome}"
-			resizable="false" width="80%" height="70%" id="dialogoNovo">
-			<h:form id="formNovaPolitica">
-
-				<p:panelGrid id="idPnlIntervalo" columns="6" styleClass="semBorda"
-					style="margin-top: 10px; margin-left: 10px">
-
-					<p:outputLabel value="Inicio" />
-					<p:inputNumber value="#{tipoVendedorBean.intervalo.inicio}"
-						decimalPlaces="0" />
-					<p:outputLabel value="menor valor de venda" for="minVenda" />
-					<p:inputNumber value="#{tipoVendedorBean.intervalo.minVenda}"
-						id="minVenda" />
-					<p:outputLabel value="Comissão Pronta Entrega" />
-					<p:inputNumber
-						value="#{tipoVendedorBean.intervalo.comissaoProntaEntrega}" />
-
-					<p:outputLabel value="Fim" />
-					<p:inputNumber value="#{tipoVendedorBean.intervalo.fim}"
-						decimalPlaces="0" />
-					<p:outputLabel value="menor valor de consignação" />
-					<p:inputNumber value="#{tipoVendedorBean.intervalo.minConsignacao}" />
-					<p:outputLabel value="Comissão Transportadora" />
-					<p:inputNumber
-						value="#{tipoVendedorBean.intervalo.comissaoTransportadora}" />
-
-					<p:outputLabel value="" />
-					<p:commandButton value="Inserir Intervalo"
-						actionListener="#{tipoVendedorBean.adicionar()}"
-						process="@this idPnlIntervalo" partialSubmit="true" update="idTab" />
-
-				</p:panelGrid>
-
-				<p:dataTable id="idTab"
-					value="#{tipoVendedorBean.politicaVCTVP.listaIntervalos}"
-					var="item"
-					style="margin-top: 15px ; width: 90%; margin-left: 10px "
-					reflow="true">
-
-
-					<p:columnGroup type="header">
-						<p:row>
-							<p:column colspan="2" headerText="Intervalos" />
-							<p:column colspan="2" headerText="Valores" />
-							<p:column colspan="2" headerText="Comissões" />
-							<p:column rowspan="2" />
-						</p:row>
-
-						<p:row>
-							<p:column headerText="Inicio" />
-							<p:column headerText="Fim" />
-
-							<p:column headerText="Mínimo Venda" />
-							<p:column headerText="Mínimo Consignação" />
-
-							<p:column headerText="Pronta Entrega" />
-							<p:column headerText="Transportadora" />
-						</p:row>
-
-					</p:columnGroup>
-
-
-					<p:column style="text-align: center">
-						<h:outputText value="#{item.inicio}" />
-					</p:column>
-
-					<p:column style="text-align: center">
-						<h:outputText value="#{item.fim}" />
-					</p:column>
-
-					<p:column style="text-align: center">
-						<h:outputText value="#{item.minVenda}">
-							<f:convertNumber pattern="#0.00" locale="pt_BR" />
-						</h:outputText>
-					</p:column>
-
-					<p:column style="text-align: center">
-						<h:outputText value="#{item.minConsignacao}">
-							<f:convertNumber pattern="#0.00" locale="pt_BR" />
-						</h:outputText>
-					</p:column>
-
-					<p:column style="text-align: center">
-						<h:outputText value="#{item.comissaoProntaEntrega}">
-							<f:convertNumber pattern="#0.00" locale="pt_BR" />
-						</h:outputText>
-					</p:column>
-
-					<p:column style="text-align: center">
-						<h:outputText value="#{item.comissaoTransportadora}">
-							<f:convertNumber pattern="#0.00" locale="pt_BR" />
-						</h:outputText>
-					</p:column>
-
-					<p:column style="text-align: center">
-						<p:commandButton value="Excluir"
-							actionListener="#{tipoVendedorBean.excluiIntervalo(item)}" 
-							process="@this" partialSubmit="true" update="idTab"/>
-					</p:column>
-
-
-				</p:dataTable>
-
-				<p:commandButton value="Fechar"
-					style="margin-left: 10px; margin-top: 10px"
-					process="@this" partialSubmit="true"
-					oncomplete="PF('NovaPolitica').hide(); return false;" />
-
-
-
-			</h:form>
-
-		</p:dialog>
 
 
 

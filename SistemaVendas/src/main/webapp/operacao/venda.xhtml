@@ -7,7 +7,7 @@
 	<p:dataTable id="idTabVenda" value="#{operacaoBean.item.vendas}"
 		var="item" editable="true" editMode="cell" style="margin-top: 30px"
 		reflow="true">
-
+		
 		<f:facet name="header">
 			<p:commandButton value="Adicionar produto" process="@this"
 				onclick="PF('dlgVenda').show()" />
@@ -23,7 +23,7 @@
 			<h:outputText value="#{item.totalVendidos}" />
 		</p:column>
 
-		<p:column headerText="Último preço"
+		<p:column headerText="Preço"
 			style="font-size: small; text-align: center; width: 10%">
 			<p:cellEditor>
 				<f:facet name="output">
@@ -35,7 +35,7 @@
 					<p:inputNumber id="preCo" value="#{item.valorUnitario}"
 						decimalSeparator="," thousandSeparator="." decimalPlaces="2">
 						<p:ajax listener="#{vendaBean.validaPreco(item)}"
-							update="preco preCo" process="@this" partialSubmit="true" />
+							update="preco preCo :formOperacao:mensagem2" process="@this" partialSubmit="true" />
 
 						<p:ajax
 							listener="#{resumoOperacaoBean.alimentaListaResumoConsignacaoVenda}"
@@ -63,7 +63,11 @@
 				<f:facet name="input">
 					<p:inputText value="#{item.quantidade}" id="idInputQuantidade">
 						<p:ajax process="@this" partialSubmit="true"
-							update="outPutQuantidadeV idInputQuantidade" />
+							listener="#{vendaBean.taxaComissao(item)}"
+							update="outPutQuantidadeV idInputQuantidade outPutTaxa :formOperacao:mensagem2" />
+
+						<p:ajax process="@this" partialSubmit="true"
+							listener="#{vendaBean.validaPreco(item)}" update="preco" />
 
 						<p:ajax
 							listener="#{resumoOperacaoBean.alimentaListaResumoConsignacaoVenda}"
@@ -82,10 +86,15 @@
 			style="font-size: small; text-align: center; width: 10%">
 			<p:cellEditor>
 				<f:facet name="output" style="width: 60px">
-					<h:outputText value="#{item.devolvidos}" />
+					<h:outputText value="#{item.devolvidos}" id="outputDevolvidos" />
 				</f:facet>
 				<f:facet name="input" style="width: 60px">
-					<p:inputNumber value="#{item.devolvidos}" minValue="0" />
+					<p:inputNumber value="#{item.devolvidos}" minValue="0"
+						id="inputDevolvidos">
+						<p:ajax process="@this inputDevolvidos" partialSubmit="true"
+							listener="#{vendaBean.validaReposicao(item)}"
+							update="outputDevolvidos inputDevolvidos outputRepostos inputRepostos" />
+					</p:inputNumber>
 				</f:facet>
 			</p:cellEditor>
 		</p:column>
@@ -94,10 +103,15 @@
 			style="font-size: small; text-align: center; width: 7%">
 			<p:cellEditor>
 				<f:facet name="output" style="width: 60px">
-					<h:outputText value="#{item.repostos}" />
+					<h:outputText value="#{item.repostos}" id="outputRepostos" />
 				</f:facet>
 				<f:facet name="input" style="width: 60px">
-					<p:inputNumber value="#{item.repostos}" minValue="0" />
+					<p:inputNumber value="#{item.repostos}" minValue="0"
+						id="inputRepostos">
+						<p:ajax process="@this inputRepostos" partialSubmit="true"
+							listener="#{vendaBean.validaReposicao(item)}"
+							update="outputRepostos inputRepostos outputDevolvidos inputDevolvidos" />
+					</p:inputNumber>
 				</f:facet>
 			</p:cellEditor>
 		</p:column>
@@ -112,7 +126,7 @@
 			</p:selectBooleanCheckbox>
 		</p:column>
 
-		<p:column headerText="Comissão - %"
+		<p:column headerText="Comissão - %" id="colunaComissao"
 			style="font-size: small; text-align: center; width: 10%">
 			<p:cellEditor>
 				<f:facet name="output" style="width: 60px">
@@ -122,20 +136,16 @@
 				</f:facet>
 				<f:facet name="input" style="width: 60px">
 					<p:inputNumber id="inputTaxa" value="#{item.taxaComissao}"
-						immediate="true" decimalSeparator="," thousandSeparator=".">
-						<p:ajax
-							listener="#{vendaBean.alteraTaxa(item)}" update="outPutTaxa inputTaxa" />
-							
-						<p:ajax
-							listener="#{resumoOperacaoBean.alimentaListaResumoConsignacaoVenda}"
-							process="@this" partialSubmit="true"
-							update=":formOperacao:idTabView:idResumoOperacao outPutTaxa inputTaxa" />	
-						
-							
+						decimalSeparator="," thousandSeparator=".">
+						<p:ajax process="colunaComissao @this" partialSubmit="true"
+							listener="#{vendaBean.alteraTaxa(item)}"
+							update="inputTaxa outPutTaxa :formOperacao:idTabView:idResumoOperacao" />
+
 					</p:inputNumber>
 				</f:facet>
 			</p:cellEditor>
 		</p:column>
+
 		<p:column headerText="Nota Fiscal"
 			style="font-size: small;  text-align: center; width: 10%"
 			styleClass="semBorda">
@@ -171,8 +181,9 @@
 	</p:dataTable>
 
 	<!-- Diálogo para Venda de um novo produto -->
-	<p:dialog header="Nova venda" widgetVar="dlgVenda" modal="true">
-		<p:panelGrid id="pnlNovaVenda" columns="4" styleClass="semBorda">
+	<p:dialog header="Nova venda" widgetVar="dlgVenda" modal="true"
+		width="40%">
+		<p:panelGrid id="pnlNovaVenda" columns="2" styleClass="semBorda">
 
 			<p:outputLabel value="Produto" for="produtoVenda" />
 			<p:selectOneMenu id="produtoVenda" immediate="true"
@@ -185,40 +196,40 @@
 				<p:ajax update="minVendaV precoV" />
 			</p:selectOneMenu>
 
-			<p:outputLabel value="Menor valor para venda" />
-			<p:outputLabel id="minVendaV"
-				value="#{vendaBean.venda.produto.minValorVenda}">
-			</p:outputLabel>
-
-			<p:outputLabel value="Valor Unitário" for="precoV" />
-			<p:inputNumber id="precoV"
-				disabled="#{vendaBean.habilitaPrecoUnitario()}" required="true"
-				requiredMessage="Preço não informado!"
-				value="#{vendaBean.venda.valorUnitario}" decimalSeparator=","
-				thousandSeparator="." decimalPlaces="2">
-				<p:ajax listener="#{vendaBean.validaPrecoNovaVenda()}"
-					update="precoV" process="@this" partialSubmit="true" />
-			</p:inputNumber>
-
-			<p:outputLabel value="" />
-			<p:outputLabel value="" />
 
 			<p:outputLabel value="Quantidade" for="quantV" />
 			<p:inputNumber id="quantV" value="#{vendaBean.venda.quantidade}"
 				required="true" requiredMessage="Quantidade não informada!"
-				minValue="0" decimalPlaces="0" />
+				minValue="0" decimalPlaces="0">
 
+				<p:ajax update="minVendaV" process="@this" partialSubmit="true" />
 
-			<p:outputLabel value="" />
-			<p:outputLabel value="" />
+			</p:inputNumber>
+
+			<p:outputLabel value="Valor Unitário" for="precoV" />
+			<h:panelGroup>
+				<p:inputNumber id="precoV"
+					disabled="#{vendaBean.habilitaPrecoUnitario()}" required="true"
+					requiredMessage="Preço não informado!"
+					value="#{vendaBean.venda.valorUnitario}" decimalSeparator=","
+					thousandSeparator="." decimalPlaces="2">
+					<p:ajax listener="#{vendaBean.validaPrecoNovaVenda()}"
+						update="precoV" process="@this" partialSubmit="true" />
+				</p:inputNumber>
+
+				<p:commandButton id="minVendaV"
+					value="Min Venda - #{vendaBean.menorValorVenda()}"
+					style="margin-left: 5px"
+					actionListener="#{vendaBean.atualizaValorVenda()}" update="precoV"
+					partialSubmit="true" process="@this" />
+
+			</h:panelGroup>
+
 
 			<p:outputLabel value="Pronta entrega" />
 			<p:selectBooleanCheckbox style="margin-left: 10px"
 				value="#{vendaBean.venda.prontaEntrega}">
 			</p:selectBooleanCheckbox>
-
-			<p:outputLabel value="" />
-			<p:outputLabel value="" />
 
 
 			<p:outputLabel value="Nota fiscal" />

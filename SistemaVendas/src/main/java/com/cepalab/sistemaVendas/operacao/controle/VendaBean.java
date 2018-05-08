@@ -12,10 +12,8 @@ import javax.inject.Named;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
 import com.cepalab.sistemaVendas.operacao.dominio.Venda;
-import com.cepalab.sistemaVendas.repository.ComissoesTipoVendedores;
 import com.cepalab.sistemaVendas.repository.Produtos;
 import com.cepalab.sistemaVendas.repository.Vendas;
-import com.cepalab.sistemaVendas.security.Seguranca;
 import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
 
 @Named
@@ -37,12 +35,6 @@ public class VendaBean implements Serializable {
 	private ReceitaBean receitaBean;
 
 	@Inject
-	private Seguranca seg;
-
-	@Inject
-	private ComissoesTipoVendedores taxaComissao;
-
-	@Inject
 	private Vendas vendas;
 
 	@Inject
@@ -57,7 +49,7 @@ public class VendaBean implements Serializable {
 		inicio();
 		operacao.getItem().setVendas(vendas.porCliente(operacao.getItem().getCliente()));
 		for (Venda v : operacao.getItem().getVendas()) {
-			v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
+			//v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
 			v.setOperacao(operacao.getItem());
 		}
 	}
@@ -68,7 +60,7 @@ public class VendaBean implements Serializable {
 
 		if (operacao.getItem().getVendas().isEmpty() && listaAux != null) {
 			for (Venda v : listaAux) {
-				v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
+				//v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
 				v.setOperacao(operacao.getItem());
 			}
 			operacao.getItem().setVendas(listaAux);
@@ -77,8 +69,8 @@ public class VendaBean implements Serializable {
 			if (listaAux != null && !listaAux.isEmpty()) {
 				for (Venda v : listaAux) {
 					if (!pertenceListaVendas(v)) {
-						v.setTaxaComissao(
-								taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
+						//v.setTaxaComissao(
+								//taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
 						v.setOperacao(operacao.getItem());
 						operacao.getItem().getVendas().add(v);
 					}
@@ -120,8 +112,8 @@ public class VendaBean implements Serializable {
 
 	public void removeVenda() {
 		List<Venda> listaVenda = new ArrayList<>();
-		for(Venda v : operacao.getItem().getVendas()) {
-			if(!v.getProduto().getNome().equals(venda.getProduto().getNome())) {
+		for (Venda v : operacao.getItem().getVendas()) {
+			if (!v.getProduto().getNome().equals(venda.getProduto().getNome())) {
 				listaVenda.add(v);
 			}
 		}
@@ -178,14 +170,22 @@ public class VendaBean implements Serializable {
 
 	public void validaPreco(Venda aux) {
 		BigDecimal valorInformado = aux.getValorUnitario();
-		BigDecimal minValorVenda = aux.getProduto().getMinValorVenda();
+		BigDecimal minValorVenda = operacao.getTipoVendedor().minVenda(aux);
 		if (valorInformado == null || valorInformado.compareTo(minValorVenda) < 0) {
-			// aux.setValorUnitario(minValorVenda);
-			FacesUtil.addErrorMessage("Valor unitário e menor que o mínimo permitido para esse produto!");
+			aux.setValorUnitario(minValorVenda);
+			FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para essa quantidade de produtos!");
 		}
 
 	}
-
+	
+	public void validaReposicao(Venda aux) {
+		if(aux.getRepostos().intValue() > aux.getDevolvidos().intValue()) {
+			aux.setRepostos(0L);
+			aux.setDevolvidos(0L);
+			FacesUtil.addErrorMessage("Quantidade reposta maior que a devolvida");
+		}
+	}
+	
 	public Boolean habilitaPrecoUnitario() {
 
 		if (venda.getProduto() == null) {
@@ -198,12 +198,12 @@ public class VendaBean implements Serializable {
 
 	public void validaPrecoNovaVenda() {
 		BigDecimal valor = venda.getValorUnitario();
-		BigDecimal minVenda = venda.getProduto().getMinValorVenda();
+		BigDecimal minVenda = operacao.getTipoVendedor().minVenda(venda);
 
 		int resul = valor.compareTo(minVenda);
 		if (resul < 0) {
 			FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para esse produto!");
-			// venda.setValorUnitario(minVenda);
+			venda.setValorUnitario(minVenda);
 		}
 
 	}
@@ -213,19 +213,19 @@ public class VendaBean implements Serializable {
 	}
 
 	public void taxaComissao(Venda v) {
-		if (v.getProntaEntrega()) {
-			v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
-		} else {
-			v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProdutoEnvio(seg.UsuarioLogado(), v.getProduto()));
-		}
+		v.setTaxaComissao(operacao.getTipoVendedor().taxaComissaoVenda(v));
 		resumoOperacao.alimentaListaResumoConsignacaoVenda();
 		receitaBean.criaListaReceitas();
 
 	}
 
 	public void alteraTaxa(Venda v) {
-		if (v.getTaxaComissao().compareTo(new BigDecimal("10")) > 0) {
+		BigDecimal maiorComissaoCadastrada = operacao.getTipoVendedor().maiorTaxaComissao(v);		
+		if (v.getTaxaComissao().compareTo(maiorComissaoCadastrada) > 0) {
 			taxaComissao(v);
+		}
+		else {
+			resumoOperacao.alimentaListaResumoConsignacaoVenda();
 		}
 	}
 
@@ -233,6 +233,19 @@ public class VendaBean implements Serializable {
 		return totalProdutosVendidos(v).multiply(v.getTaxaComissao().divide(new BigDecimal("100")));
 	}
 
+	public BigDecimal menorValorVenda() {
+		if (venda.getProduto() != null) {
+			return operacao.getTipoVendedor().minVenda(venda);
+		}
+		return BigDecimal.ZERO;
+	}
+
+	
+	
+	public void atualizaValorVenda() {
+		venda.setValorUnitario(menorValorVenda());
+	}
+	
 	public List<Produto> getListaProdutos() {
 		return listaProdutos;
 	}

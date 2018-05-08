@@ -70,7 +70,7 @@ public class IntervaloAberturaTipoProduto extends GenericDTO{
 
 	
 	@ManyToOne
-	@JoinColumn(name = "politica_abertura_tv_tp_id")
+	@JoinColumn(name = "politica_abertura_tv_tp_id", nullable=false)
 	public PoliticaAberturaTipoVendedorTipoProduto getPoliticaAberturaTipoVendedorTipoProduto() {
 		return politicaAberturaTipoVendedorTipoProduto;
 	}

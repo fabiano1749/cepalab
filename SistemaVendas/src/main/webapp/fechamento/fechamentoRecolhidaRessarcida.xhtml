@@ -5,13 +5,12 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:o="http://omnifaces.org/ui">
 
-	<p:panel header="Custos do período"
+	<p:panel header="Comissões Recolhidas / Ressarcidas"
 		style="margin-top:20px; width: 70%; text-align: center">
 
-		<p:dataTable id="idTabelaCustos"
-			value="#{fechamentoCustosBean.listaCustos}" style="width: 100%"
-			var="item" rows="10" paginator="true" paginatorPosition="bottom"
-			paginatorAlwaysVisible="false">
+		<p:dataTable id="idTabelaRecRess"
+			value="#{fechamentoBean.item.listaRecolhidaRessarcida}" style="width: 100%"
+			var="item">
 			<p:column headerText="Custo" style="text-align: center; width: 20%">
 				<h:outputText value="#{item.tipo.descricao}" />
 			</p:column>
@@ -27,23 +26,6 @@
 					<f:convertNumber type="currency" locale="pt_BR" />
 				</h:outputText>
 			</p:column>
-
-			<p:column headerText="Observação"
-				style="text-align: center; width: 40%">
-				<h:outputText value="#{item.observacao}" />
-			</p:column>
-
-			<p:columnGroup type="footer">
-			<p:row>
-				<p:column colspan="3"
-					footerText="Total: #{fechamentoCustosBean.custoTotal}"
-					style="text-align: right">
-				
-				</p:column>
-				
-			</p:row>
-		</p:columnGroup>
-
 
 		</p:dataTable>
 

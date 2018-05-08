@@ -20,6 +20,7 @@ import com.cepalab.sistemaVendas.repository.CustosViagens;
 import com.cepalab.sistemaVendas.repository.Funcionarios;
 import com.cepalab.sistemaVendas.repository.filter.CustosViagemFilter;
 import com.cepalab.sistemaVendas.security.Seguranca;
+import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
 
 
 @Named
@@ -32,6 +33,8 @@ public class pesquisaCustosBean implements Serializable {
 	private CustosViagemFilter filtro;
 	private List<CustoViagem> custosFiltrados;
 	private List<Funcionario> listaFuncionarios;
+	private CustoViagem custo;
+	
 	
 	@Inject
 	private Funcionarios fun;
@@ -91,6 +94,21 @@ public class pesquisaCustosBean implements Serializable {
 		return filtro;
 	}
 
+	public void troca(CustoViagem custo) {
+		this.custo = custo;
+	}
+	
+	public void excluir() {
+		try {
+			custos.remover(custo);
+			FacesUtil.addInfoMessage("Custo excluído com sucesso");
+			pesquisar();
+		} catch (Exception e) {
+			FacesUtil.addErrorMessage(e.getMessage());
+		}	
+	}
+	
+	
 	public void setFiltro(CustosViagemFilter filtro) {
 		this.filtro = filtro;
 	}
@@ -111,4 +129,11 @@ public class pesquisaCustosBean implements Serializable {
 		this.listaFuncionarios = listaFuncionarios;
 	}
 
+	public CustoViagem getCusto() {
+		return custo;
+	}
+
+	public void setCusto(CustoViagem custo) {
+		this.custo = custo;
+	}
 }

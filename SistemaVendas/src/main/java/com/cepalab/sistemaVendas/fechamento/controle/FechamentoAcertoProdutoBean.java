@@ -30,9 +30,11 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 	private List<Consignacao> listaConsiganacao = new ArrayList<>();
 	private List<Venda> listaVendas = new ArrayList<>();
 	private List<Amostra> listaAmostra = new ArrayList<>();
+	private List<Expedicao> listaExpedicao = new ArrayList<>();
+	private Expedicao expedicao;
 	private BigDecimal descontoTotal = BigDecimal.ZERO;
 
-	private Expedicao expedicao;
+	
 
 	@Inject
 	private Expedicoes expedicoes;
@@ -59,7 +61,14 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 
 	public void inicio() {
 		limpa();
-		expedicao = expedicoes.ultimaFechadaFuncionario(fechamentoBean.getItem().getFuncionario());
+		if(fechamentoBean.isAdministrador()) {
+			expedicao = expedicoes.porId(expedicao.getId());
+		}
+		else {
+			expedicao = expedicoes.UltimaAberta(fechamentoBean.getFuncionario());
+		}
+		
+		
 		if (expedicao != null) {
 			listaConsiganacao = consignados.porFuncionario(fechamentoBean.getItem().getFuncionario(),
 					fechamentoBean.getItem().getInicio(), fechamentoBean.getItem().getFim());
@@ -76,6 +85,7 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 				acerto.calculaDesconto();
 				descontoTotal = descontoTotal.add(acerto.getDesconto());
 				listaAcertoProduto.add(acerto);
+				fechamentoBean.getItem().setDiferencaProdutos(descontoTotal);
 			}
 		}
 	}
@@ -129,6 +139,10 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 			return true;
 	}
 
+	public void criaListaExpedicao() {
+		listaExpedicao = expedicoes.ultimasExpedicoesFechadasFuncionario(fechamentoBean.getFuncionario());
+	}
+	
 	public Expedicao getExpedicao() {
 		return expedicao;
 	}
@@ -153,4 +167,14 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 		this.descontoTotal = descontoTotal;
 	}
 
+	public List<Expedicao> getListaExpedicao() {
+		return listaExpedicao;
+	}
+
+	public void setListaExpedicao(List<Expedicao> listaExpedicao) {
+		this.listaExpedicao = listaExpedicao;
+	}
+
+	
+	
 }

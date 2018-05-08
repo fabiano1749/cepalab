@@ -10,8 +10,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
-import com.cepalab.sistemaVendas.operacao.dominio.CustoViagem;
 import com.cepalab.sistemaVendas.operacao.dominio.DescontoSalario;
+import com.cepalab.sistemaVendas.repository.filter.DescontoSalarioFilter;
 import com.cepalab.sistemaVendas.service.NegocioException;
 import com.cepalab.sistemaVendas.util.jpa.Transactional;
 
@@ -58,5 +58,18 @@ public class DescontosSalarios implements Serializable {
 			return null;
 		}
 	}
+	
+	public List<DescontoSalario> descontosFiltrados(DescontoSalarioFilter filtro) {
+
+		try {
+			return manager.createQuery(
+					"FROM DescontoSalario  WHERE funcionario= :fun AND data >= :inicio AND data <= :fim ORDER BY data",
+					DescontoSalario.class).setParameter("fun", filtro.getFuncionario()).setParameter("inicio", filtro.getInicio()).setParameter("fim", filtro.getFim())
+					.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
 
 }
