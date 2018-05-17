@@ -39,28 +39,32 @@
 						var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
 				</p:selectOneMenu>
 
+				<p:outputLabel value="" />
+				<p:outputLabel value="" />
 
 				<p:outputLabel value="Data inicial" for="inicio" />
 				<p:calendar id="inicio" pattern="dd/MM/yyyy" locale="pt"
 					value="#{pesquisaOperacaoBean.filtro.inicio}" />
 
+
 				<p:outputLabel value="Código - cliente" />
 				<p:inputNumber value="#{pesquisaOperacaoBean.filtro.codigoCliente}"
 					thousandSeparator="" decimalSeparator="" decimalPlaces="0" />
-
 
 				<p:outputLabel value="Data final" for="fim" />
 				<p:calendar id="fim" value="#{pesquisaOperacaoBean.filtro.fim}"
 					pattern="dd/MM/yyyy" locale="pt" />
 
+				<p:outputLabel value="Cnpj - Cpf" />
+				<p:inputText value="#{pesquisaOperacaoBean.filtro.cnpjCpf}" />
 
 
 			</p:panelGrid>
 
 			<p:dataTable id="idTabOperacao" sortBy="#{item.cliente.codigo}"
 				value="#{pesquisaOperacaoBean.operacoesFiltradas}" var="item"
-				style="margin-top: 15px ; width: 99% " reflow="true" editable="true"
-				editMode="cell">
+				style="margin-top: 15px ; width: 99%; font-size: 10px "
+				reflow="true" editable="true" editMode="cell">
 
 				<p:column headerText="Código" sortBy="#{item.cliente.codigo}"
 					style="text-align: center; width: 5%">
@@ -68,7 +72,7 @@
 				</p:column>
 
 				<p:column headerText="Cliente"
-					style="text-align: center; width: 30%">
+					style="text-align: center; width: 20%">
 					<h:outputText value="#{item.cliente.nome}" />
 				</p:column>
 
@@ -88,11 +92,20 @@
 				</p:column>
 
 				<p:column headerText="Receita-Total" style="text-align: center">
-					<h:outputText value="#{item.ReceitaTotal()}" />
+					<h:outputText value="#{item.ReceitaTotal()}">
+						<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Formas de Pagamento"
+					style="text-align: center">
+					<h:outputText value="#{item.formasPagamento()}" />
 				</p:column>
 
 				<p:column headerText="Comissão-Total" style="text-align: center">
-					<h:outputText value="#{item.comissaoTotal()}" />
+					<h:outputText value="#{item.comissaoTotal()}">
+						<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+					</h:outputText>
 				</p:column>
 
 				<p:column headerText="Conferido"

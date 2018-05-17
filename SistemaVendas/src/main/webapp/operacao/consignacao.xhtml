@@ -7,25 +7,31 @@
 
 	<p:dataTable id="idTabConsignados"
 		value="#{operacaoBean.item.consignacoes}" var="item" editable="true"
-		editMode="cell" style="margin-top: 30px" reflow="true">
+		editMode="cell" style="margin-top: 30px" reflow="true"
+		rowIndexVar="rowIndex">
 
 		<f:facet name="header">
 			<p:commandButton value="Consignar um novo produto" process="@this"
-				onclick="PF('dlConsig').show();" />
+				onclick="PF('dlConsig').show();"
+				actionListener="#{consignacaoBean.iniciaConsignacao()}" />
 		</f:facet>
 
+		<p:column headerText="#" style="width: 3%; text-align: center">
+       		#{rowIndex+1}
+   		</p:column>
+
 		<p:column headerText="Produto"
-			style="font-size: small; text-align: center">
+			style="font-size: small; text-align: center; font-size: 11px; width: 20%">
 			<h:outputText value="#{item.produto.nome}" />
 		</p:column>
 
 		<p:column headerText="Consignados"
-			style="font-size: small; text-align: center">
+			style="font-size: 11px; text-align: center; width: 7%">
 			<h:outputText id="consignados" value="#{item.totalConsignado}" />
 		</p:column>
 
 		<p:column headerText="Preço"
-			style="font-size: small; text-align: center">
+			style="font-size: 11px; text-align: center; width: 5%">
 			<p:cellEditor>
 				<f:facet name="output">
 					<h:outputText id="preco" value="#{item.valorUnitario}">
@@ -37,7 +43,7 @@
 						decimalSeparator="," thousandSeparator="." decimalPlaces="2">
 						<p:ajax listener="#{consignacaoBean.validaPreco(item)}"
 							process="@this "
-							update="preco preCo :formOperacao:idTabView:idResumoOperacao :formOperacao:mensagem2"
+							update="preco preCo :formOperacao:idTabView:idResumoOperacao"
 							partialSubmit="true" />
 
 						<p:ajax
@@ -57,7 +63,7 @@
 
 
 		<p:column headerText="Vendidos"
-			style="font-size: small; text-align: center">
+			style="text-align: center; font-size: 11px; width: 5%">
 			<p:cellEditor>
 				<f:facet name="output">
 					<h:outputText value="#{item.vendidos}" id="outputVendidos" />
@@ -85,7 +91,7 @@
 		</p:column>
 
 		<p:column headerText="Nota Fiscal"
-			style="font-size: small;  text-align: center; width: 15%"
+			style="font-size: 11px;  text-align: center; width: 15%"
 			styleClass="semBorda">
 			<h:panelGrid columns="2">
 				<h:panelGroup>
@@ -108,7 +114,7 @@
 		</p:column>
 
 		<p:column headerText="Comissão - %" id="colunaComissaoC"
-			style="font-size: small; text-align: center; width: 10%">
+			style="font-size: 11px; text-align: center; width: 7%">
 			<p:cellEditor>
 				<f:facet name="output" style="width: 60px">
 					<h:outputText id="outPutTaxa" value="#{item.taxaComissao}">
@@ -118,10 +124,10 @@
 				<f:facet name="input" style="width: 60px">
 					<p:inputNumber id="inputTaxa" value="#{item.taxaComissao}"
 						decimalSeparator="," thousandSeparator=".">
-						
+
 						<p:ajax process="colunaComissaoC @this" partialSubmit="true"
 							listener="#{consignacaoBean.alteraTaxa(item)}"
-							update="inputTaxa outPutTaxa :formOperacao:idTabView:idResumoOperacao" />	
+							update="inputTaxa outPutTaxa :formOperacao:idTabView:idResumoOperacao" />
 					</p:inputNumber>
 				</f:facet>
 			</p:cellEditor>
@@ -129,7 +135,7 @@
 
 
 		<p:column headerText="Devolvidos"
-			style="font-size: small; text-align: center">
+			style="font-size: 11px; text-align: center; width: 5%">
 			<p:cellEditor>
 				<f:facet name="output" style="width: 60px">
 					<h:outputText value="#{item.devolvidos}" id="outputDevolvidos" />
@@ -145,7 +151,7 @@
 		</p:column>
 
 		<p:column headerText="Nova consignação"
-			style="font-size: small; text-align: center">
+			style="font-size: 11px; text-align: center; width: 7%">
 			<p:cellEditor>
 				<f:facet name="output">
 					<h:outputText value="#{item.consignados}" id="outputConsignacao" />
@@ -162,17 +168,17 @@
 
 
 		<p:column headerText="Pronta entrega"
-			style="font-size: small; width: 110px; text-align: center">
+			style="font-size: 11px; width: 4%; text-align: center">
 			<p:selectBooleanCheckbox id="idProntaEntrega"
 				value="#{item.prontaEntrega}">
 				<p:ajax process="@this" partialSubmit="true"
 					update="idProntaEntrega" />
 			</p:selectBooleanCheckbox>
 		</p:column>
-
 		<p:column headerText=" " style="text-align: center">
+
 			<p:commandButton icon="ui-icon-trash"
-				style="margin-left: 4px; width: 40%" process="@this"
+				style="margin-left: 4px; width: 70%" process="@this"
 				partialSubmit="true"
 				actionListener="#{consignacaoBean.trocaItem(item)}"
 				oncomplete="PF('confirmExclusaoConsignacao').show();"

@@ -1,6 +1,7 @@
 package com.cepalab.sistemaVendas.consulta.dominio;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,6 +68,25 @@ Produtos produtos, List<TipoProduto> tiposProdutos) {
 		}
 		return null;
 	}
+	
+	public int quantidadeVendida(Funcionario fun, Produto prod) {
+		for (FechamentoGeral f : listaFechamento) {
+			if (f.getFuncionario().equals(fun) || f.getFuncionario().getNome().equals(fun.getNome())) {
+				return f.retornaProdutoQuantidade(prod).getVendidos();
+			}
+		}
+		return 0;
+	}
+	
+	public BigDecimal receitaPorProduto(Funcionario fun, Produto prod) {
+		for (FechamentoGeral f : listaFechamento) {
+			if (f.getFuncionario().equals(fun) || f.getFuncionario().getNome().equals(fun.getNome())) {
+				return f.retornaProdutoQuantidade(prod).getReceita().setScale(2);
+			}
+		}
+		return BigDecimal.ZERO;
+	}
+	
 
 	public Date getInicio() {
 		return inicio;

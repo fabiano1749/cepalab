@@ -22,8 +22,10 @@ public class Produto extends GenericDTO{
 		
 	private String nome;
 	private BigDecimal custo = BigDecimal.ZERO;
+	private int posicao;
 	private PodeConsignar podeConsignar;
 	private TipoProduto tipo = new TipoProduto();
+	
 	
 	@Override
 	@Id
@@ -49,7 +51,14 @@ public class Produto extends GenericDTO{
 		this.custo = custo;
 	}
 	
-	
+	public int getPosicao() {
+		return posicao;
+	}
+
+	public void setPosicao(int posicao) {
+		this.posicao = posicao;
+	}
+
 	@Enumerated(EnumType.STRING)
 	@Column(name= "pode_consignar", length=5, nullable=false)
 	public PodeConsignar getPodeConsignar() {

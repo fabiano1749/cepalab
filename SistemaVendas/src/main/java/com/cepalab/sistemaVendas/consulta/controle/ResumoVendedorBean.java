@@ -52,8 +52,13 @@ public class ResumoVendedorBean implements Serializable {
 	@PostConstruct
 	public void inicio() {
 		fechamentoGeral = new FechamentoGeral();
+		if(isAdministrador()) {
 		listaFun = fun.funcionarios();
 		retiraTiposFuncionários();
+		}
+		else {
+			fechamentoGeral.setFuncionario(seg.UsuarioLogado());
+		}
 	}
 
 	public void pesquisa() {

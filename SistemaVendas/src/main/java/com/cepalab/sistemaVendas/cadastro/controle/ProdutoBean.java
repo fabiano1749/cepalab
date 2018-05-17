@@ -56,6 +56,7 @@ public class ProdutoBean implements Serializable {
 
 	public void salvar() {
 		try {
+			item.setPosicao(ultimaPosicao());
 			cadastroProduto.salvar(item);
 			FacesUtil.addInfoMessage("Produto salvo com sucesso!");
 			limpar();
@@ -113,6 +114,14 @@ public class ProdutoBean implements Serializable {
 		}
 	}
 
+	public int ultimaPosicao() {
+		if (itens == null || itens.isEmpty()) {
+			return 1;
+		}
+		else return itens.get(itens.size()-1).getPosicao() + 1;
+	}
+	
+	
 	public Produto getitem() {
 		return item;
 	}

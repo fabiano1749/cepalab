@@ -276,6 +276,7 @@ public class Operacao extends GenericDTO {
 				for (ProdutoQuantidade p : f.getListaProdutoQuantidade()) {
 					if (c.getProduto().getNome().equals(p.getProduto().getNome())) {
 						p.incrementaVendidos(c.getVendidos());
+						p.incrementaConsignados(c.getConsignados().intValue());
 						p.incrementaReceita(c.getValorUnitario().multiply(new BigDecimal(c.getVendidos())));
 						break;
 					}
@@ -497,4 +498,21 @@ public class Operacao extends GenericDTO {
 		}
 	}
 
+	@Transient
+	public String formasPagamento() {
+		String formas = "";
+		if(receitas != null && !receitas.isEmpty()) {
+			for(Receita r : receitas) {
+				if(formas.equals("")) {
+					formas = r.getFormaPagamento().getDescricao();
+				}else {
+					formas = formas + " - "+ r.getFormaPagamento().getDescricao();
+				}
+				
+			}
+		}
+		return formas;
+	}
+	
+	
 }

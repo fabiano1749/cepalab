@@ -25,7 +25,7 @@ public class Produtos implements Serializable {
 
 	public List<Produto> produtos() {
 
-		return manager.createQuery("from Produto", Produto.class).getResultList();
+		return manager.createQuery("from Produto order by posicao", Produto.class).getResultList();
 
 	}
 
@@ -37,14 +37,14 @@ public class Produtos implements Serializable {
 			return null;
 		}
 	}
-	
+
 	@Transactional
 	public void remover(Produto produto) {
 		try {
-		produto = porId(produto.getId());
-		manager.remove(produto);
-		manager.flush();
-		}catch(PersistenceException e) {
+			produto = porId(produto.getId());
+			manager.remove(produto);
+			manager.flush();
+		} catch (PersistenceException e) {
 			throw new NegocioException("Produto não pode ser excluído.");
 		}
 	}
@@ -52,5 +52,23 @@ public class Produtos implements Serializable {
 	public Produto porId(Long id) {
 		return manager.find(Produto.class, id);
 	}
-	
+
+	public Produto porPosicao(int posicao) {
+		try {
+			return manager.createQuery("from Produto where posicao =:posicao", Produto.class)
+					.setParameter("posicao", posicao).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public int ultimaPosicao() {
+		List<Produto> produtos = manager.createQuery("from Produto order by pocicao desc", Produto.class)
+				.getResultList();
+
+		if (produtos != null) {
+			return produtos.get(0).getPosicao();
+		}
+		return 0;
+	}
 }

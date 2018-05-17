@@ -39,7 +39,7 @@
 
 			<p:dataTable var="produto" id="tbl"
 				value="#{consolidadoProdutoVendedorBean.listaProdutos}"
-				style="margin-top:10px; font-size: 9px">
+				style="margin-top:10px; font-size: 9px" >
 
 				<p:columnGroup type="header">
 					<p:row>
@@ -55,6 +55,7 @@
 							<p:column headerText="#{fun.nome}" />
 						</ui:repeat>
 					</p:row>
+
 				</p:columnGroup>
 
 				<p:column>
@@ -64,13 +65,28 @@
 				<p:columns
 					value="#{consolidadoProdutoVendedorBean.listaFuncionarios}"
 					var="fun">
-					<h:outputText
-						value="#{consolidadoProdutoVendedorBean.consolidado.quantidadeReceita(fun, produto)}" />
+					<p:panelGrid columns="2" columnClasses="grid10, grid90" 
+						style="width:115%; text-align: left; margin-left: -6px; margin-right: 0px" >
+
+						<p:outputLabel value="Qt" />
+						<h:outputText
+							value="#{consolidadoProdutoVendedorBean.consolidado.quantidadeVendida(fun, produto)}" />
+
+
+						<p:outputLabel value="R$ " />
+						<h:outputText
+							value="#{consolidadoProdutoVendedorBean.consolidado.receitaPorProduto(fun, produto)}">
+							<f:convertNumber locale="pt_BR" maxFractionDigits="2"/>
+						</h:outputText>
+					</p:panelGrid>
+
+
 				</p:columns>
 
-				<p:columnGroup type="footer">
+
+				<p:columnGroup type="footer" >
 					<p:row>
-						<p:column colspan="1" style="text-align:left"
+						<p:column colspan="1" style="text-align:left" 
 							footerText="Faturamento" />
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
@@ -152,7 +168,7 @@
 							var="fecha">
 							<p:column footerText="R$ #{fecha.faturamentoPremiacaoString()}"
 								style="text-align:left">
-								
+
 							</p:column>
 						</ui:repeat>
 					</p:row>

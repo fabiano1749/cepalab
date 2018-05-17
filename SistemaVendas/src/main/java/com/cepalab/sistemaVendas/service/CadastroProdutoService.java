@@ -17,8 +17,9 @@ public class CadastroProdutoService implements Serializable {
 	
 	@Transactional
 	public Produto salvar(Produto produto) {
-		 
+		
 		Produto produtoExistente = produtos.porNome(produto.getNome());
+		Produto codigoExistente = produtos.porPosicao(produto.getPosicao());
 		
 		if(produtoExistente != null && produto.getId() ==null) {
 			throw new NegocioException("Já existe um produto com o nome informado!");
@@ -26,6 +27,14 @@ public class CadastroProdutoService implements Serializable {
 		
 		if(produtoExistente != null && !produtoExistente.equals(produto)) {
 			throw new NegocioException("Já existe um produto com o nome informado!");
+		}
+		
+		if(codigoExistente != null && produto.getId() ==null) {
+			throw new NegocioException("Já existe um produto com a posição informada");
+		}
+		
+		if(codigoExistente != null && produto.getId() != codigoExistente.getId()) {
+			throw new NegocioException("Já existe um produto com a posição informada");
 		}
 		
 		return produtos.adicionar(produto);

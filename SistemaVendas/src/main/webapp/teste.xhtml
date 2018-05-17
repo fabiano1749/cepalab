@@ -15,9 +15,60 @@
 <h:body>
 
 	<h:form>
-		
 
-		<p:commandButton value="Teste" ajax="false"/>
+		<p:dataTable var="sale" value="">
+			<p:columnGroup type="header">
+				
+				<p:row>
+					<p:column rowspan="3" headerText="Manufacturer" />
+					<p:column colspan="4" headerText="Sale Rate" />
+				</p:row>
+				<p:row>
+					<p:column colspan="2" headerText="Sales" />
+					<p:column colspan="2" headerText="Profit" />
+				</p:row>
+				<p:row>
+					<p:column headerText="Last Year" />
+					<p:column headerText="This Year" />
+					<p:column headerText="Last Year" />
+					<p:column headerText="This Year" />
+				</p:row>
+			</p:columnGroup>
+
+			<p:column>
+				<h:outputText value="" />
+			</p:column>
+			<p:column>
+				<h:outputText value="" />
+			</p:column>
+			<p:column>
+				<h:outputText value="" />
+			</p:column>
+			<p:column>
+				<h:outputText value="">
+					<f:convertNumber type="currency" currencySymbol="$" />
+				</h:outputText>
+			</p:column>
+			<p:column>
+				<h:outputText value="">
+					<f:convertNumber type="currency" currencySymbol="$" />
+				</h:outputText>
+			</p:column>
+
+			<p:columnGroup type="footer">
+				<p:row>
+					<p:column colspan="3" style="text-align:right" footerText="Totals:" />
+					<p:column footerText="" />
+
+					<p:column footerText="" />
+				</p:row>
+			</p:columnGroup>
+
+			<f:facet name="footer">
+            Data between 2013-2014
+        </f:facet>
+		</p:dataTable>
+
 
 	</h:form>
 

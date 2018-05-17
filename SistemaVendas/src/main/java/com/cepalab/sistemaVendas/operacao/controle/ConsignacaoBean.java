@@ -42,6 +42,10 @@ public class ConsignacaoBean implements Serializable {
 	@Inject
 	private Produtos produtos;
 
+	public void iniciaConsignacao() {
+		consignacao = new Consignacao();
+	}
+	
 	public void inicio() {
 		listaProdutos = criaListaProduto();
 		consignacao = new Consignacao();
@@ -225,7 +229,8 @@ public class ConsignacaoBean implements Serializable {
 	}
 
 	public Boolean notaEmitidaNovo() {
-		if (consignacao.getNota() == true) {
+		
+		if (consignacao != null && consignacao.getNota() == true) {
 			return false;
 		} else {
 			return true;
@@ -238,19 +243,25 @@ public class ConsignacaoBean implements Serializable {
 			BigDecimal valorInformado = aux.getValorUnitario();
 			BigDecimal minValorConsignacao = operacao.getTipoVendedor().minConsignacao(aux);
 			if (valorInformado == null || valorInformado.compareTo(minValorConsignacao) < 0) {
-				aux.setValorUnitario(minValorConsignacao);
+				// Caso a cepa não permita venda abaixo do menor preço cadastrado habilitar a
+				// linha abaixo
+				// aux.setValorUnitario(minValorConsignacao);
 				FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para esse produto!");
 			}
 		}
 	}
 
 	public Boolean habilitaPrecoUnitario() {
-		if (consignacao.getProduto() == null) {
-			return true;
-		} else {
-			return false;
+		if (consignacao != null) {
+			if (consignacao.getProduto() == null) {
+				return true;
+			} else {
+				return false;
+			}
 		}
+		return false;
 	}
+
 	public void validaPrecoNovaConsignacao() {
 		BigDecimal valor = consignacao.getValorUnitario();
 		BigDecimal minConsignacao = operacao.getTipoVendedor().minConsignacao(consignacao);
@@ -258,7 +269,9 @@ public class ConsignacaoBean implements Serializable {
 		int resul = valor.compareTo(minConsignacao);
 		if (resul < 0) {
 			FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para esse produto!");
-			consignacao.setValorUnitario(minConsignacao);
+			// Caso a cepa não permita venda abaixo do menor preço cadastrado habilitar a
+			// linha abaixo
+			// consignacao.setValorUnitario(minConsignacao);
 		}
 
 	}
@@ -282,7 +295,7 @@ public class ConsignacaoBean implements Serializable {
 			BigDecimal maiorComissaoCadastrada = operacao.getTipoVendedor().maiorTaxaComissaoConsignacao(c);
 			if (c.getTaxaComissao().compareTo(maiorComissaoCadastrada) > 0) {
 				taxaComissao(c);
-			}else {
+			} else {
 				resumoOperacaoBean.alimentaListaResumoConsignacaoVenda();
 			}
 		}
@@ -291,9 +304,11 @@ public class ConsignacaoBean implements Serializable {
 
 	public BigDecimal menorValorConsignacao() {
 
-		if (consignacao.getProduto() != null) {
+		if (consignacao != null) {
+			if (consignacao.getProduto() != null) {
+				return operacao.getTipoVendedor().minConsignacao(consignacao);
+			}
 
-			return operacao.getTipoVendedor().minConsignacao(consignacao);
 		}
 		return BigDecimal.ZERO;
 	}

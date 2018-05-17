@@ -22,8 +22,8 @@
 			<p:dataTable id="idTabela" value="#{produtoBean.itens}" var="produto"
 				style="margin-top: 20px; width:100%" reflow="true">
 
-				<p:column headerText="Código" style="width:10%; text-align: center">
-					<h:outputText value="#{produto.id}" />
+				<p:column headerText="Posição" style="width:10%; text-align: center">
+					<h:outputText value="#{produto.posicao}" />
 				</p:column>
 
 				<p:column headerText="Nome" style="width:25%; text-align: center">
@@ -146,6 +146,13 @@
 							<f:selectItems value="#{produtoBean.podeConsignar()}" var="pode"
 								itemValue="#{pode}" itemLabel="#{pode.descricao}" />
 						</p:selectOneMenu>
+						
+						<p:outputLabel value="Posicao" for="idPosicao" />
+						<p:inputNumber id="idPosicao"
+							value="#{produtoBean.itemAuxiliar.posicao}" required="true"
+							style="width:100px" requiredMessage="A posição deve ser informada"
+							decimalPlaces="0" />
+						
 
 					</h:panelGrid>
 

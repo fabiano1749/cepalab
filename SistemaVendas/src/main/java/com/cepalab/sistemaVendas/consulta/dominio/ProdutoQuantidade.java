@@ -14,7 +14,8 @@ public class ProdutoQuantidade implements Serializable {
 	private int vendidos;
 	private BigDecimal receita = BigDecimal.ZERO;
 	private BigDecimal comissao = BigDecimal.ZERO;
-
+	private int consignados;
+	
 	public Produto getProduto() {
 		return produto;
 	}
@@ -50,6 +51,9 @@ public class ProdutoQuantidade implements Serializable {
 	public void incrementaVendidos(int quantidade) {
 		vendidos = vendidos + quantidade;
 	}
+	public void incrementaConsignados(int quantidade) {
+		consignados = consignados + quantidade;
+	}
 	
 	public void incrementaReceita(BigDecimal valor) {
 		this.receita = this.receita.add(valor);
@@ -59,6 +63,14 @@ public class ProdutoQuantidade implements Serializable {
 		this.comissao = this.comissao.add(valor);
 	}
 	
+	public int getConsignados() {
+		return consignados;
+	}
+
+	public void setConsignados(int consignados) {
+		this.consignados = consignados;
+	}
+
 	@Override
 	public String toString() {
 		DecimalFormat decF = new java.text.DecimalFormat("#,###,##0.00");

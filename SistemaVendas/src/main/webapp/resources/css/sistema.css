@@ -122,7 +122,7 @@ h1 {
 
 #conteudo-left {
 	/*Novamente definimos a largura da div*/
-	width: 35%;
+	width: 40%;
 	/* altura da div */
 	height: 400px;
 	/* O atributo Float é utilizado para fazermos o nosso bloco(div) literalmente flutue e se posicione onde queremos na página, quando escolhemos left, dizemos que esse bloco irá se posicionar na parte esquerda da página */
@@ -134,7 +134,7 @@ h1 {
 
 #conteudo-right {
 	/*Novamente definimos a largura da div*/
-	width: 65%;
+	width: 60%;
 	/* altura da div */
 	height: 400px;
 	/* Pode parecer meio estranho usarmos o mesmo atributo left para o bloco em que queremos posicionar na direita, mas como sabemos, o CSS é um estilo em cascata, nossa div conteúdo definimos a largura de 1000px e na conteudo-left 500px, 

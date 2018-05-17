@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
+import com.cepalab.sistemaVendas.operacao.dominio.FormaPagamento;
 import com.cepalab.sistemaVendas.operacao.dominio.RecebimentoInadiplente;
 import com.cepalab.sistemaVendas.repository.Clientes;
 import com.cepalab.sistemaVendas.security.Seguranca;
@@ -31,7 +32,6 @@ public class RecebimentoInadiplenteBean implements Serializable{
 	
 	@Inject
 	private Seguranca seg;
-	
 	
 	@Inject
 	private CadastroRecebimentoInadiplente cadastro;
@@ -65,6 +65,11 @@ public class RecebimentoInadiplenteBean implements Serializable{
 
 	}
 
+	public FormaPagamento[] formasPagamentos() {
+		return FormaPagamento.values();
+	}
+	
+	
 	public RecebimentoInadiplente getItem() {
 		return item;
 	}
@@ -75,7 +80,7 @@ public class RecebimentoInadiplenteBean implements Serializable{
 		}else {
 			//rota = item.getCliente().getRota();
 			//listaRotas = rotas.rotasPorFuncionario(item.getFuncionario());
-			criaListaClientes();
+			listaClientes = clientes.porFuncionario(item.getFuncionario());
 			this.item = item;
 		}
 	}

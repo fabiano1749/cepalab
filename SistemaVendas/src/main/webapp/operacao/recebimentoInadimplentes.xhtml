@@ -19,8 +19,7 @@
 
 				<p:toolbarGroup>
 
-					<p:button value="Novo"
-						outcome="/operacao/recebimentoInadimplentes" />
+					<p:button value="Novo" outcome="/operacao/recebimentoInadimplentes" />
 
 				</p:toolbarGroup>
 
@@ -33,16 +32,10 @@
 
 			<p:messages id="mensagem" autoUpdate="true" />
 
-			<p:panelGrid id="pnlDados" columns="6" styleClass="semBorda"
-				style="margin-top: 30px; text-align: center">
+			<p:panelGrid id="pnlDados" columns="2" styleClass="semBorda"
+				style="margin-top: 30px">
 
 				<p:outputLabel value="Cliente" for="cliente" />
-				<p:outputLabel value="Data" style="margin: 20px" for="data" />
-				<p:outputLabel value="Valor" for="valor" />
-				<p:outputLabel value="Nota" for="nota" />
-				<p:outputLabel value="Observação" />
-				<p:outputLabel value=" " />
-
 				<p:selectOneMenu id="cliente" style="width:300px"
 					value="#{recebimentoInadiplenteBean.item.cliente}"
 					converter="omnifaces.SelectItemsConverter" filter="true"
@@ -55,24 +48,35 @@
 				</p:selectOneMenu>
 
 
+				<p:outputLabel value="Data" for="data" />
 				<p:calendar style="vertical-align:middle" id="data" locale="pt"
 					value="#{recebimentoInadiplenteBean.item.data}" required="true"
 					pattern="dd/MM/yyyy" requiredMessage="Data não informada!">
 				</p:calendar>
 
-
+				<p:outputLabel value="Valor" for="valor" />
 				<p:inputNumber id="valor"
 					value="#{recebimentoInadiplenteBean.item.valor}" required="true"
 					requiredMessage="Valor não informado!" decimalSeparator=","
 					thousandSeparator=".">
 				</p:inputNumber>
 
+				<p:outputLabel value="Forma de pagamento" />
+				<p:selectOneMenu
+					value="#{recebimentoInadiplenteBean.item.formaPagamento}">
+					<f:selectItems value="#{recebimentoInadiplenteBean.formasPagamentos()}" var="forma"
+						itemValue="#{forma}" itemLabel="#{forma.descricao}" />
+				</p:selectOneMenu>
 
+				<p:outputLabel value="Nota" for="nota" />
 				<p:inputText id="nota"
 					value="#{recebimentoInadiplenteBean.item.nota}" />
 
+
+				<p:outputLabel value="Observação" />
 				<p:inputTextarea
 					value="#{recebimentoInadiplenteBean.item.observacao}" rows="1" />
+
 
 				<p:commandButton value="Salvar"
 					actionListener="#{recebimentoInadiplenteBean.salvar}" />

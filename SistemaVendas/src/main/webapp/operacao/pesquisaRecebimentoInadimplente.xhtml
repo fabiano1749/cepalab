@@ -14,8 +14,7 @@
 			<p:toolbar style="width: 70%; margin-top: 20px">
 
 				<p:toolbarGroup>
-					<p:button value="Novo"
-						outcome="/operacao/recebimentoInadimplentes" />
+					<p:button value="Novo" outcome="/operacao/recebimentoInadimplentes" />
 				</p:toolbarGroup>
 
 			</p:toolbar>
@@ -75,6 +74,10 @@
 					</h:outputText>
 				</p:column>
 
+				<p:column headerText="Pagamento" style="text-align: center">
+					<h:outputText value="#{item.formaPagamento}" />
+				</p:column>
+
 				<p:column headerText="Nota" style="text-align: center">
 					<h:outputText value="#{item.nota}" />
 				</p:column>
@@ -86,10 +89,36 @@
 						outcome="/operacao/recebimentoInadimplentes">
 						<f:param name="item" value="#{item.id}" />
 					</p:button>
+
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{pesquisaRecebimentoInadimplenteBean.troca(item)}"
+						style="margin-left: 4px; width: 40%" process="@this"
+						update="idConfirmDialogExlusao"
+						oncomplete="PF('confirmExclusao').show()">
+					</p:commandButton>
 				</p:column>
 
 
 			</p:dataTable>
 		</h:form>
+
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao"
+			header="Exclusão de recebimentos inadimplentes"
+			message="Quer realmente excluir o recebimento no valor de:  #{pesquisaRecebimentoInadimplenteBean.recebimento.valor} ?">
+			<h:form id="formExclusao">
+				<p:messages />
+				<p:commandButton value="Sim"
+					actionListener="#{pesquisaRecebimentoInadimplenteBean.excluir()}"
+					update="idFormPesquisa:idTabela" process="@this"
+					oncomplete="PF('confirmExclusao').hide(); return false;" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
+
+			</h:form>
+		</p:confirmDialog>
+
+
 	</ui:define>
 </ui:composition>

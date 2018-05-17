@@ -72,10 +72,14 @@ public class OperacaoBean implements Serializable {
 	public void inicio() {
 		item = new Operacao();
 		alimentaListaClientes();
-		tipoVendedor = tiposVendedores.porNome(seg.UsuarioLogado().getTipoVendedor().getNome());
+		buscaTipoVendedor();
 		// listaRotas = rotas.rotasPorFuncionario(seg.UsuarioLogado());
 	}
 
+	public void buscaTipoVendedor() {
+		tipoVendedor = tiposVendedores.porNome(seg.UsuarioLogado().getTipoVendedor().getNome());
+	}
+	
 	/*
 	 * Alimenta a lista de clientes por rota + eficiente public void
 	 * alimentaListaClientes() { listaClientes = clientes.porFuncionario(rota); rota
@@ -160,12 +164,15 @@ public class OperacaoBean implements Serializable {
 			// rota = item.getCliente().getRota();
 			listaClientes = clientes.porFuncionario(item.getFuncionario());
 			vendaBean.criaListaVendasEdicao();
+			vendaBean.setVenda(null);
 			consignacaoBean.criaListaConsignacaoEdicao();
+			consignacaoBean.setConsignacao(null);
 			resumo.alimentaListaResumoConsignacaoVenda();
 			receita.iniciaReceitaTotal();
 			receita.setNumFormaPag(item.getReceitas().size());
 			receita.setReceitaRestante(BigDecimal.ZERO);
 			aberturaBean.inicio();
+			buscaTipoVendedor();
 			// FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("formOperacao");
 
 		}

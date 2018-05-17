@@ -16,6 +16,7 @@ import com.cepalab.sistemaVendas.repository.Funcionarios;
 import com.cepalab.sistemaVendas.repository.RecebimentosInadiplentes;
 import com.cepalab.sistemaVendas.repository.filter.RecebimentoInadimplenteFilter;
 import com.cepalab.sistemaVendas.security.Seguranca;
+import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
 
 @Named
 @ViewScoped
@@ -26,6 +27,7 @@ public class pesquisaRecebimentoInadimplenteBean implements Serializable {
 	private RecebimentoInadimplenteFilter filtro;
 	private List<RecebimentoInadiplente> recebimentosFiltrados = new ArrayList<>();
 	private List<Funcionario> listaFuncionarios = new ArrayList<>();
+	private RecebimentoInadiplente recebimento = new RecebimentoInadiplente();
 
 	@Inject
 	private RecebimentosInadiplentes recebimentos;
@@ -62,6 +64,20 @@ public class pesquisaRecebimentoInadimplenteBean implements Serializable {
 		return false;
 	}
 
+	public void troca(RecebimentoInadiplente recebimento) {
+		this.recebimento = recebimento;
+	}
+	
+	public void excluir() {
+		try {
+			recebimentos.remover(recebimento);
+			FacesUtil.addInfoMessage("Recebimento inadimplente excluído com sucesso");
+			pesquisar();
+		} catch (Exception e) {
+			FacesUtil.addErrorMessage(e.getMessage());
+		}	
+	}
+	
 	public List<RecebimentoInadiplente> getRecebimentosFiltrados() {
 		return recebimentosFiltrados;
 	}
@@ -86,4 +102,15 @@ public class pesquisaRecebimentoInadimplenteBean implements Serializable {
 		this.listaFuncionarios = listaFuncionarios;
 	}
 
+	public RecebimentoInadiplente getRecebimento() {
+		return recebimento;
+	}
+
+	public void setRecebimento(RecebimentoInadiplente recebimento) {
+		this.recebimento = recebimento;
+	}
+
+	
+	
+	
 }

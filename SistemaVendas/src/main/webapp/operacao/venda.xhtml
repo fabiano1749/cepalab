@@ -6,12 +6,17 @@
 
 	<p:dataTable id="idTabVenda" value="#{operacaoBean.item.vendas}"
 		var="item" editable="true" editMode="cell" style="margin-top: 30px"
-		reflow="true">
-		
+		reflow="true" rowIndexVar="rowIndex">
+
 		<f:facet name="header">
 			<p:commandButton value="Adicionar produto" process="@this"
-				onclick="PF('dlgVenda').show()" />
+				onclick="PF('dlgVenda').show()"
+				actionListener="#{vendaBean.iniciaVenda()}" />
 		</f:facet>
+
+		<p:column headerText="#" style="width: 3%; text-align: center">
+       		#{rowIndex+1}
+    	</p:column>
 
 		<p:column headerText="Produto"
 			style="font-size: small; text-align: center; width: 15%">
@@ -35,7 +40,7 @@
 					<p:inputNumber id="preCo" value="#{item.valorUnitario}"
 						decimalSeparator="," thousandSeparator="." decimalPlaces="2">
 						<p:ajax listener="#{vendaBean.validaPreco(item)}"
-							update="preco preCo :formOperacao:mensagem2" process="@this" partialSubmit="true" />
+							update="preco preCo" process="@this" partialSubmit="true" />
 
 						<p:ajax
 							listener="#{resumoOperacaoBean.alimentaListaResumoConsignacaoVenda}"
@@ -64,7 +69,7 @@
 					<p:inputText value="#{item.quantidade}" id="idInputQuantidade">
 						<p:ajax process="@this" partialSubmit="true"
 							listener="#{vendaBean.taxaComissao(item)}"
-							update="outPutQuantidadeV idInputQuantidade outPutTaxa :formOperacao:mensagem2" />
+							update="outPutQuantidadeV idInputQuantidade outPutTaxa " />
 
 						<p:ajax process="@this" partialSubmit="true"
 							listener="#{vendaBean.validaPreco(item)}" update="preco" />

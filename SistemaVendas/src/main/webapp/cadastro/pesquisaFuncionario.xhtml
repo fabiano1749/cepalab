@@ -38,9 +38,14 @@
 
 			</p:panelGrid>
 
-			<p:dataTable id="idTabFun" 
+			<p:dataTable id="idTabFun"
 				value="#{pesquisaFuncionarioBean.listaFuncionarios}" var="item"
-				style="margin-top: 20px ; width: 100% " reflow="true">
+				style="margin-top: 20px ; width: 100% " reflow="true"
+				rowIndexVar="rowIndex">
+
+				<p:column headerText="#" style="width: 5%; text-align: center">
+       			 	#{rowIndex+1}
+    			</p:column>
 
 				<p:column headerText="Nome" style="width: 15%; text-align: center">
 					<h:outputText value="#{item.nome}" />
@@ -84,8 +89,10 @@
 						process="@this" update="@none"
 						style="margin-left: 4px; width: 70%"
 						action="#{pesquisaFuncionarioBean.abrirDialogo(item)}">
-						
-						<p:ajax event="dialogReturn" listener="#{pesquisaFuncionarioBean.pesquisa}" process="@this" update="idTabFun"/>
+
+						<p:ajax event="dialogReturn"
+							listener="#{pesquisaFuncionarioBean.pesquisa}" process="@this"
+							update="idTabFun" />
 					</p:commandButton>
 				</p:column>
 
@@ -93,7 +100,7 @@
 
 		</h:form>
 
-		
+
 
 
 

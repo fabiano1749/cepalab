@@ -14,6 +14,7 @@ public class OperacaoFilter implements Serializable {
 	private Date inicio;
 	private Date fim;
 	private Integer codigoCliente;
+	private String cnpjCpf;
 	
 	public Funcionario getFuncionario() {
 		return funcionario;
@@ -46,4 +47,14 @@ public class OperacaoFilter implements Serializable {
 	public void setCodigoCliente(Integer codigoCliente) {
 		this.codigoCliente = codigoCliente;
 	}
+
+	public String getCnpjCpf() {
+		return cnpjCpf;
+	}
+
+	public void setCnpjCpf(String cnpjCpf) {
+		this.cnpjCpf = cnpjCpf;
+	}
+	
+	
 }

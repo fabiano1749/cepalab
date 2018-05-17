@@ -139,7 +139,7 @@ public class Fechamento implements Serializable {
 			}
 		}
 		calculaValoresFechamento();
-		//calculaRepasse();
+		// calculaRepasse();
 	}
 
 	public void calculaValoresFechamento() {
@@ -159,7 +159,7 @@ public class Fechamento implements Serializable {
 			}
 		}
 
-		// Cálculo das despesas totais	
+		// Cálculo das despesas totais
 		if (listaDespesas != null && listaDespesas.size() != 0) {
 			for (DespesaVendedor d : listaDespesas) {
 				despesasTotais = despesasTotais.add(d.getValor());
@@ -187,14 +187,19 @@ public class Fechamento implements Serializable {
 		// Cálculo dos recebimentos inadimplentes
 		if (listaRecebimentoInadimplente != null && listaRecebimentoInadimplente.size() != 0) {
 			for (RecebimentoInadiplente r : listaRecebimentoInadimplente) {
-				recebimentoInadimplente = recebimentoInadimplente.add(r.getValor());
+				if (r.getFormaPagamento()!= null && r.getFormaPagamento().equals(FormaPagamento.DINHEIRO)) {
+					recebimentoInadimplente = recebimentoInadimplente.add(r.getValor());
+				}
+				else {
+					incrementaReceitaFormaPagamento(r);
+				}
 			}
 		}
 	}
 
 	public void calculaRepasse() {
 		this.repasse = BigDecimal.ZERO;
-		
+
 		this.repasse = this.repasse.subtract(comissoesTotais);
 		this.repasse = this.repasse.subtract(premiacao);
 		this.repasse = this.repasse.subtract(custosTotais);
@@ -206,18 +211,26 @@ public class Fechamento implements Serializable {
 		this.repasse = this.repasse.add(diferencaProdutos);
 		this.repasse = this.repasse.add(receitaDinheiro());
 	}
-	
+
 	public BigDecimal receitaDinheiro() {
-		for(FormaPagamentoValor f : listaReceitaFormaPagamento) {
-			if(f.getForma().equals(FormaPagamento.DINHEIRO)) {
+		for (FormaPagamentoValor f : listaReceitaFormaPagamento) {
+			if (f.getForma().equals(FormaPagamento.DINHEIRO)) {
 				return f.getValor();
 			}
 		}
 		return BigDecimal.ZERO;
 	}
 	
+	//Coloca as receitas de recebimento inadimplente que nãosão em espécies na lista de receitaFormaPagamento
+	public void incrementaReceitaFormaPagamento(RecebimentoInadiplente r) {
+		for(FormaPagamentoValor f: listaReceitaFormaPagamento) {
+			if(f.getForma().equals(r.getFormaPagamento())) {
+				f.incrementaReceita(r.getValor());
+			}
+		}
+	}
 	
-	
+
 	public void incrementaComissaoVendas(BigDecimal valor) {
 		comissaoVendas = comissaoVendas.add(valor);
 	}
@@ -241,19 +254,19 @@ public class Fechamento implements Serializable {
 	public void incrementaFaturamento(BigDecimal valor) {
 		faturamento = faturamento.add(valor);
 	}
-	
+
 	public void incrementaAberturas1p() {
-		this.aberturas1p ++;
+		this.aberturas1p++;
 	}
-	
+
 	public void incrementaAberturas2p() {
-		this.aberturas2p ++;
+		this.aberturas2p++;
 	}
-	
+
 	public void incrementaAberturas3p() {
-		this.aberturas3p ++;
+		this.aberturas3p++;
 	}
-	
+
 	public Funcionario getFuncionario() {
 		return funcionario;
 	}

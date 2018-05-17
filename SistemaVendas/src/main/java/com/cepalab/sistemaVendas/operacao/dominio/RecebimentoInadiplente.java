@@ -106,7 +106,4 @@ public class RecebimentoInadiplente extends GenericDTO {
 	public void setFormaPagamento(FormaPagamento formaPagamento) {
 		this.formaPagamento = formaPagamento;
 	}
-
-	
-	
 }

@@ -40,6 +40,11 @@ public class VendaBean implements Serializable {
 	@Inject
 	private Produtos produtos;
 
+	public void iniciaVenda() {
+		venda = new Venda();
+		
+	}
+	
 	public void inicio() {
 		listaProdutos = produtos.produtos();
 		venda = new Venda();
@@ -160,7 +165,7 @@ public class VendaBean implements Serializable {
 	}
 
 	public Boolean notaEmitidaNovo() {
-		if (venda.getNota() == true) {
+		if (venda != null && venda.getNota() == true) {
 			return false;
 		} else {
 			return true;
@@ -172,7 +177,8 @@ public class VendaBean implements Serializable {
 		BigDecimal valorInformado = aux.getValorUnitario();
 		BigDecimal minValorVenda = operacao.getTipoVendedor().minVenda(aux);
 		if (valorInformado == null || valorInformado.compareTo(minValorVenda) < 0) {
-			aux.setValorUnitario(minValorVenda);
+			//Caso a cepa não permita venda abaixo do menor preço cadastrado habilitar a linha abaixo 
+			//aux.setValorUnitario(minValorVenda);
 			FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para essa quantidade de produtos!");
 		}
 
@@ -188,7 +194,7 @@ public class VendaBean implements Serializable {
 	
 	public Boolean habilitaPrecoUnitario() {
 
-		if (venda.getProduto() == null) {
+		if (venda != null && venda.getProduto() == null) {
 			return true;
 		} else {
 			return false;
@@ -203,7 +209,8 @@ public class VendaBean implements Serializable {
 		int resul = valor.compareTo(minVenda);
 		if (resul < 0) {
 			FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para esse produto!");
-			venda.setValorUnitario(minVenda);
+			//Caso a cepa não permita venda abaixo do menor preço cadastrado habilitar a linha abaixo 
+			//venda.setValorUnitario(minVenda);
 		}
 
 	}
@@ -234,7 +241,7 @@ public class VendaBean implements Serializable {
 	}
 
 	public BigDecimal menorValorVenda() {
-		if (venda.getProduto() != null) {
+		if (venda != null && venda.getProduto() != null) {
 			return operacao.getTipoVendedor().minVenda(venda);
 		}
 		return BigDecimal.ZERO;

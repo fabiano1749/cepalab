@@ -62,10 +62,10 @@ public class Expedicoes implements Serializable {
 	}
 
 	public Expedicao porId2(Long id) {
-		return manager.createQuery("from Expedicao where id= :id", Expedicao.class).setParameter("id", id).getSingleResult();
+		return manager.createQuery("from Expedicao where id= :id", Expedicao.class).setParameter("id", id)
+				.getSingleResult();
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public List<Expedicao> ExpedicoesFiltradas(ExpedicaoFilter filtro) {
 		Session session = manager.unwrap(Session.class);
@@ -86,7 +86,6 @@ public class Expedicoes implements Serializable {
 		return criteria.addOrder(Order.desc("abertura")).list();
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	public List<Expedicao> ultimasExpedicoesFechadasFuncionario(Funcionario fun) {
 		Session session = manager.unwrap(Session.class);
@@ -103,13 +102,29 @@ public class Expedicoes implements Serializable {
 		criteria.setMaxResults(3);
 
 		criteria.addOrder(Order.desc("abertura"));
-		
+
 		return criteria.list();
 	}
-	
-	
+
 	public Expedicao UltimaAberta(Funcionario fun) {
 		StatusExpedicao status = StatusExpedicao.ABERTO;
-		return manager.createQuery("from Expedicao where funcionario= :fun and status =:status", Expedicao.class).setParameter("fun", fun).setParameter("status", status).getSingleResult();
+		List<Expedicao> listaAbertas = manager
+				.createQuery("from Expedicao where funcionario= :fun and status =:status", Expedicao.class)
+				.setParameter("fun", fun).setParameter("status", status).getResultList();
+		if(listaAbertas == null) {
+			return null;
+		}
+		else {
+			Expedicao exped = new Expedicao();
+			for(Expedicao e : listaAbertas) {
+				if(exped.getAbertura() == null) {
+					exped = e;
+				}
+				else if(exped.getAbertura().before(e.getAbertura())) {
+					exped = e;
+				}
+			}
+			return exped;
+		}
 	}
 }

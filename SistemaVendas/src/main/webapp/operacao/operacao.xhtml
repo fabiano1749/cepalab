@@ -47,7 +47,7 @@
 					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
 					<f:selectItems value="#{operacaoBean.listaClientes}" var="cliente"
 						itemValue="#{cliente}"
-						itemLabel="#{cliente.nome} - #{cliente.codigo}" />
+						itemLabel="#{cliente.nome} - #{cliente.codigo}- #{cliente.cpfCnpj}" />
 
 					<p:ajax listener="#{consignacaoBean.criaListaConsignados}"
 						update="idTabView:idTabConsignados" process="@this"

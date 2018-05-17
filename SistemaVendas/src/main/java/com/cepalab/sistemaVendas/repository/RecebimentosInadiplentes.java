@@ -7,10 +7,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.operacao.dominio.RecebimentoInadiplente;
 import com.cepalab.sistemaVendas.repository.filter.RecebimentoInadimplenteFilter;
+import com.cepalab.sistemaVendas.service.NegocioException;
+import com.cepalab.sistemaVendas.util.jpa.Transactional;
 
 public class RecebimentosInadiplentes implements Serializable {
 
@@ -63,5 +66,15 @@ public class RecebimentosInadiplentes implements Serializable {
 		}
 	}
 	
+	@Transactional
+	public void remover(RecebimentoInadiplente recebimento) {
+		try {
+			recebimento = porId(recebimento.getId());
+			manager.remove(recebimento);
+			manager.flush();
+		} catch (PersistenceException e) {
+			throw new NegocioException("O recebimento inadimplente não pode ser excluído.");
+		}
+	}
 	
 }

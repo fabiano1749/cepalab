@@ -166,7 +166,7 @@ public class FechamentoGeral implements Serializable {
 		}
 	}
 
-	// Método usado quando é consultado o resumo de apenasum vendedor
+	// Método usado quando é consultado o resumo de apenas um vendedor
 	public void criaResumoUnicoVendedor(Operacoes operacoes, CustosViagens custos, Produtos produtos, List<TipoProduto> tiposProdutos) {
 		limpa();
 		criaListaOperacoes(operacoes);
@@ -298,7 +298,9 @@ public class FechamentoGeral implements Serializable {
 		}
 		return null;
 	}
-
+	
+	
+	
 	public Funcionario getFuncionario() {
 		return funcionario;
 	}

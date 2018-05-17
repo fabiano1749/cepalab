@@ -9,7 +9,7 @@
 
 	<ui:define name="corpo">
 
-		<h1 class="fa-page-title">Resumo da Operação por Período</h1>
+		<h1 class="fa-page-title" style="">Resumo da Operação por Período</h1>
 
 		<h:form id="form">
 			<p:toolbar style="margin-top: 20px; margin-top: 20px">
@@ -63,11 +63,16 @@
 					reflow="true">
 
 					<p:column headerText="Produto"
-						style="text-align: center; width: 60%">
+						style="text-align: center; width: 50%">
 						<h:outputText value="#{item.produto.nome}" />
 					</p:column>
 
-					<p:column headerText="Quantidade"
+					<p:column headerText="Consignados"
+						style="text-align: center; width: 20%">
+						<h:outputText value="#{item.consignados}" />
+					</p:column>
+
+					<p:column headerText="Vendidos"
 						style="text-align: center; width: 20%">
 						<h:outputText value="#{item.vendidos}" />
 					</p:column>
@@ -82,7 +87,7 @@
 
 					<p:columnGroup type="footer">
 						<p:row>
-							<p:column colspan="3"
+							<p:column colspan="4"
 								footerText="Faturamento bruto: #{resumoVendedorBean.fechamentoGeral.faturamento}"
 								style="text-align: right">
 

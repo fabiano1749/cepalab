@@ -113,19 +113,14 @@ public class Operacoes implements Serializable {
 		}
 	}
 
-	/* 
-	public BigDecimal comissaoAberturas(Funcionario fun, Date inicio, Date fim) {
-		List<Operacao> aberturas = operacaoAberturas(fun, inicio, fim);
-		BigDecimal comissao = BigDecimal.ZERO;
-		if (aberturas != null) {
-			for (Operacao o : aberturas) {
-				comissao = comissao.add(o.comisaoAbertura());
-			}
-		}
-		return comissao;
-	}
-*/
-	
+	/*
+	 * public BigDecimal comissaoAberturas(Funcionario fun, Date inicio, Date fim) {
+	 * List<Operacao> aberturas = operacaoAberturas(fun, inicio, fim); BigDecimal
+	 * comissao = BigDecimal.ZERO; if (aberturas != null) { for (Operacao o :
+	 * aberturas) { comissao = comissao.add(o.comisaoAbertura()); } } return
+	 * comissao; }
+	 */
+
 	public List<Operacao> operacoesFiltradas(OperacaoFilter filtro) {
 		try {
 			if (filtro.getCodigoCliente() == null) {
@@ -159,6 +154,13 @@ public class Operacoes implements Serializable {
 
 		if (filtro.getCodigoCliente() != null) {
 			Cliente cliente = clientes.porCodigo(filtro.getCodigoCliente().longValue());
+			if (cliente != null) {
+				criteria.add(Restrictions.eq("cliente", cliente));
+			}
+		}
+
+		if (filtro.getCnpjCpf() != null && filtro.getCnpjCpf().trim() != "") {
+			Cliente cliente = clientes.porCpfCnpj(filtro.getCnpjCpf());
 			if (cliente != null) {
 				criteria.add(Restrictions.eq("cliente", cliente));
 			}
