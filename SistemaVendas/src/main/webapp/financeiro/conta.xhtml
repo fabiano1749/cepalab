@@ -1,0 +1,134 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Cadastro de Nova Conta</h1>
+
+		<p:toolbar style="width: 60%; margin-top: 20px ">
+
+			<p:toolbarGroup>
+				<p:commandButton value="Novo" style="margin-left: 5px;"
+					onclick="PF('NovaConta').show()" update="idFormNovo"
+					actionListener="#{contaBean.limpa()}" />
+			</p:toolbarGroup>
+
+		</p:toolbar>
+
+		<h:form id="idFormTab">
+
+			<p:messages id="messages" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			<p:dataTable id="idTab" value="#{contaBean.itens}" var="item"
+				style="margin-top: 20px ; width: 60% " reflow="true">
+
+				<p:column headerText="Nome" style="width: 30%; text-align: center">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+
+				<p:column headerText="Observação"
+					style="width: 50%; text-align: center">
+					<h:outputText value="#{item.obs}" />
+				</p:column>
+
+				<p:column headerText="Ações" style="width: 20%; text-align: center">
+					<p:commandButton icon="ui-icon-pencil"
+						style="margin-left: 4px; width: 40%" onclick="PF('edita').show()"
+						update="#{p:component('pnlEdita')}"
+						actionListener="#{contaBean.setItem(item)}" />
+
+
+					<p:commandButton icon="ui-icon-trash"
+						style="margin-left: 20px; width: 40%"
+						actionListener="#{contaBean.setItem(item)}"
+						oncomplete="PF('confirmExclusao').show()" process="@this"
+						update="idConfirmDialogExlusao" />
+				</p:column>
+			</p:dataTable>
+
+		</h:form>
+
+
+
+		<p:dialog id="dialogoNovo" widgetVar="NovaConta"
+			header="Cadastro de nova conta" resizable="false" modal="true">
+
+			<h:form id="idFormNovo">
+
+				<p:panelGrid id="idPngNovo" columns="2" style="margin-top: 15px"
+					styleClass="semBorda">
+
+					<p:outputLabel value="Nome" for="idNome" />
+					<p:inputText id="idNome" value="#{contaBean.item.nome}"
+						required="true" requiredMessage="Nome não informado!" />
+
+					<p:outputLabel value="Tipo" for="idTipo" />
+					<p:selectOneMenu id="idTipo" value="#{contaBean.item.tipo}">
+						<f:selectItems value="#{contaBean.tipos()}" var="tipo"
+							itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Observação" />
+					<p:inputTextarea value="#{contaBean.item.obs}" />
+				</p:panelGrid>
+
+				<p:commandButton value="Salvar"
+					actionListener="#{contaBean.salvar()}"
+					update="idFormTab:idTab idPngNovo"
+					oncomplete="PF('NovaConta').hide(); return false;" />
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog widgetVar="edita" header="Editar Conta" resizable="false">
+			<h:form id="formEditar">
+				<h:panelGroup id="idPnlGEdita">
+					<p:panelGrid columns="2" id="pnlEdita">
+
+						<p:outputLabel value="Nome" for="idNome" />
+						<p:inputText id="idNome" value="#{contaBean.item.nome}"
+							required="true" requiredMessage="Nome não informado!" />
+
+						<p:outputLabel value="Tipo" for="idTipo" />
+						<p:selectOneMenu id="idTipo" value="#{contaBean.item.tipo}">
+							<f:selectItems value="#{contaBean.tipos()}" var="tipo"
+								itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Observação" />
+						<p:inputTextarea value="#{contaBean.item.obs}" />
+
+					</p:panelGrid>
+
+					<p:commandButton value="Salvar"
+						actionListener="#{contaBean.salvar()}" update="idFormTab:idTab"
+						oncomplete="PF('edita').hide(); return false;" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+
+
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao" header="Exclusão de Conta"
+			message="Quer realmente excluir a conta : #{contaBean.item.nome}?">
+			<h:form id="formExclusao">
+				<p:messages />
+
+				<p:commandButton value="Sim" actionListener="#{contaBean.excluir}"
+					update="idFormTab:idTab" process="@this"
+					oncomplete="PF('confirmExclusao').hide() return false;" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
+			</h:form>
+		</p:confirmDialog>
+
+
+	</ui:define>
+</ui:composition>

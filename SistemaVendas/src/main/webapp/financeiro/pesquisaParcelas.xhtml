@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Parcelas por período</h1>
+
+		<h:form id="idFormPesquisa">
+			
+					<p:panelGrid id="pnlPesquisaTrasacao" columns="5"
+						style="margin-top: 15px" styleClass="semBorda">
+
+						<p:calendar id="inicio" pattern="dd/MM/yyyy" locale="pt"
+							value="#{pesquisaTransacaoBean.filtro.inicio}"
+							placeholder="Início" />
+
+						<p:calendar id="fim" value="#{pesquisaTransacaoBean.filtro.fim}"
+							pattern="dd/MM/yyyy" locale="pt" placeholder="Fim" />
+
+						<p:selectOneMenu
+							value="#{pesquisaTransacaoBean.filtro.tipoTransacao}">
+							<f:selectItem itemLabel="Tipo-Parcela" />
+							<f:selectItems value="#{pesquisaTransacaoBean.tipoTransacao()}"
+								var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+
+						</p:selectOneMenu>
+
+						<p:selectOneMenu
+							value="#{pesquisaTransacaoBean.filtro.statusParcela}">
+							<f:selectItem itemLabel="Status" />
+							<f:selectItems value="#{pesquisaTransacaoBean.status()}"
+								var="status" itemValue="#{status}"
+								itemLabel="#{status.descricao}" />
+
+						</p:selectOneMenu>
+
+						<p:commandButton value="Pesquisar"
+						actionListener="#{pesquisaTransacaoBean.pesquisar()}"
+						process="pnlPesquisaTrasacao @this"
+						update="idTabTrasacao pnlPesquisaTrasacao" />
+					</p:panelGrid>
+				
+			<p:messages id="messages" showDetail="false" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:dataTable id="idTabTrasacao" sortBy="#{item.data}"
+				value="#{pesquisaTransacaoBean.listaParcelas}" var="item"
+				style="margin-top: 15px ; width: 70%; font-size: 10px "
+				reflow="true" editable="true" editMode="cell" stickyHeader="true"
+				emptyMessage="Não foram encontrados resultados para estes filtros!">
+
+				<p:column headerText="Número" style="text-align: center; width: 10%">
+					<h:outputText
+						value="#{item.numero} - #{item.transacao.numParcelas}" />
+				</p:column>
+
+				<p:column headerText="Tipo" style="text-align: center; width: 10%">
+					<h:outputText value="#{item.transacao.tipoTransacao.descricao}" />
+				</p:column>
+
+				<p:column headerText="Conta-Origem"
+					style="text-align: center; width: 10%">
+					<h:outputText value="#{item.transacao.conta.nome}" />
+				</p:column>
+
+				<p:column headerText="Vencimento" sortBy="#{item.data}"
+					style="text-align: center; width: 10%">
+					<h:outputText value="#{item.data}">
+						<f:convertDateTime pattern="dd/MM/yyyy" locale="pt" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Valor" style="text-align: center; width: 10%">
+					<h:outputText value="#{item.valor}" />
+				</p:column>
+
+				<p:column headerText="Status" style="text-align: center; width: 10%">
+					<p:selectOneMenu value="#{item.status}">
+						<f:selectItems value="#{pesquisaTransacaoBean.status()}"
+							var="status" itemValue="#{status}"
+							itemLabel="#{status.descricao}" />
+
+						<p:ajax process="@this" partialSubmit="true" update="@this"
+							listener="#{pesquisaTransacaoBean.editaStatusParcela(item)}" />
+					</p:selectOneMenu>
+				</p:column>
+
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column colspan="5"
+							footerText="Ttotal: #{pesquisaTransacaoBean.somaParcelas()}"
+							style="text-align: right">
+						</p:column>
+					</p:row>
+				</p:columnGroup>
+
+			</p:dataTable>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

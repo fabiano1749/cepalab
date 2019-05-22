@@ -3,6 +3,7 @@ package com.cepalab.sistemaVendas.operacao.controle;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -10,8 +11,6 @@ import javax.inject.Named;
 
 import com.cepalab.sistemaVendas.operacao.dominio.FormaPagamento;
 import com.cepalab.sistemaVendas.operacao.dominio.Receita;
-import com.cepalab.sistemaVendas.repository.TiposProdutos;
-import com.cepalab.sistemaVendas.security.Seguranca;
 import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
 
 @Named
@@ -31,16 +30,6 @@ public class ReceitaBean implements Serializable {
 	@Inject
 	private OperacaoBean operacao;
 
-	//Faz parte do teste
-	@Inject
-	private Seguranca seg;
-	
-	@Inject
-	private TiposProdutos tiposProdutos;
-	
-
-	//Fim do teste
-	
 	public void iniciaReceitaTotal() {
 		receitaTotal = resumo.getReceitatotal();
 		receitaRestante = new BigDecimal("0");
@@ -50,21 +39,28 @@ public class ReceitaBean implements Serializable {
 	public void criaListaReceitas() {
 		iniciaReceitaTotal();
 		operacao.getItem().setReceitas(new ArrayList<>());
-
+		
 		if (receitaTotal.compareTo(BigDecimal.ZERO) > 0) {
-
-			for (int i = 0; i < numFormaPag; i++) {
+			
+			if(numFormaPag < 1) {
+				numFormaPag = 1;
+				FacesUtil.addErrorMessage("Número de formas de pagamento invalido!");
+			}
+			
+			for (int i = 1; i <= numFormaPag; i++) {
 				Receita r = new Receita();
 				r.setOperacao(operacao.getItem());
-				if (i == 0) {
+				if (i == 1) {
 
 					r.setValor(receitaTotal);
+					r.setFormaPagamento(FormaPagamento.NENHUM);
 					receitaRestante = receitaRestante.subtract(receitaTotal);
 				} else {
 					r.setValor(new BigDecimal("0"));
+					r.setFormaPagamento(FormaPagamento.NENHUM);
 				}
 
-				//r.setFormaPagamento(null);
+				// r.setFormaPagamento(null);
 				operacao.getItem().getReceitas().add(r);
 			}
 		}
@@ -98,20 +94,46 @@ public class ReceitaBean implements Serializable {
 	}
 
 	public void confirmarOperacao() {
-		if (receitaTotal.compareTo(BigDecimal.ZERO) > 0 && !operacao.getItem().getReceitas().isEmpty()) {
-			BigDecimal aux = BigDecimal.ZERO;
-			for (Receita r : operacao.getItem().getReceitas()) {
-				aux = aux.add(r.getValor());
+	
+			if(operacao.getItem().getReceitas().size() > 1) {
+				operacao.getItem().setReceitas(retiraReceitasZeradas(operacao.getItem().getReceitas()));
 			}
-			if (aux.compareTo(receitaTotal) == 0) {
-				operacao.salvar();
+
+			if (receitaTotal.compareTo(BigDecimal.ZERO) > 0 && !operacao.getItem().getReceitas().isEmpty()) {
+				BigDecimal aux = BigDecimal.ZERO;
+				for (Receita r : operacao.getItem().getReceitas()) {			
+					aux = aux.add(r.getValor());
+				}
+				if (aux.compareTo(receitaTotal) == 0) {
+					operacao.salvar();
+				} else {
+					FacesUtil.addErrorMessage("Soma de valores difere do total de receitas!");
+				}
 			} else {
-				FacesUtil.addErrorMessage("Soma de valores difere do total de receitas!");
+				operacao.getItem().setReceitas(new ArrayList<>());
+				operacao.salvar();
 			}
-		} else {
-			operacao.getItem().setReceitas(new ArrayList<>());
-			operacao.salvar();
+	}
+
+	public List<Receita> retiraReceitasZeradas(List<Receita> receitas) {
+		List<Receita> lista = new ArrayList<>();
+		
+		for(Receita r : receitas) {
+			if(r.getValor().compareTo(BigDecimal.ZERO) > 0) {
+				lista.add(r);
+			}
 		}
+		return lista;
+	}
+	
+	
+	public boolean formasPagamentoOk() {
+		for (Receita r : operacao.getItem().getReceitas()) {
+			if (r.getFormaPagamento() == FormaPagamento.NENHUM) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public Receita getReceita() {

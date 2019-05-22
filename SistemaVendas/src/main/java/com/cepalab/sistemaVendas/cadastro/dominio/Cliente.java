@@ -186,7 +186,15 @@ public class Cliente extends GenericDTO {
 		this.bloqueado = bloqueado;
 	}	
 	
+	public String codigoOuCnpj() {
+		if(codigo != null) {
+			return codigo.toString();
+		}
+		else return cpfCnpj;
+	}
 	
-	
+	public String cpfCnpjSoNumero() {
+		return cpfCnpj.replace(".", "").replaceAll("-", "").replace("/", "");
+	}
 	
 }

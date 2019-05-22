@@ -17,9 +17,9 @@
 				<p:toolbarGroup>
 					<p:panelGrid id="pnlFechamento" columns="9" styleClass="semBorda">
 						<p:outputLabel value="Vendedor" for="idVendedor"
-							rendered="#{fechamentoBean.isAdministrador()}" />
+							rendered="#{fechamentoBean.isVendedor() == false}" />
 						<p:selectOneMenu id="idVendedor" required="true"
-							rendered="#{fechamentoBean.isAdministrador()}"
+							rendered="#{fechamentoBean.isVendedor() == false}"
 							requiredMessage="Vendedor Não informado!"
 							value="#{fechamentoBean.funcionario}"
 							converter="omnifaces.SelectItemsConverter">
@@ -46,9 +46,10 @@
 							pattern="dd/MM/yyyy" requiredMessage="Data final não informada!">
 						</p:calendar>
 
-						<p:outputLabel value="Expedição" for="exped" />
+						<p:outputLabel value="Expedição" for="exped" 
+						rendered="#{fechamentoBean.isVendedor() == false}"/>
 						<p:selectOneMenu id="exped" required="true"
-							rendered="#{fechamentoBean.isAdministrador()}"
+							rendered="#{fechamentoBean.isVendedor() == false}"
 							requiredMessage="Expedição não informada!"
 							value="#{fechamentoAcertoProdutoBean.expedicao}"
 							converter="omnifaces.SelectItemsConverter">
@@ -66,14 +67,15 @@
 						idTabView:idTabelaColocacao idTabView:idTabelaCustos idTabView:idTabelaDespesas
 						idTabView:idTabelaRecRess idTabView:idTabelaDescontos idTabView:idTabelaRecebimentoInad
 						idTabView:idpngAcertoProduto idTabView:idTabAcertoProduto idTabView:idPainelResumo 
-						idTabView:idPainelOutros idTabView:idAberturas "/>
+						idTabView:idPainelOutros idTabView:idAberturas idTabView:idTabelaFrete idTabView:idTabelaAumentoConsignacao
+						idTabView:idTabelaAmostras"/>
 
 					</p:panelGrid>
 				</p:toolbarGroup>
 
 			</p:toolbar>
 
-			<p:tabView id="idTabView" style="margin-top: 20px; overflow: hidden;">
+			<p:tabView id="idTabView" style="margin-top: 20px; overflow: hidden; font-size: 10px">
 
 				<p:tab title="Resumo">
 					<ui:include src="/fechamento/fechamentoResumo.xhtml" />
@@ -90,6 +92,14 @@
 				<p:tab title="Colocações">
 					<ui:include src="/fechamento/fechamentoColocacao.xhtml" />
 				</p:tab>
+				
+				<p:tab title="Amostras">
+					<ui:include src="/fechamento/fechamentoAmostras.xhtml" />
+				</p:tab>
+
+				<p:tab title="Aumento-Consignação">
+					<ui:include src="/fechamento/fechamentoAumentoConsignacao.xhtml" />
+				</p:tab>	
 
 				<p:tab title="Custos">
 					<ui:include src="/fechamento/fechamentoCustos.xhtml" />
@@ -110,6 +120,11 @@
 				<p:tab title="Recebimento Inadimplente">
 					<ui:include
 						src="/fechamento/fechamentoRecebimentoInadimplente.xhtml" />
+				</p:tab>
+				
+				<p:tab title="Descontos de Fretes">
+					<ui:include
+						src="/fechamento/fechamentoDescontoFrete.xhtml" />
 				</p:tab>
 
 				<p:tab title="Acerto de produtos">

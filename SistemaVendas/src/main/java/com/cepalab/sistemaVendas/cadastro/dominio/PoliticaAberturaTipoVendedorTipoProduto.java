@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -34,7 +35,7 @@ public class PoliticaAberturaTipoVendedorTipoProduto extends GenericDTO {
 	private TipoVendedor tipoVendedor;
 	private TipoProduto tipoProduto;
 	private List<IntervaloAberturaTipoProduto> listaIntervalos = new ArrayList<>();
-	
+	private int quantMinimaPorProduto;
 	
 	@ManyToOne
 	@JoinColumn(name = "tipo_vendedor_id", nullable = false)
@@ -66,6 +67,15 @@ public class PoliticaAberturaTipoVendedorTipoProduto extends GenericDTO {
 		this.listaIntervalos = listaIntervalos;
 	}
 	
+	@Column(name = "quant_minima_por_produto")
+	public int getQuantMinimaPorProduto() {
+		return quantMinimaPorProduto;
+	}
+
+	public void setQuantMinimaPorProduto(int quantMinimaPorProduto) {
+		this.quantMinimaPorProduto = quantMinimaPorProduto;
+	}
+
 	@Transient
 	public boolean adicionaIntervaloAbertura(IntervaloAberturaTipoProduto intervalo) {
 		//Verifica se o novo intervalo esta dentro de um intervalo maior.

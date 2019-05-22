@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:p="http://primefaces.org/ui"
@@ -16,12 +16,12 @@
 </h:head>
 
 <h:body>
-	<p:ajaxStatus oncomplete="configurarMoeda()" />
 
+	<p:ajaxStatus oncomplete="configurarMoeda()" />
 
 	<header>
 
-	<div style="float: right; margin-right: 110px">
+	<div style="float: right; margin-right: 20px">
 
 		<span
 			style="float: left; height: 30px; line-height: 30px; margin-right: 60px">
@@ -43,13 +43,24 @@
 
 				<p:submenu label="Expedição">
 					<p:menuitem value="Expedição" outcome="/expedicao/expedicao" />
-					<p:menuitem value="Envio Transportadora" outcome="/expedicao/envioTransportadora" />
+					<p:menuitem value="Envio Transportadora"
+						outcome="/expedicao/envioTransportadora" />
+					<p:menuitem value="Pesquisa Expedição"
+						outcome="/expedicao/pesquisaExpedicao" />
 				</p:submenu>
 
 				<p:submenu label="Consultas">
-					<p:menuitem value="Resumo Vendedor" outcome="/consultas/resumoVendedor"/>
-					<p:menuitem value="Consolidado" outcome="/consultas/vendedorVsProduto"/>
-					<p:menuitem value="Fechamento" outcome="/fechamento/fechamento"/>
+					<p:menuitem value="Resumo Vendedor"
+						outcome="/consultas/resumoVendedor" />
+					<p:menuitem value="Consolidado"
+						outcome="/consultas/vendedorVsProduto" />
+					<p:menuitem value="Fechamento" outcome="/fechamento/fechamento" />
+					<p:menuitem value="Produtos Consignados"
+						outcome="/consultas/consultaConsignados" />
+					<p:menuitem value="Clientes Nunca Visitados"
+						outcome="/consultas/nuncaVisitados" />
+					<p:menuitem value="Última Visita"
+						outcome="/consultas/ultimaVisitaAntesDe" />
 				</p:submenu>
 
 				<p:submenu label="Relatórios">
@@ -60,8 +71,10 @@
 					<p:menuitem value="Clientes" outcome="/cadastro/cliente" />
 					<p:menuitem value="Funcionários" outcome="/cadastro/funcionario" />
 					<p:menuitem value="Produtos" outcome="/cadastro/produto" />
-					<p:menuitem value="Tipos de Produtos" outcome="/cadastro/tipoProduto" />
-					<p:menuitem value="Transportadora" outcome="/cadastro/transportadora" />
+					<p:menuitem value="Tipos de Produtos"
+						outcome="/cadastro/tipoProduto" />
+					<p:menuitem value="Transportadora"
+						outcome="/cadastro/transportadora" />
 					<p:separator />
 
 					<p:menuitem value="Tipos de Funcionários"
@@ -79,33 +92,52 @@
 						outcome="/cadastro/descontoSalario" />
 					<p:menuitem value="Comissão Recolhida"
 						outcome="/cadastro/comissaoRecolhidaRessarcida" />
-					
-					<p:menuitem value="ImportarClientes"
-						outcome="/cadastro/importar" />
+
+					<p:menuitem value="ImportarClientes" outcome="/cadastro/importar" />
 
 				</p:submenu>
-				
+
+				<p:submenu label="Financeiro">
+					<p:menuitem value="Transferencias" outcome="/financeiro/transferencia"/>
+					<p:menuitem value="Pagamentos e Recebimentos" outcome="/financeiro/pagReceb"/>
+					<p:menuitem value="Vencimentos x Período" outcome="/financeiro/pesquisaParcelas"/>
+					<p:menuitem value="Conta" outcome="/financeiro/conta"/>
+					<p:menuitem value="Cheque" outcome="/financeiro/cheque"/>
+					<p:menuitem value="Banco" outcome="/financeiro/banco"/>
+				</p:submenu>
+
 				<p:submenu label="Usuário">
 					<p:menuitem value="Alterar Senha" outcome="/cadastro/alteraSenha" />
 				</p:submenu>
-				
+
 				<p:menuitem value="Sair" url="/logout" />
 			</p:menubar>
+
 		</h:form>
 	</div>
+
+
+
 
 	<div style="clear: both"></div>
 
 	</header>
+
+	
+
+<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+<p:dialog id="loading"  widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <h:graphicImage  library="images" name="loading2.gif" alt=""/>
+</p:dialog>
+	
+
 
 	<div id="conteudo">
 		<ui:insert name="corpo" />
 	</div>
 
 	<p:separator style="margin-top: 20px" />
-
-	
-
 
 	<script>
 		function configurarMoeda() {

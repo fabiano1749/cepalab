@@ -56,7 +56,7 @@ public class RotaBean implements Serializable {
 	}
 
 	public void setItem(Rota item) {
-		funcionarios = fun.funcionarios();
+		funcionarios = fun.vendedorAtivo();
 
 		String paramResposta = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
 				.getRequest()).getParameter("rota");

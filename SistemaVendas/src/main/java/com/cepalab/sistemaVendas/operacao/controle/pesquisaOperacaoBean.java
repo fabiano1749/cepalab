@@ -13,9 +13,11 @@ import javax.inject.Named;
 
 import org.primefaces.context.RequestContext;
 
+import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.Grupo;
 import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
+import com.cepalab.sistemaVendas.repository.Clientes;
 import com.cepalab.sistemaVendas.repository.Funcionarios;
 import com.cepalab.sistemaVendas.repository.Operacoes;
 import com.cepalab.sistemaVendas.repository.filter.OperacaoFilter;
@@ -32,7 +34,7 @@ public class pesquisaOperacaoBean implements Serializable {
 	private OperacaoFilter filtro;
 	private List<Operacao> operacoesFiltradas;
 	private List<Funcionario> listaFuncionarios;
-	private List<Funcionario> listaFun = new ArrayList<>();
+	private List<Cliente> listaClientes = new ArrayList<>();
 	private int numero;
 	private Operacao operacao;
 	private boolean checado;
@@ -47,33 +49,40 @@ public class pesquisaOperacaoBean implements Serializable {
 	private Funcionarios fun;
 
 	@Inject
+	private Clientes clientes;
+
+	@Inject
 	private Seguranca seg;
 
 	@PostConstruct
 	public void inicio() {
 		filtro = new OperacaoFilter();
-		if (!isAdministrador()) {
+		if (isVendedor()) {
 			filtro.setFuncionario(seg.UsuarioLogado());
+			listaClientes = clientes.porFuncionario(seg.UsuarioLogado());
 		} else {
-			listaFun = fun.funcionarios();
-			retiraTiposFuncionários();
-
+			listaFuncionarios = fun.vendedorAtivo();
+			listaClientes = clientes.clientes();
 		}
 
-	}
-
-	// Melhorar isso em versões posteriores
-	private void retiraTiposFuncionários() {
-		listaFuncionarios = new ArrayList<>();
-		for (Funcionario f : listaFun) {
-			if (!f.getTipoVendedor().getNome().equals("Interno-0")) {
-				listaFuncionarios.add(f);
-			}
-		}
 	}
 
 	public void pesquisar() {
 		operacoesFiltradas = operacoes.filtradas(filtro);
+		if (operacoesFiltradas == null) {
+			FacesUtil.addErrorMessage("Não foram encontrados registros para os filtros informados !");
+		} else {
+			if (operacoesFiltradas.isEmpty()) {
+				FacesUtil.addErrorMessage("Não foram encontrados registros para os filtros informados !");
+			}
+		}
+	}
+
+	public void alimentaListaCliente() {
+		if (filtro.getFuncionario() != null) {
+			listaClientes = clientes.porFuncionario(filtro.getFuncionario());
+		}
+
 	}
 
 	public void fechaDialogo() {
@@ -85,6 +94,8 @@ public class pesquisaOperacaoBean implements Serializable {
 		Map<String, Object> opcoes = new HashMap<>();
 		opcoes.put("modal", true);
 		opcoes.put("resizable", false);
+		opcoes.put("width", 1200);
+		opcoes.put("height", 600);
 		opcoes.put("contentHeight", 600);
 		opcoes.put("contentWidth", 1200);
 
@@ -102,6 +113,38 @@ public class pesquisaOperacaoBean implements Serializable {
 			if (g.getNome().equals("ADMINISTRADORES")) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	public boolean isVendedor() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("VENDEDORES")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isRoot() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("ROOT")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean podeExcluir(Operacao o) {
+		if ((o.getFuncionario().equals(seg.UsuarioLogado()) && o.isChecado() == false) || isRoot()) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean podeConferir() {
+		if (isRoot() || isAdministrador()) {
+			return true;
 		}
 		return false;
 	}
@@ -173,4 +216,11 @@ public class pesquisaOperacaoBean implements Serializable {
 		this.checado = checado;
 	}
 
+	public List<Cliente> getListaClientes() {
+		return listaClientes;
+	}
+
+	public void setListaClientes(List<Cliente> listaClientes) {
+		this.listaClientes = listaClientes;
+	}
 }

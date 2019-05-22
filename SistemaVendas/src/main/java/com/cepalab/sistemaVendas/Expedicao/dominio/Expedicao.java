@@ -36,6 +36,10 @@ public class Expedicao extends GenericDTO{
 	private StatusExpedicao status = StatusExpedicao.ABERTO;
 	private List<ExpedProduto> expedProdutos = new ArrayList<>();
 
+	private boolean conferidoSaidaVendedor = false;
+	private boolean conferidoChegadaVendedor = false;
+	
+	
 	SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy");
 	
 	
@@ -96,4 +100,25 @@ public class Expedicao extends GenericDTO{
 	public void setExpedProdutos(List<ExpedProduto> expedProdutos) {
 		this.expedProdutos = expedProdutos;
 	}
+
+	@Column(name="conferido_saida_vendedor", nullable = false)
+	public boolean isConferidoSaidaVendedor() {
+		return conferidoSaidaVendedor;
+	}
+
+	public void setConferidoSaidaVendedor(boolean conferidoSaidaVendedor) {
+		this.conferidoSaidaVendedor = conferidoSaidaVendedor;
+	}
+
+	@Column(name="conferido_chegada_vendedor", nullable = false)
+	public boolean isConferidoChegadaVendedor() {
+		return conferidoChegadaVendedor;
+	}
+
+	public void setConferidoChegadaVendedor(boolean conferidoChegadaVendedor) {
+		this.conferidoChegadaVendedor = conferidoChegadaVendedor;
+	}
+	
+	
+	
 }

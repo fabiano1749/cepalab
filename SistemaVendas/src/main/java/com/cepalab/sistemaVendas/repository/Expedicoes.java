@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 
 import org.hibernate.Criteria;
@@ -43,6 +44,17 @@ public class Expedicoes implements Serializable {
 				.setParameter("ABERTO", StatusExpedicao.ABERTO).getResultList();
 
 	}
+	
+	public Expedicao expedicaoAbertaVendedor(Funcionario fun) {
+
+		try {
+		return manager.createQuery("from Expedicao where funcionario= :fun and status =:status", Expedicao.class).setParameter("fun", fun)
+				.setParameter("status", StatusExpedicao.ABERTO).getSingleResult();
+		}catch (NoResultException e) {
+			return null;
+		}
+	}
+	
 
 	@Transactional
 	public void remover(Expedicao expedicao) {
@@ -107,24 +119,17 @@ public class Expedicoes implements Serializable {
 	}
 
 	public Expedicao UltimaAberta(Funcionario fun) {
-		StatusExpedicao status = StatusExpedicao.ABERTO;
-		List<Expedicao> listaAbertas = manager
-				.createQuery("from Expedicao where funcionario= :fun and status =:status", Expedicao.class)
-				.setParameter("fun", fun).setParameter("status", status).getResultList();
-		if(listaAbertas == null) {
+		
+		try {
+		return manager
+				.createQuery("from Expedicao where funcionario= :fun and status =:status and id= :(select max(id) from Expedicao)", Expedicao.class)
+				.setParameter("fun", fun).setParameter("status", StatusExpedicao.ABERTO).getSingleResult();
+		}catch (NoResultException e) {
 			return null;
 		}
-		else {
-			Expedicao exped = new Expedicao();
-			for(Expedicao e : listaAbertas) {
-				if(exped.getAbertura() == null) {
-					exped = e;
-				}
-				else if(exped.getAbertura().before(e.getAbertura())) {
-					exped = e;
-				}
-			}
-			return exped;
-		}
+	}
+	
+	public Long idUltimaExpedicao(Funcionario funcionario) {
+		return manager.createQuery("select max(f.id) from Expedicao f where f.funcionario =:fun", Long.class).setParameter("fun", funcionario).getSingleResult();
 	}
 }

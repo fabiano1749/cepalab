@@ -18,7 +18,7 @@ import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="venda")
-public class Venda extends GenericDTO{
+public class Venda extends GenericDTO {
 
 	@Override
 	@Id
@@ -38,7 +38,7 @@ public class Venda extends GenericDTO{
 	private Long totalVendidos = 0L;
 	private Long devolvidos = 0L;
 	private Long repostos =0L; 
-	private BigDecimal freteDiluido = BigDecimal.ZERO;
+	
 	
 	
 	@Transient
@@ -48,12 +48,7 @@ public class Venda extends GenericDTO{
 	
 	@Transient
 	public BigDecimal comissao() {
-		if(freteDiluido == null) {
-			freteDiluido = BigDecimal.ZERO;
-		}
-		
-		BigDecimal receitaParaComissao = receita().subtract(freteDiluido);
-		return receitaParaComissao.multiply(taxaComissao).divide(new BigDecimal("100"));
+		return receita().multiply(taxaComissao).divide(new BigDecimal("100"));
 	}
 	
 	@Column(nullable = false, length = 3)
@@ -141,15 +136,7 @@ public class Venda extends GenericDTO{
 	public void setRepostos(Long repostos) {
 		this.repostos = repostos;
 	}
-	
-	@Column(name = "frete_diluido", precision = 10, scale = 2)
-	public BigDecimal getFreteDiluido() {
-		return freteDiluido;
-	}
 
-	public void setFreteDiluido(BigDecimal freteDiluido) {
-		this.freteDiluido = freteDiluido;
-	}
 }
 
 

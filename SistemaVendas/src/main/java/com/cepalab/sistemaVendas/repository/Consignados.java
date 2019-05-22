@@ -9,11 +9,19 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.operacao.dominio.Consignacao;
-
+import com.cepalab.sistemaVendas.operacao.dominio.TipoOperacao;
+import com.cepalab.sistemaVendas.repository.filter.ProdutosConsignadosFilter;
 
 public class Consignados implements Serializable {
 
@@ -64,5 +72,66 @@ public class Consignados implements Serializable {
 			return null;
 		}
 	}
+	
+	public List<Consignacao> aumentoPorFuncionario(Funcionario fun, Date inicio, Date fim) {
+		try {
+			return manager.createQuery(
+					"FROM Consignacao  WHERE operacao.funcionario= :fun AND operacao.data >= :inicio AND operacao.data <= :fim "
+					+ "AND operacao.tipo =:tipo AND vendidos < consignados AND totalAux > 0",
+					Consignacao.class).setParameter("fun", fun).setParameter("inicio", inicio).setParameter("fim", fim).setParameter("tipo", TipoOperacao.VISITA)
+					.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+	
+	
+	public List<Consignacao> filtrados(ProdutosConsignadosFilter filtro) {
 
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Consignacao> criteriaQuery = builder.createQuery(Consignacao.class);
+		Root<Consignacao> c = criteriaQuery.from(Consignacao.class);
+		
+		
+		List<Predicate> predicates = new ArrayList<>();
+		
+		if (filtro.getProduto() != null) { 
+			predicates.add(builder.equal(c.get("produto"), filtro.getProduto()));
+		}
+		
+		if (filtro.getFuncionario() != null) { 
+			predicates.add(builder.equal(c.get("operacao").get("funcionario"), filtro.getFuncionario()));
+		}
+		
+		if (filtro.getRota() != null) { 
+			predicates.add(builder.equal(c.get("operacao").get("cliente").get("rota"), filtro.getRota()));
+		}
+		
+		if (filtro.getCliente() != null) { 
+			predicates.add(builder.equal(c.get("operacao").get("cliente"), filtro.getCliente()));
+		}
+		
+		if (filtro.getUf() != null) { 
+			predicates.add(builder.equal(c.get("operacao").get("cliente").get("endereco").get("uf"), filtro.getUf().toString()));
+		}
+		
+		if (StringUtils.isNotBlank(filtro.getCidade())) {
+			predicates.add(builder.like(builder.lower(c.get("operacao").get("cliente").get("endereco").get("cidade")), "%"+ filtro.getCidade().toLowerCase() + "%"));
+		}
+		
+		criteriaQuery.select(c);
+		criteriaQuery.where(predicates.toArray(new Predicate[0]));
+		TypedQuery<Consignacao> query = manager.createQuery(criteriaQuery);
+
+		List<Consignacao> lista = query.getResultList();
+		
+		return lista;
+		
+		
+		
+	}
+	
+	
+	
+	
 }

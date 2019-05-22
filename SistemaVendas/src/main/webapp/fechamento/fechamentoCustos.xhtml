@@ -10,8 +10,7 @@
 
 		<p:dataTable id="idTabelaCustos"
 			value="#{fechamentoBean.item.listaCustos}" style="width: 100%"
-			var="item" rows="10" paginator="true" paginatorPosition="bottom"
-			paginatorAlwaysVisible="false">
+			var="item">
 			<p:column headerText="Custo" style="text-align: center; width: 20%">
 				<h:outputText value="#{item.tipo.descricao}" />
 			</p:column>

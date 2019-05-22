@@ -21,7 +21,7 @@
 				minValue="0">
 				<p:ajax listener="#{receitaBean.criaListaReceitas}" process="@this"
 					partialSubmit="true"
-					update="idFormaPag idtabReceita idReceitaRestante" />
+					update="idFormaPag idtabReceita idReceitaRestante :formOperacao:idTabView:idConfirmaOperacao" />
 
 			</p:inputNumber>
 
@@ -64,22 +64,19 @@
 					requiredMessage="Forma de pagamento não informada!">
 					<f:selectItems value="#{receitaBean.formasPagamento()}" var="forma"
 						itemValue="#{forma}" itemLabel="#{forma.descricao}" />
+						
+					<p:ajax process="@this" partialSubmit="true" update =":formOperacao:idTabView:idConfirmaOperacao"/>	
 				</p:selectOneMenu>
 			</p:column>
 
 		</p:dataTable>
-
-
 		<br />
 
-	<p:commandButton value="Confirmar operação" style="margin-top: 20px"
+	<p:commandButton id="idConfirmaOperacao" value="Confirmar operação" style="margin-top: 20px"
 		process="@this formOperacao:pnlDados idtabReceita"
 		actionListener="#{receitaBean.confirmarOperacao}"
-		action="/operacao/operacao.xhtml"/>
-
-
-
-
-
+		action="#{pesquisaOperacaoBean.fechaDialogo}" 
+		disabled="#{receitaBean.formasPagamentoOk() == false}"
+		update="formOperacao"/>
 
 </ui:composition>

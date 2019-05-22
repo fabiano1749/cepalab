@@ -1,10 +1,10 @@
 package com.cepalab.sistemaVendas.repository;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -19,7 +19,6 @@ import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
 import com.cepalab.sistemaVendas.operacao.dominio.TipoOperacao;
-import com.cepalab.sistemaVendas.operacao.dominio.Venda;
 import com.cepalab.sistemaVendas.repository.filter.EnvioTransportadoraFilter;
 import com.cepalab.sistemaVendas.repository.filter.OperacaoFilter;
 import com.cepalab.sistemaVendas.service.NegocioException;
@@ -74,12 +73,6 @@ public class Operacoes implements Serializable {
 		return criteria.list();
 	}
 
-	public List<Venda> vendasPorCliente(Cliente cliente) {
-		List<Operacao> operacaoCliente = porCliente(cliente);
-		List<Venda> vendasAgrupadasClientes = new ArrayList<Venda>();
-		return null;
-	}
-
 	public List<Operacao> resumo(Funcionario fun, Date inicio, Date fim) {
 		try {
 			return manager
@@ -108,6 +101,19 @@ public class Operacoes implements Serializable {
 					"from Operacao where funcionario= :fun and data >= :inicio and data <= :fim and tipo =:tipo",
 					Operacao.class).setParameter("fun", fun).setParameter("inicio", inicio).setParameter("fim", fim)
 					.setParameter("tipo", TipoOperacao.VISITA).getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	// Retorna a lista das operações cuja data de envio esta dentro do intervalo
+	// inicio - fim
+	public List<Operacao> operacoesComFrete(Funcionario fun, Date inicio, Date fim) {
+		try {
+			return manager
+					.createQuery("from Operacao where funcionario= :fun and dataEnvio >= :inicio and dataEnvio <= :fim",
+							Operacao.class)
+					.setParameter("fun", fun).setParameter("inicio", inicio).setParameter("fim", fim).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}
@@ -152,17 +158,46 @@ public class Operacoes implements Serializable {
 			criteria.add(Restrictions.eq("funcionario", filtro.getFuncionario()));
 		}
 
+		
+		if(filtro.getCliente() != null) {
+			criteria.add(Restrictions.eq("cliente", filtro.getCliente()));
+		}
+		
 		if (filtro.getCodigoCliente() != null) {
 			Cliente cliente = clientes.porCodigo(filtro.getCodigoCliente().longValue());
-			if (cliente != null) {
-				criteria.add(Restrictions.eq("cliente", cliente));
+
+			if (cliente == null) {
+				return null;
+			} else {
+				if (filtro.getFuncionario() == null) {
+					criteria.add(Restrictions.eq("cliente", cliente));
+				} else {
+					if (cliente.getRota().getFuncionario().equals(filtro.getFuncionario())) {
+						criteria.add(Restrictions.eq("cliente", cliente));
+					} else {
+						return null;
+					}
+				}
+
 			}
 		}
 
 		if (filtro.getCnpjCpf() != null && filtro.getCnpjCpf().trim() != "") {
 			Cliente cliente = clientes.porCpfCnpj(filtro.getCnpjCpf());
-			if (cliente != null) {
-				criteria.add(Restrictions.eq("cliente", cliente));
+
+			if (cliente == null) {
+				return null;
+			} else {
+				if (filtro.getFuncionario() == null) {
+					criteria.add(Restrictions.eq("cliente", cliente));
+				} else {
+					if (cliente.getRota().getFuncionario().equals(filtro.getFuncionario())) {
+						criteria.add(Restrictions.eq("cliente", cliente));
+					} else {
+						return null;
+					}
+				}
+
 			}
 		}
 
@@ -181,17 +216,15 @@ public class Operacoes implements Serializable {
 	public List<Operacao> operacaoEnvioTransportadora(EnvioTransportadoraFilter filtro) {
 		List<Operacao> lista = new ArrayList<>();
 		lista = resumo(filtro.getFuncionario(), filtro.getInicio(), filtro.getFim());
-		List<Operacao> lista2 = new ArrayList<>();
-
-		if (lista != null) {
-			for (Operacao o : lista) {
-				if (o.possuiEnvioTransportadora()) {
-					lista2.add(o);
+		
+			ListIterator<Operacao> it = lista.listIterator();
+			while(it.hasNext()) {
+				if (!it.next().possuiEnvioTransportadora()) {
+					it.remove();
 				}
 			}
-		}
-		return lista2;
-
+		return lista;
 	}
+
 
 }

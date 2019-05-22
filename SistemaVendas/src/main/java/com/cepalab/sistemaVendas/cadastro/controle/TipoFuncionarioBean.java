@@ -12,6 +12,7 @@ import com.cepalab.sistemaVendas.cadastro.dominio.Grupo;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoFuncionario;
 import com.cepalab.sistemaVendas.repository.Grupos;
 import com.cepalab.sistemaVendas.repository.TiposFuncionarios;
+import com.cepalab.sistemaVendas.security.Seguranca;
 import com.cepalab.sistemaVendas.service.CadastroTipoFuncionarioService;
 import com.cepalab.sistemaVendas.service.NegocioException;
 import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
@@ -32,7 +33,8 @@ public class TipoFuncionarioBean implements Serializable {
 	@Inject
 	private Grupos grupos;
 	
-	
+	@Inject
+	private Seguranca seg;
 	
 	@Inject
 	private TiposFuncionarios tipos;
@@ -99,6 +101,16 @@ public class TipoFuncionarioBean implements Serializable {
 
 	}
 
+	public boolean isAdministrador() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("ADMINISTRADORES")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 	public void troca(TipoFuncionario itemAux) {
 		this.itemAux = itemAux;
 	}
@@ -149,8 +161,5 @@ public class TipoFuncionarioBean implements Serializable {
 
 	public void setGrupoUsuarios(List<Grupo> grupoUsuarios) {
 		this.grupoUsuarios = grupoUsuarios;
-	}
-	
-	
-	
+	}	
 }

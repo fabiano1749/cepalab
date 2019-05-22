@@ -2,7 +2,6 @@ package com.cepalab.sistemaVendas.consulta.dominio;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,10 +97,12 @@ public class FechamentoGeral implements Serializable {
 	public void criaListaReceitasFormaPagamento() {
 		listaReceitaFormaPagamento = new ArrayList<>();
 		for (FormaPagamento f : FormaPagamento.values()) {
-			ReceitaFormaPagamento r = new ReceitaFormaPagamento();
-			r.setFormaPag(f);
-			r.setReceita(new BigDecimal("0"));
-			listaReceitaFormaPagamento.add(r);
+			if (f != FormaPagamento.NENHUM) {
+				ReceitaFormaPagamento r = new ReceitaFormaPagamento();
+				r.setFormaPag(f);
+				r.setReceita(new BigDecimal("0"));
+				listaReceitaFormaPagamento.add(r);
+			}
 		}
 
 	}
@@ -167,7 +168,8 @@ public class FechamentoGeral implements Serializable {
 	}
 
 	// Método usado quando é consultado o resumo de apenas um vendedor
-	public void criaResumoUnicoVendedor(Operacoes operacoes, CustosViagens custos, Produtos produtos, List<TipoProduto> tiposProdutos) {
+	public void criaResumoUnicoVendedor(Operacoes operacoes, CustosViagens custos, Produtos produtos,
+			List<TipoProduto> tiposProdutos) {
 		limpa();
 		criaListaOperacoes(operacoes);
 		criaListaCustos(custos);
@@ -298,9 +300,7 @@ public class FechamentoGeral implements Serializable {
 		}
 		return null;
 	}
-	
-	
-	
+
 	public Funcionario getFuncionario() {
 		return funcionario;
 	}
@@ -320,11 +320,11 @@ public class FechamentoGeral implements Serializable {
 	public BigDecimal getFaturamento() {
 		return faturamento;
 	}
+
 	public String faturamentoString() {
 		DecimalFormat decF = new java.text.DecimalFormat("#,###,##0.00");
 		return decF.format(getFaturamento());
 	}
-	
 
 	public void setFaturamento(BigDecimal faturamento) {
 		this.faturamento = faturamento;
@@ -357,11 +357,11 @@ public class FechamentoGeral implements Serializable {
 	public BigDecimal getComissoesTotais() {
 		return comissoesTotais.setScale(2, BigDecimal.ROUND_UP);
 	}
+
 	public String comissoesTotaisString() {
 		DecimalFormat decF = new java.text.DecimalFormat("#,###,##0.00");
 		return decF.format(getComissoesTotais());
 	}
-	
 
 	public void setComissoesTotais(BigDecimal comissoesTotais) {
 		this.comissoesTotais = comissoesTotais;
@@ -494,7 +494,7 @@ public class FechamentoGeral implements Serializable {
 		DecimalFormat decF = new java.text.DecimalFormat("#,###,##0.00");
 		return decF.format(getReceitaBoleto());
 	}
-	
+
 	public void setReceitaBoleto(BigDecimal receitaBoleto) {
 		this.receitaBoleto = receitaBoleto;
 	}
@@ -507,7 +507,7 @@ public class FechamentoGeral implements Serializable {
 		DecimalFormat decF = new java.text.DecimalFormat("#,###,##0.00");
 		return decF.format(getReceitaCheque());
 	}
-	
+
 	public void setReceitaCheque(BigDecimal receitaCheque) {
 		this.receitaCheque = receitaCheque;
 	}
@@ -515,11 +515,12 @@ public class FechamentoGeral implements Serializable {
 	public BigDecimal getReceitaDinheiro() {
 		return receitaDinheiro;
 	}
+
 	public String receitaDinheiroString() {
 		DecimalFormat decF = new java.text.DecimalFormat("#,###,##0.00");
 		return decF.format(getReceitaDinheiro());
 	}
-	
+
 	public void setReceitaDinheiro(BigDecimal receitaDinheiro) {
 		this.receitaDinheiro = receitaDinheiro;
 	}

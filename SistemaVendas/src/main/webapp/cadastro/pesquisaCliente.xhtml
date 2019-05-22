@@ -23,24 +23,24 @@
 
 			</p:toolbar>
 
-			<p:panelGrid columns="4" style="margin-top: 10px"
+			<p:panelGrid columns="6" style="margin-top: 10px"
 				styleClass="semBorda" id="idPnlPesquisa">
 
 				<p:outputLabel value="Código" />
 				<p:inputText value="#{pesquisaClienteBean.filtro.codigo}" />
 
-				<p:outputLabel value="Funcionário" />
+				<p:outputLabel value="Funcionário"
+					rendered="#{pesquisaClienteBean.isVendedor() == false}" />
 				<p:selectOneMenu value="#{pesquisaClienteBean.filtro.funcionario}"
+					rendered="#{pesquisaClienteBean.isVendedor() == false}"
 					converter="omnifaces.SelectItemsConverter">
 					<f:selectItem itemLabel="Selecione" />
-					<f:selectItems value="#{pesquisaClienteBean.funcionarios()}" var="fun"
-						itemValue="#{fun}" itemLabel="#{fun.nome}" />
-					<p:ajax listener="#{pesquisaClienteBean.rota}" update="idPnlPesquisa" process="idPnlPesquisa @this"/>
-					
-				</p:selectOneMenu>
+					<f:selectItems value="#{pesquisaClienteBean.funcionarios()}"
+						var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
+					<p:ajax listener="#{pesquisaClienteBean.rota}"
+						update="idPnlPesquisa" process="idPnlPesquisa @this" />
 
-				<p:outputLabel value="Nome" />
-				<p:inputText value="#{pesquisaClienteBean.filtro.nome}" />
+				</p:selectOneMenu>
 
 				<p:outputLabel value="Rota" />
 				<p:selectOneMenu value="#{pesquisaClienteBean.filtro.rota}"
@@ -50,57 +50,79 @@
 						itemValue="#{rota}" itemLabel="#{rota.descricao} - #{rota.numero}" />
 				</p:selectOneMenu>
 
+				<p:outputLabel value="Nome" />
+				<p:inputText value="#{pesquisaClienteBean.filtro.nome}" />
+
+				<p:outputLabel value="UF" />
+				<p:selectOneMenu
+					value="#{pesquisaClienteBean.filtro.uf}"
+					filter="true"
+					filterMatchMode="contains">
+					<f:selectItem itemLabel="Selecione"/>
+					<f:selectItems value="#{pesquisaClienteBean.estados()}"
+						var="estado" itemValue="#{estado}" itemLabel="#{estado} - #{estado.descricao} " />
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="Cidade" />
+				<p:inputText value="#{pesquisaClienteBean.filtro.cidade}" />
+				
+				<p:outputLabel value="Cnpj / Cpf" />
+				<p:inputText value="#{pesquisaClienteBean.filtro.cnpj}" />
+				
+
 			</p:panelGrid>
 
 
-			<p:dataTable id="idTabela"
+			<p:dataTable id="idTabela" stickyHeader="true"
 				value="#{pesquisaClienteBean.clientesFiltrados}" var="item"
-				style="margin-top: 10px ; width: 100% " reflow="true"
-				rows="10" paginator="true" paginatorPosition="bottom"
-			paginatorAlwaysVisible="false">
+				style="margin-top: 10px ; width: 100%; font-size: 10px" reflow="true">
 
-				<p:column headerText="Código" style="text-align: center">
+				<p:column headerText="Código" style="text-align: center; width: 5%">
 					<h:outputText value="#{item.codigo}" />
 				</p:column>
 
-				<p:column headerText="Nome" style=" text-align: center; width: 30%">
+				<p:column headerText="Nome" style=" text-align: center; width: 25%">
 					<h:outputText value="#{item.nome}" />
 				</p:column>
 
 				<p:column headerText="CPF / CNPJ" style="text-align: center">
 					<h:outputText value="#{item.cpfCnpj}" />
 				</p:column>
-
+				
+				<p:column headerText="UF" style="text-align: center">
+					<h:outputText value="#{item.endereco.uf}" />
+				</p:column>
+				
+				<p:column headerText="Cidade" style="text-align: center">
+					<h:outputText value="#{item.endereco.cidade}" />
+				</p:column>
+				
 				<p:column headerText="Rota" style="text-align: center">
 					<h:outputText value="#{item.rota.descricao} - #{item.rota.numero}" />
 				</p:column>
 
-				<p:column headerText="Status" style="text-align: center">
-					<h:outputText value="#{item.status.descricao}" />
-				</p:column>
-
-
 				<p:column headerText="Ações" style="text-align: center">
 					<p:commandButton icon="ui-icon-pencil"
-						style="margin-left: 4px; width: 40%"
-						process="@this" update="@none"
-						action="#{pesquisaClienteBean.abrirDialogo(item)}">
-						
-						<p:ajax event="dialogReturn" listener="#{pesquisaClienteBean.pesquisar}" process="@this" update="idTabela"/>
+						style="margin-left: 4px; width: 40%" process="@this"
+						update="@none" action="#{pesquisaClienteBean.abrirDialogo(item)}">
+
+						<p:ajax event="dialogReturn"
+							listener="#{pesquisaClienteBean.pesquisar}" process="@this"
+							update="idTabela" />
 					</p:commandButton>
 				</p:column>
-				
+
 				<p:columnGroup type="footer">
-			<p:row>
-				<p:column colspan="1"
-					footerText="Total: #{pesquisaClienteBean.total}"
-					style="text-align: right">
-				
-				</p:column>
-				
-			</p:row>
-		</p:columnGroup>
-				
+					<p:row>
+						<p:column colspan="1"
+							footerText="Total: #{pesquisaClienteBean.total}"
+							style="text-align: right">
+
+						</p:column>
+
+					</p:row>
+				</p:columnGroup>
+
 
 
 			</p:dataTable>
@@ -108,7 +130,7 @@
 		</h:form>
 
 
-		
+
 
 
 	</ui:define>

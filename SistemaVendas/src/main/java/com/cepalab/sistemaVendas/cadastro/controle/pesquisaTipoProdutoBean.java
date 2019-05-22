@@ -48,7 +48,7 @@ public class pesquisaTipoProdutoBean implements Serializable {
 		Map<String, Object> opcoes = new HashMap<>();
 		opcoes.put("modal", true);
 		opcoes.put("resizable", false);
-		opcoes.put("contentHeight", 300);
+		opcoes.put("contentHeight", 100);
 		opcoes.put("contentWidth", 400);
 
 		List<String> lista = new ArrayList<>();

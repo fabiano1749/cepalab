@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+
+	<title>Consignacao de novos produtos</title>
+	<h:outputStylesheet library="css" name="sistema.css" />
+
+</h:head>
+
+<h:body>
+
+
+	<h:form id="formTabConsignacao">
+		<p:messages id="idMensageNovaConsignacao" />
+
+		<p:dataTable id="idTabNovasConsignacoes"
+			value="#{consignacaoBean.novasConsignacoes}" editable="true"
+			editMode="cell" var="item" style="margin-top: 10px; width: 100%"
+			emptyMessage="" rowIndexVar="rowIndex" rows="10" paginator="true"
+			paginatorPosition="bottom" paginatorAlwaysVisible="false">
+
+			<p:column headerText="#" style="width: 3%; text-align: center">
+       		#{rowIndex+1}
+    		</p:column>
+
+
+			<p:column headerText="Produto"
+				style="width: 20%; text-align: center; font-size: 10px">
+				<h:outputText value="#{item.produto.nome}" />
+			</p:column>
+
+			<p:column headerText="Quantidade"
+				style="text-align: center; width: 10%; font-size: 10px">
+				<p:cellEditor>
+					<f:facet name="output" style="width: 60px">
+						<h:outputText value="#{item.consignados}">
+							<f:convertNumber maxFractionDigits="0" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input" style="width: 60px">
+						<p:inputNumber value="#{item.consignados}" decimalPlaces="0"
+							thousandSeparator=".">
+
+						</p:inputNumber>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column headerText="Menor preço" id="idMenorPreco"
+				style="width: 10%; text-align: center; font-size: 10px">
+				<p:commandButton id="idMenorP"
+					value="#{consignacaoBean.menorValorConsignacao(item)}"
+					process="@this" partialSubmit="true" style="color: red"
+					actionListener="#{consignacaoBean.insereValorNovaConsignacao(item)}"
+					update="inputPreco outputPreco" />
+			</p:column>
+
+			<p:column headerText="Valor"
+				style="text-align: center; width: 10%; font-size: 10px">
+				<p:cellEditor>
+					<f:facet name="output" style="width: 60px">
+						<h:outputText id="outputPreco" value="#{item.valorUnitario}">
+							<f:convertNumber pattern="#0.00" locale="pt_BR" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input" style="width: 60px">
+						<p:inputNumber id="inputPreco" value="#{item.valorUnitario}"
+							decimalSeparator="," thousandSeparator=".">
+							<p:ajax listener="#{consignacaoBean.validaPreco(item)}"
+								process="@this" partialSubmit="true"
+								update="inputPreco outputPreco idMensageNovaConsignacao" />
+
+						</p:inputNumber>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+		</p:dataTable>
+
+		<p:commandButton value="Incluir"
+			actionListener="#{consignacaoBean.adicionaConsignacao2}"
+			style="margin-top: 10px; width: 100px"
+			process="@this" partialSubmit="true"
+			 />
+	</h:form>
+</h:body>
+
+
+
+</html>

@@ -29,9 +29,9 @@
 				style="margin-top: 10px">
 
 				<p:outputLabel value="Vendedor" for="idVendedor"
-					rendered="#{resumoVendedorBean.isAdministrador()}" />
+					rendered="#{resumoVendedorBean.isVendedor() == false}" />
 				<p:selectOneMenu id="idVendedor" required="true"
-					rendered="#{resumoVendedorBean.isAdministrador()}"
+					rendered="#{resumoVendedorBean.isVendedor() == false}"
 					requiredMessage="Vendedor Não informado!"
 					value="#{resumoVendedorBean.fechamentoGeral.funcionario}"
 					converter="omnifaces.SelectItemsConverter">

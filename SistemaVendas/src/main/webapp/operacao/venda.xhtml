@@ -5,13 +5,15 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 	<p:dataTable id="idTabVenda" value="#{operacaoBean.item.vendas}"
-		var="item" editable="true" editMode="cell" style="margin-top: 30px"
-		reflow="true" rowIndexVar="rowIndex">
+		var="item" editable="true" editMode="cell"
+		style="margin-top: 30px; font-size: 10px" reflow="true"
+		rowIndexVar="rowIndex">
 
 		<f:facet name="header">
 			<p:commandButton value="Adicionar produto" process="@this"
-				onclick="PF('dlgVenda').show()"
-				actionListener="#{vendaBean.iniciaVenda()}" />
+				onclick="PF('dlgAdicionarProdutos').show()"
+				update=":formOperacao:idTabView:idTabAdicionarProdutos"
+				actionListener="#{vendaBean.criaListaNovasVendas()}" />
 		</f:facet>
 
 		<p:column headerText="#" style="width: 3%; text-align: center">
@@ -19,17 +21,17 @@
     	</p:column>
 
 		<p:column headerText="Produto"
-			style="font-size: small; text-align: center; width: 15%">
+			style="font-size: 10px; text-align: center; width: 15%">
 			<h:outputText value="#{item.produto.nome}" />
 		</p:column>
 
 		<p:column headerText="Histórioco de vendas"
-			style="font-size: small; text-align: center; width: 10%">
+			style="font-size: 10px; text-align: center; width: 10%">
 			<h:outputText value="#{item.totalVendidos}" />
 		</p:column>
 
 		<p:column headerText="Preço"
-			style="font-size: small; text-align: center; width: 10%">
+			style="font-size: 10px; text-align: center; width: 10%">
 			<p:cellEditor>
 				<f:facet name="output">
 					<h:outputText id="preco" value="#{item.valorUnitario}">
@@ -49,7 +51,9 @@
 
 						<p:ajax listener="#{receitaBean.criaListaReceitas}"
 							process="@this" partialSubmit="true"
-							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita" />
+							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita :formOperacao:idTabView:idConfirmaOperacao" />
+
+						<p:ajax />
 
 					</p:inputNumber>
 				</f:facet>
@@ -59,7 +63,7 @@
 
 
 		<p:column headerText="Vendidos"
-			style="font-size: small; text-align: center; width: 10%">
+			style="font-size: 10px; text-align: center; width: 10%">
 			<p:cellEditor>
 				<f:facet name="output">
 					<h:outputText value="#{item.quantidade}" id="outPutQuantidadeV" />
@@ -81,21 +85,21 @@
 
 						<p:ajax listener="#{receitaBean.criaListaReceitas}"
 							process="@this" partialSubmit="true"
-							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita" />
+							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita :formOperacao:idTabView:idConfirmaOperacao" />
 					</p:inputText>
 				</f:facet>
 			</p:cellEditor>
 		</p:column>
 
 		<p:column headerText="Devolvidos"
-			style="font-size: small; text-align: center; width: 10%">
+			style="font-size: 10px; text-align: center; width: 10%">
 			<p:cellEditor>
 				<f:facet name="output" style="width: 60px">
 					<h:outputText value="#{item.devolvidos}" id="outputDevolvidos" />
 				</f:facet>
 				<f:facet name="input" style="width: 60px">
 					<p:inputNumber value="#{item.devolvidos}" minValue="0"
-						id="inputDevolvidos">
+						decimalPlaces="0" id="inputDevolvidos">
 						<p:ajax process="@this inputDevolvidos" partialSubmit="true"
 							listener="#{vendaBean.validaReposicao(item)}"
 							update="outputDevolvidos inputDevolvidos outputRepostos inputRepostos" />
@@ -105,14 +109,14 @@
 		</p:column>
 
 		<p:column headerText="Repostos"
-			style="font-size: small; text-align: center; width: 7%">
+			style="font-size: 10px; text-align: center; width: 7%">
 			<p:cellEditor>
 				<f:facet name="output" style="width: 60px">
 					<h:outputText value="#{item.repostos}" id="outputRepostos" />
 				</f:facet>
 				<f:facet name="input" style="width: 60px">
 					<p:inputNumber value="#{item.repostos}" minValue="0"
-						id="inputRepostos">
+						decimalPlaces="0" id="inputRepostos">
 						<p:ajax process="@this inputRepostos" partialSubmit="true"
 							listener="#{vendaBean.validaReposicao(item)}"
 							update="outputRepostos inputRepostos outputDevolvidos inputDevolvidos" />
@@ -122,7 +126,7 @@
 		</p:column>
 
 		<p:column headerText="Pronta entrega"
-			style="font-size: small; width: 10%; text-align: center">
+			style="font-size: 10px; width: 10%; text-align: center">
 			<p:selectBooleanCheckbox value="#{item.prontaEntrega}">
 				<p:ajax listener="#{vendaBean.taxaComissao(item)}"
 					update="outPutTaxa inputTaxa :formOperacao:idTabView:idResumoOperacao"
@@ -132,7 +136,7 @@
 		</p:column>
 
 		<p:column headerText="Comissão - %" id="colunaComissao"
-			style="font-size: small; text-align: center; width: 10%">
+			style="font-size: 10px; text-align: center; width: 10%">
 			<p:cellEditor>
 				<f:facet name="output" style="width: 60px">
 					<h:outputText id="outPutTaxa" value="#{item.taxaComissao}">
@@ -152,7 +156,7 @@
 		</p:column>
 
 		<p:column headerText="Nota Fiscal"
-			style="font-size: small;  text-align: center; width: 10%"
+			style="font-size: 10px;  text-align: center; width: 10%"
 			styleClass="semBorda">
 			<h:panelGrid columns="2">
 				<h:panelGroup>
@@ -277,6 +281,125 @@
 			onclick="PF('confirmExclusaoVenda').hide(); return false;" />
 
 	</p:confirmDialog>
+
+
+	<!-- Diálogo com tabela para Venda de um novo produto-->
+	<p:dialog header="Adicionar Produtos" widgetVar="dlgAdicionarProdutos"
+		modal="true" width="70%" height="550" minWidth="600"
+		style="text-align: center">
+
+		<p:messages id="idMensageNovaVenda" />
+
+		<p:dataTable id="idTabAdicionarProdutos"
+			value="#{vendaBean.listaNovasVendas}" editable="true" editMode="cell"
+			var="item" style="margin-top: 10px; width: 100%"
+			rowIndexVar="rowIndex" rows="10" paginator="true"
+			paginatorPosition="bottom" paginatorAlwaysVisible="false">
+
+			<p:column headerText="#" style="width: 3%; text-align: center">
+       		#{rowIndex+1}
+    		</p:column>
+
+
+			<p:column headerText="Produto"
+				style="width: 20%; text-align: center; font-size: 10px">
+				<h:outputText value="#{item.produto.nome}" />
+			</p:column>
+
+			<p:column headerText="Quantidade"
+				style="text-align: center; width: 10%; font-size: 10px">
+				<p:cellEditor>
+					<f:facet name="output" style="width: 60px">
+						<h:outputText id="idOutputQuantidade" value="#{item.quantidade}">
+
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input" style="width: 60px">
+						<p:inputText id="idInputQuantidade" value="#{item.quantidade}">
+							<f:convertNumber maxFractionDigits="0" />
+							<p:ajax update="idInputQuantidade idOutputQuantidade idMenorP"
+								process="idInputQuantidade" partialSubmit="true" />
+						</p:inputText>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column headerText="Menor preço" id="idMenorPreco"
+				style="width: 10%; text-align: center; font-size: 10px">
+				<p:commandButton id="idMenorP"
+					value="#{vendaBean.menorValorVenda(item)}" process="@this"
+					partialSubmit="true" style="color: red"
+					actionListener="#{vendaBean.insereValorNaVenda(item)}"
+					update="inputPreco outputPreco" />
+			</p:column>
+
+			<p:column headerText="Valor"
+				style="text-align: center; width: 10%; font-size: 10px">
+				<p:cellEditor>
+					<f:facet name="output" style="width: 60px">
+						<h:outputText id="outputPreco" value="#{item.valorUnitario}">
+							<f:convertNumber pattern="#0.00" locale="pt_BR" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input" style="width: 60px">
+						<p:inputNumber id="inputPreco" value="#{item.valorUnitario}"
+							decimalSeparator="," thousandSeparator=".">
+							<p:ajax listener="#{vendaBean.validaPrecoNovaVenda2(item)}"
+								process="@this" partialSubmit="true"
+								update="inputPreco outputPreco :formOperacao:idTabView:idMensageNovaVenda" />
+
+						</p:inputNumber>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column headerText="Pronta entrega"
+				style="font-size: 10px; width: 10%; text-align: center">
+				<p:selectBooleanCheckbox id="idProntEntrega"
+					value="#{item.prontaEntrega}">
+					<p:ajax process="idProntEntrega" partialSubmit="true" />
+				</p:selectBooleanCheckbox>
+			</p:column>
+
+			<p:column headerText="Nota Fiscal"
+				style="font-size: 10px;  text-align: center; width: 20%"
+				styleClass="semBorda">
+				<h:panelGrid columns="2">
+					<h:panelGroup>
+						<h:outputText value="Nota" style="margin-left: -20px" />
+						<p:selectBooleanCheckbox value="#{item.nota}"
+							style="margin-left: 5px">
+							<p:ajax listener="#{vendaBean.nota(item)}" process="@this"
+								partialSubmit="true" update="emitidaVendaNova" />
+						</p:selectBooleanCheckbox>
+					</h:panelGroup>
+					<h:panelGroup id="Emitida">
+						<h:outputText value="Emitida" style="margin-left: -10px" />
+						<p:selectBooleanCheckbox value="#{item.notaEmitida}"
+							id="emitidaVendaNova"
+							style="margin-left: 5px; margin-right: -5px "
+							disabled="#{vendaBean.notaFiscal(item)}">
+							<p:ajax process="@this" partialSubmit="true" />
+
+						</p:selectBooleanCheckbox>
+					</h:panelGroup>
+				</h:panelGrid>
+
+			</p:column>
+
+		</p:dataTable>
+
+		<p:commandButton value="Incluir"
+			actionListener="#{vendaBean.insereNovaVenda}"
+			style="margin-top: 10px; width: 100px"
+			update=":formOperacao:idTabView:idTabVenda :formOperacao:idTabView:idResumoOperacao 
+				:formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita :formOperacao:idTabView:idConfirmaOperacao" 
+			process="@this"
+			oncomplete="PF('dlgAdicionarProdutos').hide(); return false;" />
+
+
+	</p:dialog>
+
 
 
 

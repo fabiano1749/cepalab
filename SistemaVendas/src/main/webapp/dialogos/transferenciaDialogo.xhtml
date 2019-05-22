@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+
+	<h1 class="fa-page-title">Transferência</h1>
+	<h:outputStylesheet library="css" name="sistema.css" />
+
+	<f:metadata>
+		<o:viewParam name="item" value="#{transferenciaBean.item}" />
+	</f:metadata>
+
+
+	<style>
+.rotulo {
+	width: 30%;
+	height: 30px;
+}
+
+.campo {
+	width: 70%;
+}
+</style>
+
+
+</h:head>
+
+<h:body>
+
+	<h:form id="idForm">
+
+		<p:messages id="messages" closable="true">
+			<p:autoUpdate />
+		</p:messages>
+
+		<p:toolbar style="width: 77%; margin-top: 20px ">
+
+			<p:toolbarGroup align="right">
+				<p:commandButton value="Salvar" id="idBotaoSalvar"
+					actionListener="#{transferenciaBean.prepararSalvar()}"
+					style="margin-left: 5px; width: 70px; color: green" 
+					action="#{pesquisaTransferenciaBean.fechaDialogo}"/>
+
+			</p:toolbarGroup>
+		</p:toolbar>
+
+		<div id="idDivPrincipal" style="width: 95%; overflow: hidden">
+
+			<div id="idEsquerda"
+				style="width: 30%; float: left; margin-top: 10px">
+
+				<p:panelGrid id="idGridTransacao" columns="2" styleClass="semBorda"
+					style="width: 100%" columnClasses="rotulo, campo">
+
+					<p:outputLabel value="Conta Origem" for="idContaOrigem" />
+					<p:selectOneMenu id="idContaOrigem" style="width: 93%"
+						value="#{transferenciaBean.item.conta}" required="true"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+						<f:selectItems value="#{transferenciaBean.listaContas()}"
+							var="conta" itemValue="#{conta}" itemLabel="#{conta.nome}" />
+						<p:ajax process="@this" partialSubmit="true"
+							update="idGridTransacao idFormInserirCheque"
+							listener="#{transferenciaBean.atualizaChequeEmCaixa()}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Conta Destino" for="idContaDestino" />
+					<p:selectOneMenu id="idContaDestino" style="width: 93%"
+						required="true" converter="omnifaces.SelectItemsConverter"
+						value="#{transferenciaBean.item.destino}">
+						<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+						<f:selectItems value="#{transferenciaBean.listaContas()}"
+							var="conta" itemValue="#{conta}" itemLabel="#{conta.nome}" />
+						<p:ajax process="@this" partialSubmit="true" update="@none" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Data" for="idData" />
+					<p:calendar id="idData" value="#{transferenciaBean.item.data}"
+						required="true" locale="pt" pattern="dd/MM/yyyy">
+						<p:ajax event="dateSelect"
+							listener="#{transferenciaBean.atualisaDataParcela()}"
+							process="@this" partialSubmit="true" update="idTab" />
+					</p:calendar>
+
+					<p:outputLabel value="Valor" for="idValor" />
+					<p:inputNumber id="idValor" style="width: 100%" required="true"
+						value="#{transferenciaBean.item.valor}" decimalSeparator=","
+						thousandSeparator=".">
+						<p:ajax listener="#{transferenciaBean.atualisaValorParcela()}"
+							process="@this" partialSubmit="true"
+							update="idTab idGridTransacao" />
+					</p:inputNumber>
+
+					<p:commandButton value="Cheques"
+						style="background-color: green; color: white"
+						oncomplete="PF('InserirCheque').show()" />
+					<p:outputLabel value="#{transferenciaBean.item.somaDosCheques()}"
+						style="color:red" />
+
+					<p:commandButton value="Dinheiro"
+						style="background-color: green; color: white" update="@none" />
+					<p:outputLabel value="#{transferenciaBean.valorDinheiro()}"
+						style="color: red" />
+
+
+					<p:outputLabel value="Obs" />
+					<p:inputTextarea value="#{transferenciaBean.item.obs}"
+						style="width: 100%" />
+
+				</p:panelGrid>
+
+			</div>
+
+
+
+			<div id="idDireita"
+				style="width: 60%; float: left; margin-left: 50px; margin-top: 15px">
+
+				<p:dataTable id="idTab"
+					value="#{transferenciaBean.item.listaParcelas}" var="item"
+					editable="true" editMode="cell" style="width: 79%" reflow="true">
+
+					<f:facet name="header">
+						<h:outputText value="Parcelas" />
+					</f:facet>
+
+					<p:column headerText="Número"
+						style="text-align: center; width: 10%">
+						<h:outputText value="#{item.numero}" />
+					</p:column>
+
+					<p:column headerText="Data" style="text-align: center; width: 30%">
+						<p:calendar value="#{item.data}"
+							mindate="#{transferenciaBean.item.data}" />
+					</p:column>
+
+					<p:column headerText="Valor" style="text-align: center; width: 15%">
+						<h:outputText value="#{item.valor}">
+							<f:convertNumber type="currency" locale="pt_BR"
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Status"
+						style="text-align: center; width: 20%">
+						<p:selectOneMenu value="#{item.status}">
+							<f:selectItems value="#{transferenciaBean.statusParcela()}"
+								var="status" itemValue="#{status}"
+								itemLabel="#{status.descricao}" />
+						</p:selectOneMenu>
+					</p:column>
+
+				</p:dataTable>
+			</div>
+		</div>
+	</h:form>
+
+	<p:dialog widgetVar="InserirCheque" id="idInserirCheque" modal="true"
+		resizable="false" width="90%" header="Inserir cheque">
+		<h:form id="idFormInserirCheque">
+
+			<p:dataTable id="idTab"
+				value="#{transferenciaBean.item.listaCheques}" var="item"
+				style="margin-top: 5px; margin-left: 10px ; width: 50%; font-size: 10px;
+						float: left"
+				reflow="true">
+
+				<f:facet name="header">
+					<h:outputText value="Cheques da parcela   -   Total: " />
+					<h:outputText value="#{transferenciaBean.item.somaDosCheques()}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</h:outputText>
+				</f:facet>
+
+				<p:column headerText="Origem" style="text-align: center; width: 35%">
+					<h:outputText value="#{item.origem} #{item.funcionario.nome}" />
+				</p:column>
+
+				<p:column headerText="Número" style="text-align: center; width: 13%">
+					<h:outputText value="#{item.numero}" />
+				</p:column>
+
+				<p:column headerText="Banco" style="text-align: center; width: 16%">
+					<h:outputText value="#{item.banco.nome}" />
+				</p:column>
+
+				<p:column headerText="Bom para"
+					style="text-align: center; width: 13%">
+					<h:outputText value="#{item.bomPara}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Valor" style="text-align: center; width: 13%">
+					<h:outputText value="#{item.valor}" />
+				</p:column>
+
+				<p:column style="text-align: center; width: 10%">
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{transferenciaBean.removerCheque(item)}"
+						update="idFormInserirCheque idForm:idGridTransacao" />
+				</p:column>
+
+			</p:dataTable>
+
+			<p:dataTable id="idTab2"
+				value="#{transferenciaBean.listaChequesEmCaixa}" var="item"
+				style="margin-top: 5px; margin-left: 10px ; width: 47%; font-size: 10px;
+						float: left"
+				reflow="true">
+
+				<f:facet name="header">
+					<h:outputText value="Disponíveis" />
+				</f:facet>
+
+				<p:column headerText="Origem" style="text-align: center; width: 35%">
+					<h:outputText value="#{item.origem} #{item.funcionario.nome}" />
+				</p:column>
+
+				<p:column headerText="Número" style="width: 13%">
+					<h:outputText value="#{item.numero}" />
+				</p:column>
+
+				<p:column headerText="Banco" style="text-align: center; width: 16%">
+					<h:outputText value="#{item.banco.nome}" />
+				</p:column>
+
+				<p:column headerText="Bom para"
+					style="text-align: center; width: 13%">
+					<h:outputText value="#{item.bomPara}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Valor" style="text-align: center; width: 13%">
+					<h:outputText value="#{item.valor}" />
+				</p:column>
+
+				<p:column style="text-align: center; width: 10%">
+					<p:commandButton icon="ui-icon-check"
+						actionListener="#{transferenciaBean.adicionarCheque(item)}"
+						update="idFormInserirCheque idForm:idGridTransacao" />
+				</p:column>
+
+			</p:dataTable>
+
+
+
+		</h:form>
+	</p:dialog>
+
+</h:body>
+
+
+
+</html>

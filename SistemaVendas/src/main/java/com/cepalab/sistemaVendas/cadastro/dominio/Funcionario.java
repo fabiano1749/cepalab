@@ -34,7 +34,8 @@ public class Funcionario extends GenericDTO {
 	private String senha;
 	private List<Rota> rotas = new ArrayList<>();
 	private List<ComissaoRecolhidaRessarcida> comissaoRecolhidaRessarcida;
-
+	
+	
 	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -151,6 +152,8 @@ public class Funcionario extends GenericDTO {
 	public void setComissaoRecolhidaRessarcida(List<ComissaoRecolhidaRessarcida> comissaoRecolhidaRessarcida) {
 		this.comissaoRecolhidaRessarcida = comissaoRecolhidaRessarcida;
 	}
-		
 	
+	public String primeiroNome() {
+		return nome.substring(0, nome.indexOf(" "));
+	}
 }

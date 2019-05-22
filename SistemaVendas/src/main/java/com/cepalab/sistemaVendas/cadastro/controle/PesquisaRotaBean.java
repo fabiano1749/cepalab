@@ -37,7 +37,7 @@ public class PesquisaRotaBean implements Serializable {
 	@PostConstruct
 	public void inicio() {
 		limpar();
-		funcionarios = fun.funcionarios();
+		funcionarios = fun.vendedorAtivo();
 	}
 
 	public void limpar() {

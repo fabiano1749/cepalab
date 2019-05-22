@@ -27,32 +27,7 @@
 				<p:outputLabel value="Nome" for="idNome" />
 				<p:inputText id="idNome" value="#{tipoProdutoBean.item.nome}"
 					required="true" requiredMessage="Nome não informado!" />
-
-				<p:outputLabel value="Comissão abertura" for="idCA" />
-				<p:inputNumber id="idCA"
-					value="#{tipoProdutoBean.item.comissaoAbertura}"
-					style="width:100px" decimalSeparator="," thousandSeparator="."
-					decimalPlaces="2" />
-
-				<p:outputLabel value="Premiação abertura" for="idPA" />
-				<p:inputNumber id="idPA"
-					value="#{tipoProdutoBean.item.premiacaoAbertura}"
-					style="width:100px" decimalSeparator="," thousandSeparator="."
-					decimalPlaces="2" />
-
-				<p:outputLabel value="Comissão colocação" for="idCC" />
-				<p:inputNumber id="idCC"
-					value="#{tipoProdutoBean.item.comissaoColocacao}"
-					style="width:100px" decimalSeparator="," thousandSeparator="."
-					decimalPlaces="2" />
-
-
-				<p:outputLabel value="Premiação colocação" for="idPC" />
-				<p:inputNumber id="idPC"
-					value="#{tipoProdutoBean.item.premiacaoColocacao}"
-					style="width:100px" decimalSeparator="," thousandSeparator="."
-					decimalPlaces="2" />
-
+			
 				<p:commandButton value="Salvar"
 					actionListener="#{tipoProdutoBean.salvar}" update="idPnl"
 					action="#{pesquisaTipoProdutoBean.fechaDialogo}"

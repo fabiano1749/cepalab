@@ -34,8 +34,6 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 	private Expedicao expedicao;
 	private BigDecimal descontoTotal = BigDecimal.ZERO;
 
-	
-
 	@Inject
 	private Expedicoes expedicoes;
 
@@ -65,9 +63,9 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 			expedicao = expedicoes.porId(expedicao.getId());
 		}
 		else {
-			expedicao = expedicoes.UltimaAberta(fechamentoBean.getFuncionario());
+			Long id = expedicoes.idUltimaExpedicao(fechamentoBean.getItem().getFuncionario());
+			expedicao = expedicoes.porId(id);
 		}
-		
 		
 		if (expedicao != null) {
 			listaConsiganacao = consignados.porFuncionario(fechamentoBean.getItem().getFuncionario(),
@@ -76,7 +74,9 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 					fechamentoBean.getItem().getInicio(), fechamentoBean.getItem().getFim());
 			listaAmostra = amostras.porFuncionario(fechamentoBean.getItem().getFuncionario(),
 					fechamentoBean.getItem().getInicio(), fechamentoBean.getItem().getFim());
+			
 			for (ExpedProduto ex : expedicao.getExpedProdutos()) {
+			
 				AcertoProduto acerto = new AcertoProduto();
 				acerto.setExpedProduto(ex);
 				alimentaQuantidades(acerto);
@@ -91,7 +91,9 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 	}
 
 	public void alimentaQuantidades(AcertoProduto acerto) {
+		
 		if (listaConsiganacao != null) {
+			
 			for (Consignacao c : listaConsiganacao) {
 				if (c.getProduto().getId().equals(acerto.getExpedProduto().getProduto().getId())) {
 					if (c.getConsignados() != null && c.getProntaEntrega() == true) {
@@ -104,7 +106,7 @@ public class FechamentoAcertoProdutoBean implements Serializable {
 		}
 
 		if (listaVendas != null) {
-
+			
 			for (Venda v : listaVendas) {
 
 				if (v.getProduto().getId().equals(acerto.getExpedProduto().getProduto().getId())) {

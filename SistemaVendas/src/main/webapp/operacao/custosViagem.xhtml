@@ -29,19 +29,6 @@
 			<p:panelGrid columns="2" id="pnlnovo" styleClass="semBorda"
 				style="margin-top: 20px">
 
-				<p:outputLabel value="Vendedor" for="idVendedor"
-					rendered="#{custoViagemBean.isAdministrador()}" />
-				<p:selectOneMenu id="idVendedor" required="true"
-					rendered="#{custoViagemBean.isAdministrador()}"
-					requiredMessage="Vendedor Não informado!"
-					value="#{custoViagemBean.item.funcionario}"
-					converter="omnifaces.SelectItemsConverter">
-					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
-					<f:selectItems value="#{custoViagemBean.listaFuncionarios}"
-						var="fun" itemValue="#{fun}" itemLabel="#{fun.nome}" />
-				</p:selectOneMenu>
-
-
 				<p:outputLabel value="Custo" for="custo" />
 				<p:selectOneMenu id="custo" value="#{custoViagemBean.item.tipo}"
 					style="width: 80%" required="true"
@@ -67,6 +54,7 @@
 
 				<p:commandButton value="Salvar"
 					style="margin-top: 30px; width: 100%"
+					disabled="#{custoViagemBean.podeSalvar() == false}"
 					actionListener="#{custoViagemBean.salvar()}" update="pnlnovo" />
 
 			</p:panelGrid>

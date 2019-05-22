@@ -71,10 +71,11 @@
 
 		<br />
 
-	<p:commandButton value="Confirmar operação" style="margin-top: 20px"
+	<p:commandButton value="Confirmar operação" style="margin-top: 20px" 
 		process="@this formOperacao:pnlDados idtabReceita"
 		actionListener="#{receitaBean.confirmarOperacao}"
-		action="#{pesquisaClienteBean.fechaDialogo}" />
+		action="#{pesquisaOperacaoBean.fechaDialogo}" 
+		disabled="#{operacaoBean.podeEditar() == false}"/>
 
 
 

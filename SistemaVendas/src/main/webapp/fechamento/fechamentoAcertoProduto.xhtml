@@ -27,13 +27,15 @@
 
 	<p:dataTable id="idTabAcertoProduto"
 		value="#{fechamentoAcertoProdutoBean.listaAcertoProduto}" var="item"
-		style="margin-top: 20px" reflow="true">
-		
+		style="margin-top: 20px" reflow="true"
+		sortBy="#{item.expedProduto.produto.posicao}">
+
 		<p:column headerText="Produto"
-			style="font-size: small; text-align: center">
+			sortBy="#{item.expedProduto.produto.posicao}"
+			style="font-size: small; text-align: center; width: 10%">
 			<h:outputText value="#{item.expedProduto.produto.nome}" />
 		</p:column>
-		
+
 		<p:column headerText="Quant-Saída"
 			style="font-size: small; text-align: center">
 			<h:outputText value="#{item.expedProduto.saida}" />
@@ -48,27 +50,27 @@
 			style="font-size: small; text-align: center">
 			<h:outputText value="#{item.vendidos}" />
 		</p:column>
-		
+
 		<p:column headerText="Devolvidos"
 			style="font-size: small; text-align: center">
 			<h:outputText value="#{item.devolvidos}" />
 		</p:column>
-		
+
 		<p:column headerText="Repostos"
 			style="font-size: small; text-align: center">
 			<h:outputText value="#{item.repostos}" />
 		</p:column>
-		
+
 		<p:column headerText="Amostras"
 			style="font-size: small; text-align: center">
 			<h:outputText value="#{item.amostras}" />
 		</p:column>
-		
+
 		<p:column headerText="Estoque-Esperado"
 			style="font-size: small; text-align: center">
 			<h:outputText value="#{item.estoqueEsperado}" />
 		</p:column>
-		
+
 		<p:column headerText="Estoque-Real"
 			style="font-size: small; text-align: center">
 			<h:outputText value="#{item.expedProduto.chegada}" />
@@ -83,24 +85,24 @@
 			style="font-size: small; text-align: center; color: red">
 			<h:outputText value="#{item.expedProduto.produto.custo}" />
 		</p:column>
-		
-		
+
+
 		<p:column headerText="Descontar"
 			style="font-size: small; text-align: center; color: red">
 			<h:outputText value="#{item.desconto}" />
 		</p:column>
-		
+
 		<p:columnGroup type="footer">
 			<p:row>
 				<p:column colspan="12"
 					footerText="Descontos Totais: #{fechamentoAcertoProdutoBean.descontoTotal}"
 					style="text-align: right">
-				
+
 				</p:column>
-				
+
 			</p:row>
 		</p:columnGroup>
-		
+
 
 	</p:dataTable>
 

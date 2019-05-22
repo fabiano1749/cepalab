@@ -12,27 +12,28 @@
 
 		<f:facet name="header">
 			<p:commandButton value="Consignar um novo produto" process="@this"
-				onclick="PF('dlConsig').show();"
-				actionListener="#{consignacaoBean.iniciaConsignacao()}" />
+				onclick="PF('dlgNovosProdutos').show();"
+				update=":formOperacao:idTabView:idTabNovasConsignacoes"
+				actionListener="#{consignacaoBean.criaListaNovasConsignacoes()}" />
 		</f:facet>
 
-		<p:column headerText="#" style="width: 3%; text-align: center">
+		<p:column headerText="#" style="width: 5%; text-align: center">
        		#{rowIndex+1}
    		</p:column>
 
-		<p:column headerText="Produto"
-			style="font-size: small; text-align: center; font-size: 11px; width: 20%">
+		<p:column headerText="Produto" 
+			style="font-size: small; text-align: center; font-size: 11px; width: 17%">
 			<h:outputText value="#{item.produto.nome}" />
 		</p:column>
 
 		<p:column headerText="Consignados"
-			style="font-size: 11px; text-align: center; width: 7%">
+			style="font-size: 11px; text-align: center; width: 8%">
 			<h:outputText id="consignados" value="#{item.totalConsignado}" />
 		</p:column>
 
 		<p:column headerText="Preço"
 			style="font-size: 11px; text-align: center; width: 5%">
-			<p:cellEditor>
+			<p:cellEditor >
 				<f:facet name="output">
 					<h:outputText id="preco" value="#{item.valorUnitario}">
 						<f:convertNumber pattern="#0.00" locale="pt_BR" />
@@ -53,7 +54,7 @@
 
 						<p:ajax listener="#{receitaBean.criaListaReceitas}"
 							process="@this" partialSubmit="true"
-							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita" />
+							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita :formOperacao:idTabView:idConfirmaOperacao" />
 
 					</p:inputNumber>
 				</f:facet>
@@ -63,8 +64,8 @@
 
 
 		<p:column headerText="Vendidos"
-			style="text-align: center; font-size: 11px; width: 5%">
-			<p:cellEditor>
+			style="text-align: center; font-size: 11px; width: 6%">
+			<p:cellEditor >
 				<f:facet name="output">
 					<h:outputText value="#{item.vendidos}" id="outputVendidos" />
 				</f:facet>
@@ -83,7 +84,7 @@
 
 						<p:ajax listener="#{receitaBean.criaListaReceitas}"
 							process="@this" partialSubmit="true"
-							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita" />
+							update=":formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita :formOperacao:idTabView:idConfirmaOperacao" />
 
 					</p:inputText>
 				</f:facet>
@@ -97,7 +98,7 @@
 				<h:panelGroup>
 					<h:outputText value="Nota" />
 					<p:selectBooleanCheckbox value="#{item.nota}" id="nota"
-						style="margin-left: 6px">
+						style="margin-left: 6px" >
 						<p:ajax listener="#{consignacaoBean.nota(item)}"
 							process="@this Emitida" partialSubmit="true" update="Emitida" />
 					</p:selectBooleanCheckbox>
@@ -114,8 +115,8 @@
 		</p:column>
 
 		<p:column headerText="Comissão - %" id="colunaComissaoC"
-			style="font-size: 11px; text-align: center; width: 7%">
-			<p:cellEditor>
+			style="font-size: 11px; text-align: center; width: 10%">
+			<p:cellEditor >
 				<f:facet name="output" style="width: 60px">
 					<h:outputText id="outPutTaxa" value="#{item.taxaComissao}">
 						<f:convertNumber pattern="#0.00" locale="pt_BR" />
@@ -135,8 +136,8 @@
 
 
 		<p:column headerText="Devolvidos"
-			style="font-size: 11px; text-align: center; width: 5%">
-			<p:cellEditor>
+			style="font-size: 11px; text-align: center; width: 9%">
+			<p:cellEditor >
 				<f:facet name="output" style="width: 60px">
 					<h:outputText value="#{item.devolvidos}" id="outputDevolvidos" />
 				</f:facet>
@@ -151,8 +152,8 @@
 		</p:column>
 
 		<p:column headerText="Nova consignação"
-			style="font-size: 11px; text-align: center; width: 7%">
-			<p:cellEditor>
+			style="font-size: 11px; text-align: center; width: 9%">
+			<p:cellEditor >
 				<f:facet name="output">
 					<h:outputText value="#{item.consignados}" id="outputConsignacao" />
 				</f:facet>
@@ -167,18 +168,18 @@
 		</p:column>
 
 
-		<p:column headerText="Pronta entrega"
-			style="font-size: 11px; width: 4%; text-align: center">
-			<p:selectBooleanCheckbox id="idProntaEntrega"
+		<p:column headerText="Pronta entrega" 
+			style="font-size: 11px; width: 9%; text-align: center">
+			<p:selectBooleanCheckbox id="idProntaEntrega" 
 				value="#{item.prontaEntrega}">
 				<p:ajax process="@this" partialSubmit="true"
 					update="idProntaEntrega" />
 			</p:selectBooleanCheckbox>
 		</p:column>
-		<p:column headerText=" " style="text-align: center">
+		<p:column headerText=" " style="text-align: center; width: 7%">
 
 			<p:commandButton icon="ui-icon-trash"
-				style="margin-left: 4px; width: 70%" process="@this"
+				style="margin-left: 4px; width: 90%" process="@this"
 				partialSubmit="true"
 				actionListener="#{consignacaoBean.trocaItem(item)}"
 				oncomplete="PF('confirmExclusaoConsignacao').show();"
@@ -292,6 +293,88 @@
 			onclick="PF('confirmExclusaoConsignacao').hide(); return false;" />
 
 	</p:confirmDialog>
+
+
+	<!-- Diálogo com tabela para consignação de um novo produto-->
+	<p:dialog header="Adicionar Produtos" widgetVar="dlgNovosProdutos"
+		width="70%" height="500" minWidth="600" modal="true"
+		style="text-align: center">
+
+		<p:messages id="idMensageNovaConsignacao" />
+
+		<p:dataTable id="idTabNovasConsignacoes"
+			value="#{consignacaoBean.novasConsignacoes}" editable="true"
+			editMode="cell" var="item" style="margin-top: 10px; width: 100%"
+			emptyMessage="" rowIndexVar="rowIndex" rows="10" paginator="true"
+			paginatorPosition="bottom" paginatorAlwaysVisible="false">
+
+			<p:column headerText="#" style="width: 3%; text-align: center">
+       		#{rowIndex+1}
+    		</p:column>
+
+
+			<p:column headerText="Produto"
+				style="width: 20%; text-align: center; font-size: 10px">
+				<h:outputText value="#{item.produto.nome}" />
+			</p:column>
+
+			<p:column headerText="Quantidade" id="teste"
+				style="text-align: center; width: 10%; font-size: 10px">
+				<p:cellEditor>
+					<f:facet name="output" style="width: 60px">
+						<h:outputText id="idOutputQuant" value="#{item.consignados}" />
+					</f:facet>
+					<f:facet name="input" style="width: 60px">
+						<p:inputText id="idinputQuant" value="#{item.consignados}">
+							<f:convertNumber maxFractionDigits="0"/>
+							<p:ajax process="idinputQuant" partialSubmit="true" 
+								update="idOutputQuant idinputQuant"/>
+						</p:inputText>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column headerText="Menor preço" id="idMenorPreco"
+				style="width: 10%; text-align: center; font-size: 10px">
+				<p:commandButton id="idMenorP"
+					value="#{consignacaoBean.menorValorConsignacao(item)}"
+					process="@this" partialSubmit="true" style="color: red"
+					actionListener="#{consignacaoBean.insereValorNovaConsignacao(item)}"
+					update="inputPreco outputPreco" />
+			</p:column>
+
+			<p:column headerText="Valor"
+				style="text-align: center; width: 10%; font-size: 10px">
+				<p:cellEditor>
+					<f:facet name="output" style="width: 60px">
+						<h:outputText id="outputPreco" value="#{item.valorUnitario}">
+							<f:convertNumber pattern="#0.00" locale="pt_BR" />
+						</h:outputText>
+					</f:facet>
+					<f:facet name="input" style="width: 60px">
+						<p:inputNumber id="inputPreco" value="#{item.valorUnitario}"
+							decimalSeparator="," thousandSeparator=".">
+							<p:ajax listener="#{consignacaoBean.validaPreco(item)}"
+								process="@this" partialSubmit="true"
+								update="inputPreco outputPreco :formOperacao:idTabView:idMensageNovaConsignacao" />
+						</p:inputNumber>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+		</p:dataTable>
+
+		<p:commandButton value="Incluir"
+			actionListener="#{consignacaoBean.adicionaConsignacao2}"
+			style="margin-top: 10px; width: 100px"
+			update=":formOperacao:idTabView:idTabConsignados :formOperacao:idTabView:idResumoOperacao 
+				:formOperacao:idTabView:pnlReceita :formOperacao:idTabView:idtabReceita"
+			process="@this" partialSubmit="true"
+			oncomplete="PF('dlgNovosProdutos').hide(); return false;" />
+
+
+	</p:dialog>
+
 
 
 

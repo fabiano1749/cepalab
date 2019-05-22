@@ -10,11 +10,12 @@
 		<h1 class="fa-page-title">Pesquisa Expedicao</h1>
 
 		<h:form id="idFormPesquisaExpedicao">
-			<p:messages autoUpdate="true" />
+
 			<p:toolbar style="width: 70%; margin-top: 20px">
 
 				<p:toolbarGroup align="left">
-					<p:button value="Novo" outcome="/expedicao/expedicao" />
+					<p:button value="Novo" outcome="/expedicao/expedicao"
+						disabled="#{pesquisaExpedicaoBean.isVendedor()}" />
 				</p:toolbarGroup>
 
 				<p:toolbarGroup align="right">
@@ -29,8 +30,10 @@
 			<p:panelGrid columns="6" styleClass="semBorda"
 				style="margin-top: 10px">
 
-				<p:outputLabel value="Vendedor" />
+				<p:outputLabel value="Vendedor"
+					rendered="#{pesquisaExpedicaoBean.isVendedor() == false}" />
 				<p:selectOneMenu
+					rendered="#{pesquisaExpedicaoBean.isVendedor() == false}"
 					value="#{pesquisaExpedicaoBean.filtroExpedicao.funcionario}"
 					converter="omnifaces.SelectItemsConverter">
 					<f:selectItem itemLabel="todos" />
@@ -53,10 +56,13 @@
 
 			</p:panelGrid>
 
-
+			<p:messages id="messages" showDetail="false" closable="true" >
+				<p:autoUpdate />
+			</p:messages>
 			<p:dataTable id="idTabExpedicao"
 				value="#{pesquisaExpedicaoBean.listaExpedicao}" var="item"
-				style="margin-top: 20px margin-left: 10px ; width: 70% " reflow="true">
+				style="margin-top: 20px margin-left: 10px ; width: 70% "
+				reflow="true">
 
 				<p:column headerText="Funcionario" style="text-align: center">
 					<h:outputText value="#{item.funcionario.nome}" />
@@ -82,13 +88,15 @@
 							listener="#{pesquisaExpedicaoBean.pesquiza}" process="@this"
 							update="idTabExpedicao" />
 					</p:commandButton>
-					
-					<p:commandButton icon="ui-icon-trash" style="margin-left: 5px; width: 45%"
-						actionListener="#{pesquisaExpedicaoBean.alimentaExpedicao(item)}" process="@this"
-						oncomplete="PF('confirmExclusao').show()"
+
+					<p:commandButton icon="ui-icon-trash"
+						style="margin-left: 5px; width: 45%"
+						actionListener="#{pesquisaExpedicaoBean.alimentaExpedicao(item)}"
+						process="@this" oncomplete="PF('confirmExclusao').show()"
+						disabled="#{pesquisaExpedicaoBean.podeExcluir()==false}"
 						update="idConfirmDialogExlusao" />
-						
-					
+
+
 				</p:column>
 			</p:dataTable>
 
@@ -96,11 +104,12 @@
 
 		<p:confirmDialog id="idConfirmDialogExlusao"
 			widgetVar="confirmExclusao" header="Exclusão de Expedição"
-			message="Quer realmente excluir a expedição : #{pesquisaExpedicaoBean.expedicao.id}?">
+			message="Quer realmente excluir esta expedição ?">
 			<h:form id="formExclusao">
 				<p:messages />
 
-				<p:commandButton value="Sim" actionListener="#{pesquisaExpedicaoBean.excluir}"
+				<p:commandButton value="Sim"
+					actionListener="#{pesquisaExpedicaoBean.excluir}"
 					update="idFormPesquisaExpedicao:idTabExpedicao" process="@this"
 					oncomplete="PF('confirmExclusao').hide(); return false;" />
 				<p:commandButton value="Não"
@@ -109,7 +118,7 @@
 
 			</h:form>
 		</p:confirmDialog>
-		
+
 
 
 

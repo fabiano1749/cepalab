@@ -31,7 +31,6 @@ public class ComissoesRecolhidasRessarcidas implements Serializable {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public List<ComissaoRecolhidaRessarcida> porFuncionario(Funcionario funcionario) {
 
 		try {

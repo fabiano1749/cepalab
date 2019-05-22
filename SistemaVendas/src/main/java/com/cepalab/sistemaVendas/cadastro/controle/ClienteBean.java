@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
 import com.cepalab.sistemaVendas.cadastro.dominio.Contato;
 import com.cepalab.sistemaVendas.cadastro.dominio.Endereco;
+import com.cepalab.sistemaVendas.cadastro.dominio.EstadosBrasileiros;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.Grupo;
 import com.cepalab.sistemaVendas.cadastro.dominio.Rota;
@@ -68,7 +69,7 @@ public class ClienteBean implements Serializable {
 	@PostConstruct
 	public void inicio() {
 		limpar();
-		if(!isAdministrador()) {
+		if(!isAdministradorOuRoot()) {
 			setFuncionario(seg.UsuarioLogado());
 			criaListaRotas();
 		}else {
@@ -123,7 +124,7 @@ public class ClienteBean implements Serializable {
 			
 			this.item = item;
 			
-			if(!isAdministrador()) {
+			if(!isAdministradorOuRoot()) {
 				setFuncionario(seg.UsuarioLogado());
 				criaListaRotas();
 			}else {
@@ -161,7 +162,21 @@ public class ClienteBean implements Serializable {
 		}
 		return false;
 	}
+	
+	public boolean isAdministradorOuRoot() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("ADMINISTRADORES") || g.getNome().equals("ROOT")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
+	public EstadosBrasileiros[] estados() {
+		return EstadosBrasileiros.values();
+	}
+	
 	public void setRotasCliente(List<Rota> rotasCliente) {
 		this.rotasCliente = rotasCliente;
 	}

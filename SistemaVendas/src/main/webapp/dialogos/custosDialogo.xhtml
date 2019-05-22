@@ -26,6 +26,7 @@
 			<p:toolbarGroup>
 				<p:commandButton value="Salvar"
 					actionListener="#{custoViagemBean.salvar}" process="@form"
+					disabled="#{custoViagemBean.podeSalvar() == false}"
 					action="#{pesquisaCustosBean.fechaDialogo}" />
 
 			</p:toolbarGroup>

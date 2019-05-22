@@ -2,6 +2,7 @@ package com.cepalab.sistemaVendas.repository;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -9,6 +10,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
+import com.cepalab.sistemaVendas.cadastro.dominio.StatusVendedor;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoFuncionario;
 import com.cepalab.sistemaVendas.service.NegocioException;
 import com.cepalab.sistemaVendas.util.jpa.Transactional;
@@ -81,17 +83,30 @@ public class Funcionarios implements Serializable {
 
 	public List<Funcionario> vendedor() {
 
-		try {
-			return manager.createQuery("from Funcionario where tipo.nome= :tipo", Funcionario.class)
-					.setParameter("tipo", "Vendedor").getResultList();
-		} catch (NoResultException e) {
-
+		List<Funcionario> lista = funcionarios();
+		ListIterator<Funcionario> it = lista.listIterator();
+		while(it.hasNext()) {
+			if(it.next().getTipoVendedor().getNome().equals("Interno-0")) {
+				it.remove();
+			}
 		}
-		
-		return null;
+		return lista;
 	}
 
-	
+	public List<Funcionario> vendedorAtivo() {
+
+		List<Funcionario> lista = funcionarios();
+		ListIterator<Funcionario> it = lista.listIterator();
+		while(it.hasNext()) {
+			Funcionario f = it.next(); 
+			
+			if(f.getTipoVendedor().getNome().equals("Interno-0") || f.getStatus() != StatusVendedor.ATIVO) {
+				it.remove();
+			}
+			
+		}
+		return lista;
+	}
 	
 	
 	
@@ -114,5 +129,7 @@ public class Funcionarios implements Serializable {
 		return manager.createQuery("from Funcionario where id= :id", Funcionario.class).setParameter("id", id).getSingleResult();
 	}
 
+
+	
 	
 }

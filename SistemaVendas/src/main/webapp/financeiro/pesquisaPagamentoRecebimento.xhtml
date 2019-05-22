@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Pesquisa Pagamentos e Recebimentos</h1>
+
+		<h:form id="idFormPesquisaPagReceb">
+
+			<p:toolbar style="width: 80%; margin-top: 20px">
+
+				<p:toolbarGroup align="left">
+					<p:button value="Novo" outcome="/financeiro/pagReceb" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Pesquisar"
+						actionListener="#{pesquisaPagRecebBean.pesquisa()}" update="idTab" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+			<p:panelGrid columns="4" styleClass="semBorda"
+				style="margin-top: 10px">
+
+				<p:selectOneMenu
+					value="#{pesquisaPagRecebBean.filtro.tipoTransacao}">
+					<f:selectItem itemLabel="Tipo" />
+					<f:selectItems value="#{pesquisaPagRecebBean.tipos()}" var="tipo"
+						itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+				</p:selectOneMenu>
+
+				<p:selectOneMenu value="#{pesquisaPagRecebBean.filtro.conta}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="conta" />
+					<f:selectItems value="#{pesquisaPagRecebBean.contas()}" var="conta"
+						itemValue="#{conta}" itemLabel="#{conta.nome}" />
+				</p:selectOneMenu>
+
+				<p:calendar id="inicio" pattern="dd/MM/yyyy" locale="pt"
+					value="#{pesquisaPagRecebBean.filtro.inicio}" placeholder="Início" />
+
+				<p:calendar id="fim" value="#{pesquisaPagRecebBean.filtro.fim}"
+					pattern="dd/MM/yyyy" locale="pt" placeholder="Fim" />
+
+
+			</p:panelGrid>
+
+			<p:messages id="messages" showDetail="false" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:dataTable id="idTab" value="#{pesquisaPagRecebBean.listaPagReceb}"
+				var="item" style="margin-top: 20px; margin-left: 10px ; width: 80% "
+				reflow="true">
+
+				<p:column headerText="Conta" style="text-align: center; width: 15%">
+					<h:outputText value="#{item.conta.nome}" />
+				</p:column>
+
+				<p:column headerText="Tipo" style="text-align: center; width: 15%">
+					<h:outputText value="#{item.tipoTransacao.descricao}" />
+				</p:column>
+
+				<p:column headerText="Data" style="text-align: center; width: 10%">
+					<h:outputText value="#{item.data}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Parcelas"
+					style="text-align: center; width: 10%">
+					<h:outputText value="#{item.numParcelas}" />
+				</p:column>
+
+				<p:column headerText="Valor" style="text-align: center; width: 10%">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+
+
+				<p:column headerText="Ações" style="text-align: center; width: 20%">
+					<p:commandButton icon="ui-icon-pencil" title="Editar"
+						process="@this" style="margin-left: 4px; width: 45%"
+						action="#{pesquisaPagRecebBean.abrirDialogo(item)}">
+
+						<p:ajax event="dialogReturn"
+							listener="#{pesquisaPagRecebBean.pesquisa()}" process="@this"
+							update="idTab" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-trash"
+						style="margin-left: 5px; width: 45%" />
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

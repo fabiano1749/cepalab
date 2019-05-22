@@ -39,7 +39,7 @@ public class Consignacao extends GenericDTO {
 	private Operacao operacao;
 	private Long totalConsignado = 0L;
 	private Long totalAux = 0L;
-	private BigDecimal freteDiluido = BigDecimal.ZERO;
+	
 
 	@Transient
 	public BigDecimal receita() {
@@ -48,11 +48,7 @@ public class Consignacao extends GenericDTO {
 	
 	@Transient
 	public BigDecimal comissao() {
-		if(freteDiluido == null) {
-			freteDiluido = BigDecimal.ZERO;
-		}
-		
-		return (receita().subtract(freteDiluido)).multiply(taxaComissao).divide(new BigDecimal("100"));
+		return receita().multiply(taxaComissao).divide(new BigDecimal("100"));
 	}
 	
 
@@ -162,15 +158,6 @@ public class Consignacao extends GenericDTO {
 
 	public void setTotalAux(Long totalAux) {
 		this.totalAux = totalAux;
-	}
-
-	@Column(name = "frete_diluido", precision = 10, scale = 2)
-	public BigDecimal getFreteDiluido() {
-		return freteDiluido;
-	}
-
-	public void setFreteDiluido(BigDecimal freteDiluido) {
-		this.freteDiluido = freteDiluido;
 	}
 
 }

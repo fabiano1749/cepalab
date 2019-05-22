@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.Grupo;
+import com.cepalab.sistemaVendas.cadastro.dominio.StatusVendedor;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoFuncionario;
 import com.cepalab.sistemaVendas.repository.Funcionarios;
 import com.cepalab.sistemaVendas.util.cdi.CDIServiceLocator;
@@ -32,10 +33,10 @@ public class AppUserDetailsService implements UserDetailsService {
 
 		UsuarioSistema user = null;
 
-		if (funcionario != null) {
+		if (funcionario != null && funcionario.getStatus() == StatusVendedor.ATIVO) {
 			user = new UsuarioSistema(funcionario, getGrupos(funcionario.getTipo()));
 		} else {
-			throw new UsernameNotFoundException("Usuário não encontrado.");
+			throw new UsernameNotFoundException("Usuário não encontrado ou não autorizado!");
 		}
 		return user;
 	}

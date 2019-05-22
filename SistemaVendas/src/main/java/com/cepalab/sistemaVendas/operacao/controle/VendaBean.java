@@ -24,6 +24,7 @@ public class VendaBean implements Serializable {
 
 	private Venda venda = new Venda();
 	private List<Produto> listaProdutos = new ArrayList<>();
+	private List<Venda> listaNovasVendas = new ArrayList<>();
 
 	@Inject
 	private OperacaoBean operacao;
@@ -42,9 +43,9 @@ public class VendaBean implements Serializable {
 
 	public void iniciaVenda() {
 		venda = new Venda();
-		
+
 	}
-	
+
 	public void inicio() {
 		listaProdutos = produtos.produtos();
 		venda = new Venda();
@@ -54,7 +55,8 @@ public class VendaBean implements Serializable {
 		inicio();
 		operacao.getItem().setVendas(vendas.porCliente(operacao.getItem().getCliente()));
 		for (Venda v : operacao.getItem().getVendas()) {
-			//v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
+			// v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(),
+			// v.getProduto()));
 			v.setOperacao(operacao.getItem());
 		}
 	}
@@ -65,7 +67,8 @@ public class VendaBean implements Serializable {
 
 		if (operacao.getItem().getVendas().isEmpty() && listaAux != null) {
 			for (Venda v : listaAux) {
-				//v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
+				// v.setTaxaComissao(taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(),
+				// v.getProduto()));
 				v.setOperacao(operacao.getItem());
 			}
 			operacao.getItem().setVendas(listaAux);
@@ -74,8 +77,9 @@ public class VendaBean implements Serializable {
 			if (listaAux != null && !listaAux.isEmpty()) {
 				for (Venda v : listaAux) {
 					if (!pertenceListaVendas(v)) {
-						//v.setTaxaComissao(
-								//taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(), v.getProduto()));
+						// v.setTaxaComissao(
+						// taxaComissao.taxaComissaoFuncionarioProduto(seg.UsuarioLogado(),
+						// v.getProduto()));
 						v.setOperacao(operacao.getItem());
 						operacao.getItem().getVendas().add(v);
 					}
@@ -177,21 +181,23 @@ public class VendaBean implements Serializable {
 		BigDecimal valorInformado = aux.getValorUnitario();
 		BigDecimal minValorVenda = operacao.getTipoVendedor().minVenda(aux);
 		if (valorInformado == null || valorInformado.compareTo(minValorVenda) < 0) {
-			//Caso a cepa não permita venda abaixo do menor preço cadastrado habilitar a linha abaixo 
-			//aux.setValorUnitario(minValorVenda);
-			FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para essa quantidade de produtos!");
+			// Caso a cepa não permita venda abaixo do menor preço cadastrado habilitar a
+			// linha abaixo
+			// aux.setValorUnitario(minValorVenda);
+			FacesUtil
+					.addErrorMessage("Valor unitário é menor que o mínimo permitido para essa quantidade de produtos!");
 		}
 
 	}
-	
+
 	public void validaReposicao(Venda aux) {
-		if(aux.getRepostos().intValue() > aux.getDevolvidos().intValue()) {
+		if (aux.getRepostos().intValue() > aux.getDevolvidos().intValue()) {
 			aux.setRepostos(0L);
 			aux.setDevolvidos(0L);
 			FacesUtil.addErrorMessage("Quantidade reposta maior que a devolvida");
 		}
 	}
-	
+
 	public Boolean habilitaPrecoUnitario() {
 
 		if (venda != null && venda.getProduto() == null) {
@@ -209,8 +215,23 @@ public class VendaBean implements Serializable {
 		int resul = valor.compareTo(minVenda);
 		if (resul < 0) {
 			FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para esse produto!");
-			//Caso a cepa não permita venda abaixo do menor preço cadastrado habilitar a linha abaixo 
-			//venda.setValorUnitario(minVenda);
+			// Caso a cepa não permita venda abaixo do menor preço cadastrado habilitar a
+			// linha abaixo
+			// venda.setValorUnitario(minVenda);
+		}
+
+	}
+
+	public void validaPrecoNovaVenda2(Venda v) {
+		BigDecimal valor = v.getValorUnitario();
+		BigDecimal minVenda = operacao.getTipoVendedor().minVenda(v);
+
+		int resul = valor.compareTo(minVenda);
+		if (resul < 0) {
+			FacesUtil.addErrorMessage("Valor unitário é menor que o mínimo permitido para esse produto!");
+			// Caso a cepa não permita venda abaixo do menor preço cadastrado habilitar a
+			// linha abaixo
+			// venda.setValorUnitario(minVenda);
 		}
 
 	}
@@ -227,11 +248,10 @@ public class VendaBean implements Serializable {
 	}
 
 	public void alteraTaxa(Venda v) {
-		BigDecimal maiorComissaoCadastrada = operacao.getTipoVendedor().maiorTaxaComissao(v);		
+		BigDecimal maiorComissaoCadastrada = operacao.getTipoVendedor().maiorTaxaComissao(v);
 		if (v.getTaxaComissao().compareTo(maiorComissaoCadastrada) > 0) {
 			taxaComissao(v);
-		}
-		else {
+		} else {
 			resumoOperacao.alimentaListaResumoConsignacaoVenda();
 		}
 	}
@@ -247,14 +267,66 @@ public class VendaBean implements Serializable {
 		return BigDecimal.ZERO;
 	}
 
-	
-	
+	public BigDecimal menorValorVenda(Venda v) {
+		if (v != null && v.getProduto() != null) {
+			return operacao.getTipoVendedor().minVenda(v);
+		}
+		return BigDecimal.ZERO;
+	}
+
+	public void insereValorNaVenda(Venda v) {
+		v.setValorUnitario(operacao.getTipoVendedor().minVenda(v));
+	}
+
 	public void atualizaValorVenda() {
 		venda.setValorUnitario(menorValorVenda());
 	}
-	
+
+	public void criaListaNovasVendas() {
+		listaNovasVendas = new ArrayList<>();
+		for (Produto p : listaProdutos) {
+			if (!jaFoiVendido(p)) {
+				Venda v = new Venda();
+				v.setProduto(p);
+				v.setOperacao(operacao.getItem());
+				listaNovasVendas.add(v);
+			}
+		}
+	}
+
+	public boolean jaFoiVendido(Produto p) {
+		if (operacao.getItem().getVendas() != null && !operacao.getItem().getVendas().isEmpty()) {
+			for (Venda v : operacao.getItem().getVendas()) {
+				if (p.equals(v.getProduto())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public void insereNovaVenda() {
+		for (Venda v : listaNovasVendas) {
+			if (v.getQuantidade() != 0) {
+				v.setTaxaComissao(operacao.getTipoVendedor().taxaComissaoVenda(v));
+				operacao.getItem().getVendas().add(v);
+
+			}
+		}
+		resumoOperacao.alimentaListaResumoConsignacaoVenda();
+		receitaBean.criaListaReceitas();
+	}
+
 	public List<Produto> getListaProdutos() {
 		return listaProdutos;
+	}
+
+	public List<Venda> getListaNovasVendas() {
+		return listaNovasVendas;
+	}
+
+	public void setListaNovasVendas(List<Venda> listaNovasVendas) {
+		this.listaNovasVendas = listaNovasVendas;
 	}
 
 	public void setListaProdutos(List<Produto> listaProdutos) {

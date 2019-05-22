@@ -30,7 +30,7 @@ public class DescontoSalarioBean implements Serializable {
 	private Funcionarios fun;
 	
 	public void inicio() {
-		funcionarios = fun.funcionarios();
+		funcionarios = fun.vendedorAtivo();
 	}
 	
 	public void limpar() {

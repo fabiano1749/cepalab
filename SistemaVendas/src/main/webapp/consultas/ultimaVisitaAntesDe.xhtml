@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title" style="">Clientes visitados antes de um determinado período</h1>
+
+		<h:form id="form">
+
+			<p:messages autoUpdate="true" />
+
+			<p:panelGrid columns="9" id="pnlNovo" styleClass="semBorda"
+				style="margin-top: 10px">
+
+				<p:outputLabel value="Vendedor" />
+				<p:selectOneMenu id="idVendedor" style="width: 200px"
+					value="#{ultimaVisitaAntesDeBean.filtro.funcionario}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{ultimaVisitaAntesDeBean.listaFuncionarios}" var="fun"
+						itemValue="#{fun}" itemLabel="#{fun.nome}" />
+					<p:ajax listener="#{ultimaVisitaAntesDeBean.alimentaRotas()}"
+						process="idVendedor" update="idRota" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Rota" />
+				<p:selectOneMenu id="idRota" style="width: 150px"
+					value="#{ultimaVisitaAntesDeBean.filtro.rota}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{ultimaVisitaAntesDeBean.listaRotas}" var="rota"
+						itemValue="#{rota}" itemLabel="#{rota.descricao}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Ultima visita antes de :" for="idData"/>
+				<p:calendar id="idData" required="true"
+					requiredMessage="Data não informada!"
+					value="#{ultimaVisitaAntesDeBean.filtro.data}" locale="pt"
+					pattern="dd/MM/yyyy" />
+
+				<p:commandButton value="Pesquisar"
+					actionListener="#{ultimaVisitaAntesDeBean.pesquisa}" update="idTab" />
+
+
+			</p:panelGrid>
+
+
+			<p:dataTable id="idTab" stickyHeader="true"
+				style="margin-top:10px; width: 70%; font-size: 10px"
+				value="#{ultimaVisitaAntesDeBean.listaUltimasVisitas}" var="item"
+				rowIndexVar="rowIndex">
+
+				<p:column headerText="#" style="width: 5%; text-align: center">
+       				#{rowIndex+1}
+    			</p:column>
+
+				<p:column headerText="Código" style="text-align: center; width: 10%">
+					<h:outputText value="#{item.cliente.codigoOuCnpj()}" />
+				</p:column>
+
+				<p:column headerText="Nome" style="text-align: center; width: 45%">
+					<h:outputText value="#{item.cliente.nome}" />
+				</p:column>
+
+				<p:column headerText="Rota" style="text-align: center; width: 10%">
+					<h:outputText value="#{item.cliente.rota.descricao}" />
+				</p:column>
+
+				<p:column headerText="Cidade" style="text-align: center; width: 20%">
+					<h:outputText value="#{item.cliente.endereco.cidade}" />
+				</p:column>
+				
+				<p:column headerText="Ultima visita" style="text-align: center; width: 10%">
+					<h:outputText value="#{item.data}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -23,9 +23,9 @@
 				styleClass="semBorda">
 
 				<p:outputLabel value="Funcionário"
-					rendered="#{pesquisaRecebimentoInadimplenteBean.isAdministrador()}" />
+					rendered="#{pesquisaRecebimentoInadimplenteBean.isVendedor() == false}" />
 				<p:selectOneMenu id="idfuncionario"
-					rendered="#{pesquisaRecebimentoInadimplenteBean.isAdministrador()}"
+					rendered="#{pesquisaRecebimentoInadimplenteBean.isVendedor() == false}"
 					value="#{pesquisaRecebimentoInadimplenteBean.filtro.funcionario}"
 					converter="omnifaces.SelectItemsConverter">
 					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />

@@ -34,7 +34,7 @@ public class pesquisaRecolhidaRessarcidaBean implements Serializable{
 	
 	@PostConstruct
 	public void inicio() {
-		listaFuncionario = funcionarios.funcionarios();
+		listaFuncionario = funcionarios.vendedorAtivo();
 		itens = new ArrayList<ComissaoRecolhidaRessarcida>();
 	}
 	

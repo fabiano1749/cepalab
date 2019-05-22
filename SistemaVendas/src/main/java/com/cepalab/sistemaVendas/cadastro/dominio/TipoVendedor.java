@@ -19,6 +19,7 @@ import org.hibernate.annotations.Fetch;
 
 import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
 import com.cepalab.sistemaVendas.operacao.dominio.Consignacao;
+import com.cepalab.sistemaVendas.operacao.dominio.FormaPagamento;
 import com.cepalab.sistemaVendas.operacao.dominio.Venda;
 
 @SuppressWarnings("serial")
@@ -44,8 +45,12 @@ public class TipoVendedor extends GenericDTO {
 	private boolean ativaMVCC;
 	private boolean ativaMVPC;
 	private boolean maiorTaxa;
-
+	private boolean comissaoPorProduto;
+	private boolean comissaoPorFormaPagamento;
+	
+	
 	private List<PoliticaVendaConsignacaoTipoVendedorProduto> politicasVCTVP = new ArrayList<>();
+	private List<PoliticaVendaConsignacaoTipoVendedorFormaPagamento> politicasVCTVFP = new ArrayList<>();
 	private List<PoliticaAberturaTipoVendedorTipoProduto> listaPoliticasATVTP = new ArrayList<>();
 	private List<PoliticaColocacaoTipoVendedorTipoProduto> listaPoliticasCTVTP = new ArrayList<>();
 
@@ -143,10 +148,52 @@ public class TipoVendedor extends GenericDTO {
 		this.ativaMVPC = ativaMVPC;
 	}
 
+	public boolean isComissaoPorProduto() {
+		return comissaoPorProduto;
+	}
+
+	public void setComissaoPorProduto(boolean comissaoPorProduto) {
+		this.comissaoPorProduto = comissaoPorProduto;
+	}
+
+	public boolean isComissaoPorFormaPagamento() {
+		return comissaoPorFormaPagamento;
+	}
+
+	public void setComissaoPorFormaPagamento(boolean comissaoPorFormaPagamento) {
+		this.comissaoPorFormaPagamento = comissaoPorFormaPagamento;
+	}
+
+	public void alteraComissionamentoFormaPag() {
+		if(isComissaoPorFormaPagamento()) {
+			setComissaoPorProduto(false);
+		}
+		else setComissaoPorProduto(true);
+	}
+	
+	public void alteraComissionamentoProduto() {
+		if(isComissaoPorProduto()) {
+			setComissaoPorFormaPagamento(false);
+		}
+		else setComissaoPorFormaPagamento(true);
+	}
+	
+	
+	
 	@OneToMany(mappedBy = "tipoVendedor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
 	public List<PoliticaVendaConsignacaoTipoVendedorProduto> getPoliticasVCTVP() {
 		return politicasVCTVP;
+	}
+	
+	@OneToMany(mappedBy = "tipoVendedor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
+	public List<PoliticaVendaConsignacaoTipoVendedorFormaPagamento> getPoliticasVCTVFP() {
+		return politicasVCTVFP;
+	}
+
+	public void setPoliticasVCTVFP(List<PoliticaVendaConsignacaoTipoVendedorFormaPagamento> politicasVCTVFP) {
+		this.politicasVCTVFP = politicasVCTVFP;
 	}
 
 	public void setPoliticasVCTVP(List<PoliticaVendaConsignacaoTipoVendedorProduto> politicas) {
@@ -252,15 +299,15 @@ public class TipoVendedor extends GenericDTO {
 		return BigDecimal.ZERO;
 	}
 
-	//CALCULO DA COMISSAO ABERTURA
+	// CALCULO DA COMISSAO ABERTURA
 	@Transient
 	public BigDecimal comissaoAbertura(List<AberturaProduto> lista, List<TipoProduto> tiposProdutos) {
 		if (lista == null || lista.size() == 0) {
 			return BigDecimal.ZERO;
 		} else {
-			AuxCalculoComissaoAbertura auxComissao = new AuxCalculoComissaoAbertura(this, lista);
+			AuxCalculoComissaoAbertura auxComissao = new AuxCalculoComissaoAbertura(this, lista, tiposProdutos);
 
-			BigDecimal comissaoCalculada = auxComissao.principal(tiposProdutos);
+			BigDecimal comissaoCalculada = auxComissao.principal();
 
 			if (ativaMVCA == true && maiorValorComissaoAbertura != null) {
 				if (comissaoCalculada.compareTo(maiorValorComissaoAbertura) > 0) {
@@ -274,7 +321,7 @@ public class TipoVendedor extends GenericDTO {
 
 	}
 
-	//CALCULO DA PREMIACAO ABERTURA
+	// CALCULO DA PREMIACAO ABERTURA
 	@Transient
 	public BigDecimal premiacaoAbertura(List<AberturaProduto> lista, List<TipoProduto> tiposProdutos) {
 		if (lista == null || lista.size() == 0) {
@@ -294,12 +341,11 @@ public class TipoVendedor extends GenericDTO {
 
 		}
 
-
 	}
 
-	//CALCULO DA COMISSAO COLOCACAO
+	// CALCULO DA COMISSAO COLOCACAO
 	@Transient
-	public BigDecimal comissaoColocacao(List<AberturaProduto> lista,  List<TipoProduto> tiposProdutos) {
+	public BigDecimal comissaoColocacao(List<AberturaProduto> lista, List<TipoProduto> tiposProdutos) {
 		if (lista == null || lista.size() == 0) {
 			return BigDecimal.ZERO;
 		} else {
@@ -319,7 +365,7 @@ public class TipoVendedor extends GenericDTO {
 
 	}
 
-	//CALCULO DA PREMIACAO COLOCACAO
+	// CALCULO DA PREMIACAO COLOCACAO
 	@Transient
 	public BigDecimal premiacaoColocacao(List<AberturaProduto> lista, List<TipoProduto> tiposProdutos) {
 		if (lista == null || lista.size() == 0) {
@@ -339,5 +385,29 @@ public class TipoVendedor extends GenericDTO {
 
 		}
 	}
+	
+	//Retorna o número mínimo de um produto de um determinado tipo para que ele seja considerado para o calculo de abertura 
+	public int numeroMinimoDeProduto(TipoProduto tipo) {
+		if (listaPoliticasATVTP != null && listaPoliticasATVTP.size() > 0) {
+			for (PoliticaAberturaTipoVendedorTipoProduto p : listaPoliticasATVTP) {
+				if (p.getTipoProduto().equals(tipo)) {
+					return p.getQuantMinimaPorProduto();
+				}
+			}
+		}
+		return 1;
+	}
+
+	public BigDecimal taxaComissaoFormaPagamento(FormaPagamento forma) {
+		if(politicasVCTVFP != null) {
+			for(PoliticaVendaConsignacaoTipoVendedorFormaPagamento p : politicasVCTVFP) {
+				if(p.getFormaPagamento().equals(forma)) {
+					return p.getTaxa().divide(new BigDecimal(100));
+				}
+			}
+		}
+		return BigDecimal.ZERO;
+	}
+	
 
 }

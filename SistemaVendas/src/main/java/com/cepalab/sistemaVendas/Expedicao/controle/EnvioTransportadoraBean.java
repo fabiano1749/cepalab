@@ -26,10 +26,11 @@ public class EnvioTransportadoraBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private List<Funcionario> listaFuncionarios = new ArrayList<>();
-	private List<Operacao> listaOperacoes = new ArrayList<>();
+	private List<Operacao> listaOperacoes = new ArrayList<>(); //Lista de operações que possuem envio de transportadora
 	private List<Transportadora> listaTransportadoras = new ArrayList<>();
 	private EnvioTransportadoraFilter filtro;
-
+	
+	
 	@Inject
 	private Funcionarios funcionarios;
 
@@ -44,7 +45,7 @@ public class EnvioTransportadoraBean implements Serializable {
 
 	@PostConstruct
 	public void inicio() {
-		listaFuncionarios = funcionarios.vendedor();
+		listaFuncionarios = funcionarios.vendedorAtivo();
 		listaTransportadoras = transportadoras.transportadoras();
 		filtro = new EnvioTransportadoraFilter();
 	}
@@ -54,6 +55,7 @@ public class EnvioTransportadoraBean implements Serializable {
 		filtro = new EnvioTransportadoraFilter();
 	}
 
+	
 	public void pesquisa() {
 		listaOperacoes = new ArrayList<>();
 		listaOperacoes = operacoes.operacaoEnvioTransportadora(filtro);
@@ -65,7 +67,8 @@ public class EnvioTransportadoraBean implements Serializable {
 			}
 		}
 	}
-
+	
+	
 	public void listaEnviados() {
 		List<Operacao> lista = new ArrayList<>();
 		for (Operacao operacao : listaOperacoes) {
@@ -86,10 +89,11 @@ public class EnvioTransportadoraBean implements Serializable {
 		listaOperacoes = lista;
 	}
 
+	 
 	public void confirmar(Operacao o) {
 		if (o.getDataEnvio() != null && o.getTransportadora() != null
 				&& o.getValorFrete().compareTo(BigDecimal.ZERO) > 0) {
-			o.diluiFrete();
+			
 			cadastroOperacao.salvar(o);
 			FacesUtil.addInfoMessage("Confirmado !");
 		} else {
@@ -98,6 +102,8 @@ public class EnvioTransportadoraBean implements Serializable {
 
 	}
 
+	
+	
 	public List<Funcionario> getListaFuncionarios() {
 		return listaFuncionarios;
 	}

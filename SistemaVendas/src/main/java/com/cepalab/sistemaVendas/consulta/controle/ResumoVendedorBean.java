@@ -52,8 +52,8 @@ public class ResumoVendedorBean implements Serializable {
 	@PostConstruct
 	public void inicio() {
 		fechamentoGeral = new FechamentoGeral();
-		if(isAdministrador()) {
-		listaFun = fun.funcionarios();
+		if(!isVendedor()) {
+		listaFun = fun.vendedorAtivo();
 		retiraTiposFuncionários();
 		}
 		else {
@@ -76,6 +76,16 @@ public class ResumoVendedorBean implements Serializable {
 		return false;
 	}
 
+	public boolean isVendedor() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("VENDEDORES")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 
 	//Melhorar isso em versões posteriores
 		private void retiraTiposFuncionários() {

@@ -10,8 +10,7 @@
 
 		<p:dataTable id="idTabelaAberturas"
 			value="#{fechamentoBean.item.listaAberturas}"
-			style="width: 80%; float: left" var="item" rows="10" paginator="true"
-			paginatorPosition="bottom" paginatorAlwaysVisible="false">
+			style="width: 80%; float: left" var="item" >
 
 			<p:column headerText="Código" style="text-align: center; width: 10%">
 				<h:outputText value="#{item.operacao.cliente.codigo}" />
@@ -27,7 +26,7 @@
 				</h:outputText>
 			</p:column>
 
-			<p:column headerText="Produto" style="text-align: center; width: 30%">
+			<p:column headerText="Produto" style="text-align: center; width: 30%" filterBy="#{item.produto.nome}" filterMatchMode="contains">
 				<h:outputText value="#{item.produto.nome}" />
 			</p:column>
 

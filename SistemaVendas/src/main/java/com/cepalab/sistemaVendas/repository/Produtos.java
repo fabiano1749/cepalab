@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 
+import com.cepalab.sistemaVendas.cadastro.dominio.PodeConsignar;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 import com.cepalab.sistemaVendas.service.NegocioException;
 import com.cepalab.sistemaVendas.util.jpa.Transactional;
@@ -71,4 +72,11 @@ public class Produtos implements Serializable {
 		}
 		return 0;
 	}
+
+	public List<Produto> podeConsignar() {
+
+		return manager.createQuery("from Produto where podeConsignar =:podeConsignar order by posicao", Produto.class).setParameter("podeConsignar", PodeConsignar.SIM).getResultList();
+
+	}
+
 }

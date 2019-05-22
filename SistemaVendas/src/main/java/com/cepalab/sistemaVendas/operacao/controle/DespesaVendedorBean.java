@@ -40,7 +40,7 @@ public class DespesaVendedorBean implements Serializable {
 
 	
 	public void inicio() {
-		funcionarios = fun.funcionarios();
+		funcionarios = fun.vendedorAtivo();
 	}
 
 	public void salvar() {

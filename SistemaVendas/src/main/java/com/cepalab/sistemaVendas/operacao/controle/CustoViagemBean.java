@@ -57,9 +57,7 @@ public class CustoViagemBean implements Serializable {
 
 	public void salvar() {
 		try {
-			if (!isAdministrador()) {
-				item.setFuncionario(seg.UsuarioLogado());
-			}
+			item.setFuncionario(seg.UsuarioLogado());
 			cadastroCusto.salvar(item);
 			FacesUtil.addInfoMessage("Custo salvo com sucesso!");
 		} catch (NegocioException e) {
@@ -74,6 +72,41 @@ public class CustoViagemBean implements Serializable {
 		return TipoCustosViagem.values();
 	}
 
+	
+	public boolean isRoot() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("ROOT")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isVendedor() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("VENDEDORES")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isAdministrador() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("ADMINISTRADORES")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean podeSalvar() {
+		if(isRoot() || isVendedor()) {
+			return true;
+		}
+		return false;
+	}
+	
 	public CustoViagem getItem() {
 		return item;
 	}
@@ -95,15 +128,6 @@ public class CustoViagemBean implements Serializable {
 	
 		listaFuncionarios = funcionarios.funcionarios();
 
-	}
-
-	public boolean isAdministrador() {
-		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
-			if (g.getNome().equals("ADMINISTRADORES")) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public List<Funcionario> getListaFuncionarios() {

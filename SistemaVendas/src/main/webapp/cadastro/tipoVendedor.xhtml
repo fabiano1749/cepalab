@@ -22,7 +22,7 @@
 					<p:commandButton value="Salvar" id="idSalvar"
 						actionListener="#{tipoVendedorBean.salvar()}"
 						style="margin-left: 10px;"
-						update="idTabView:pnlDados idTabView:idComissaoTab idTabView:idAberturasTab idTabView:idColocacoesTab" />
+						update="idTabView:pnlDados idTabView:idComissaoFormaPagamentoTab idTabView:idComissaoTab idTabView:idAberturasTab idTabView:idColocacoesTab" />
 				</p:toolbarGroup>
 
 				<p:toolbarGroup align="right">
@@ -51,7 +51,7 @@
 							<p:selectBooleanCheckbox itemLabel="ativado"
 								value="#{tipoVendedorBean.item.maiorTaxa}"
 								style="margin-left: 10px">
-								<p:ajax process="@this" update="maiorTaxa" />
+								<p:ajax process="@this"  update="maiorTaxa" />
 							</p:selectBooleanCheckbox>
 
 						</h:panelGroup>
@@ -105,12 +105,35 @@
 								<p:ajax process="@this" update="mvpc" />
 							</p:selectBooleanCheckbox>
 						</h:panelGroup>
-
+						
+						<p:outputLabel value="Comissionamento" />
+						<h:panelGroup>
+							<p:selectBooleanCheckbox itemLabel="Produto" 
+								value="#{tipoVendedorBean.item.comissaoPorProduto}"
+								style="margin-left: 10px"
+								id="comProd"
+								>
+								<p:ajax process="@this" update="comFormPag" listener="#{tipoVendedorBean.item.alteraComissionamentoProduto()}"/>
+							</p:selectBooleanCheckbox>
+							
+							<p:selectBooleanCheckbox itemLabel="Forma pagamento"
+								value="#{tipoVendedorBean.item.comissaoPorFormaPagamento}"
+								style="margin-left: 10px"
+								id="comFormPag"
+								>
+								<p:ajax process="@this" update="comProd" listener="#{tipoVendedorBean.item.alteraComissionamentoFormaPag()}"/>
+							</p:selectBooleanCheckbox>
+						</h:panelGroup>
+						
 					</p:panelGrid>
 
 				</p:tab>
 
-				<p:tab title="Politicas de Vendas">
+				<p:tab title="Politicas de Vendas por Forma de Pagamento">
+					<ui:include src="/cadastro/politicaConsignacaoVendaTipoVendedorFormaPagamento.xhtml" />
+				</p:tab>
+
+				<p:tab title="Politicas de Vendas por Prouto">
 					<ui:include
 						src="/cadastro/politicaConsignacaoVendaTipoVendedorProduto.xhtml" />
 				</p:tab>

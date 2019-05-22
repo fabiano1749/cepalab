@@ -74,6 +74,11 @@
 							required="true" style="width:250px"
 							requiredMessage="Nome não informado!">
 						</p:inputText>
+						
+						<p:outputLabel value="Nome Abreviado"  />
+						<p:inputText value="#{produtoBean.item.nomeAbreviado}"
+							style="width:250px">
+						</p:inputText>
 
 						<p:outputLabel value="Tipo Produto" for="idTipo" />
 						<p:selectOneMenu id="idTipo" value="#{produtoBean.item.tipo}"
@@ -125,7 +130,12 @@
 							required="true" style="width:250px"
 							requiredMessage="Nome não informado!">
 						</p:inputText>
-
+						
+						<p:outputLabel value="Nome" />
+						<p:inputText value="#{produtoBean.itemAuxiliar.nomeAbreviado}"
+							style="width:250px">
+						</p:inputText>
+						
 						<p:outputLabel value="Tipo Produto" for="idTipo" />
 						<p:selectOneMenu id="idTipo"
 							value="#{produtoBean.itemAuxiliar.tipo}"

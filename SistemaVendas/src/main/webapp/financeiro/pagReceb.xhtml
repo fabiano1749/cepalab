@@ -1,0 +1,416 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<style>
+.rotulo {
+	width: 30%;
+	height: 30px;
+}
+
+.campo {
+	width: 70%;
+}
+</style>
+
+
+
+
+		<h1 class="fa-page-title">Novo Pagamento / Recebimento</h1>
+
+		<h:form id="idForm">
+
+			<p:messages id="messages" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:toolbar style="width: 78%; margin-top: 20px ">
+
+				<p:toolbarGroup>
+					<p:button value="Novo" style="margin-left: 5px;"
+						outcome="/financeiro/pagReceb" />
+
+					<p:button value="Pesquisar"
+						outcome="/financeiro/pesquisaPagamentoRecebimento" />
+
+				</p:toolbarGroup>
+
+
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Salvar" id="idBotaoSalvar"
+						style="margin-left: 5px; width: 70px; color: green"
+						actionListener="#{pagamentoRecebimentoBean.prepararSalvar()}"
+						update="idGridTransacao idTab idFormInserirCheque" />
+				</p:toolbarGroup>
+			</p:toolbar>
+
+			<div id="idDivPrincipal" style="width: 95%; overflow: hidden">
+
+				<div id="idEsquerda"
+					style="width: 40%; float: left; margin-top: 10px">
+
+					<p:panelGrid id="idGridTransacao" columns="2" styleClass="semBorda"
+						style="width: 100%" columnClasses="rotulo, campo">
+
+						<p:outputLabel value="Conta" for="idConta" />
+						<p:selectOneMenu id="idConta" style="width: 93%"
+							value="#{pagamentoRecebimentoBean.item.conta}" required="true"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+							<f:selectItems value="#{pagamentoRecebimentoBean.listaContas()}"
+								var="conta" itemValue="#{conta}" itemLabel="#{conta.nome}" />
+							<p:ajax process="@this" partialSubmit="true"
+								update="idGridTransacao idFormInserirCheque"
+								listener="#{pagamentoRecebimentoBean.atualizaListaCheques()}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Tipo" for="idTipo" />
+						<p:selectOneMenu id="idTipo" style="width: 93%"
+							value="#{pagamentoRecebimentoBean.item.tipoTransacao}"
+							required="true" converter="omnifaces.SelectItemsConverter">
+							<f:selectItems value="#{pagamentoRecebimentoBean.tipos()}"
+								var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+							<p:ajax
+								listener="#{pagamentoRecebimentoBean.atualizaListaCheques()}"
+								process="@this" partialSubmit="true"
+								update="idGridTransacao idFormInserirCheque" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Favorecido / Origem *" />
+						<p:selectBooleanCheckbox
+							value="#{pagamentoRecebimentoBean.favorecidoOrigemVendedor}"
+							itemLabel="Vendedor">
+							<p:ajax process="@this" partialSubmit="true"
+								listener="#{pagamentoRecebimentoBean.favorecidoOrigemNaoVendedor()}"
+								update="idGridTransacao idFormInserirCheque" />
+						</p:selectBooleanCheckbox>
+
+						<p:outputLabel value="" />
+						<p:selectOneMenu style="width: 93%"
+							rendered="#{pagamentoRecebimentoBean.favorecidoOrigemVendedor}"
+							value="#{pagamentoRecebimentoBean.item.favorecidoOrigemVendedor}"
+							converter="omnifaces.SelectItemsConverter" required="true">
+							<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+							<f:selectItems
+								value="#{pagamentoRecebimentoBean.listaVendedores()}"
+								var="vendedor" itemValue="#{vendedor}"
+								itemLabel="#{vendedor.nome}" />
+							<p:ajax
+								listener="#{pagamentoRecebimentoBean.atualizaListaCheques()}"
+								process="@this" partialSubmit="true"
+								update="idGridTransacao  idFormInserirCheque" />
+						</p:selectOneMenu>
+
+						<p:inputText
+							value="#{pagamentoRecebimentoBean.item.favorecidoOrigemOutros}"
+							required="true"
+							rendered="#{!pagamentoRecebimentoBean.favorecidoOrigemVendedor}">
+							<p:ajax process="@this" partialSubmit="true" update="@this" />
+						</p:inputText>
+
+
+
+
+						<p:outputLabel value="Data" for="idData" />
+
+						<h:panelGroup>
+							<div style="overflow: hidden;">
+								<div style="float: left;">
+									<p:calendar id="idData"
+										value="#{pagamentoRecebimentoBean.item.data}" required="true"
+										locale="pt" pattern="dd/MM/yyyy">
+										<p:ajax event="dateSelect" process="@this"
+											partialSubmit="true"
+											listener="#{pagamentoRecebimentoBean.iniciaParcelas()}"
+											update="idGridTransacao idTab" />
+									</p:calendar>
+								</div>
+
+								<div style="float: left; margin-left: 10px">
+									<p:outputLabel value="Parcelado" />
+									<p:selectBooleanCheckbox style="margin-left: 5px"
+										value="#{pagamentoRecebimentoBean.item.parcelado}">
+										<p:ajax process="@this" partialSubmit="true"
+											update="idGridTransacao idTab"
+											listener="#{pagamentoRecebimentoBean.iniciaParcelas()}" />
+									</p:selectBooleanCheckbox>
+								</div>
+
+							</div>
+						</h:panelGroup>
+
+						<p:outputLabel value="1º Vencimento" for="idPrimeiroVencimento"
+							rendered="#{pagamentoRecebimentoBean.item.parcelado}" />
+						<h:panelGroup
+							rendered="#{pagamentoRecebimentoBean.item.parcelado}">
+							<div style="overflow: hidden">
+
+								<div style="float: left">
+
+									<p:calendar id="idPrimeiroVencimento"
+										value="#{pagamentoRecebimentoBean.item.primeiroVencimento}"
+										required="true" locale="pt" pattern="dd/MM/yyyy"
+										navigator="true">
+										<p:ajax event="dateSelect"
+											listener="#{pagamentoRecebimentoBean.iniciaParcelas()}"
+											process="@this" partialSubmit="true" update="idTab" />
+									</p:calendar>
+								</div>
+								<div style="float: left; margin-left: 5px">
+									<p:selectOneMenu id="idPeriodicidade" style="width:60px"
+										value="#{pagamentoRecebimentoBean.item.periodoPagamento}"
+										converter="omnifaces.SelectItemsConverter">
+										<f:selectItems value="#{pagamentoRecebimentoBean.periodos()}"
+											var="periodo" itemValue="#{periodo}"
+											itemLabel="#{periodo.descricao}" />
+										<p:ajax process="@this" partialSubmit="true"
+											listener="#{pagamentoRecebimentoBean.iniciaParcelas()}"
+											update="idGridTransacao idTab" />
+									</p:selectOneMenu>
+								</div>
+
+								<div style="float: left; margin-left: 5px">
+									<p:inputText
+										value="#{pagamentoRecebimentoBean.item.periodoPagamentoNumerico}"
+										style="width: 40px"
+										rendered="#{pagamentoRecebimentoBean.periodoPagamentoIsOutro()}"
+										required="true">
+										<f:convertNumber maxFractionDigits="0" />
+
+										<p:ajax process="@this" partialSubmit="true"
+											listener="#{pagamentoRecebimentoBean.iniciaParcelas()}"
+											update="idGridTransacao idTab" />
+									</p:inputText>
+								</div>
+
+							</div>
+						</h:panelGroup>
+
+
+						<p:outputLabel value="Valor" for="idValor" />
+						<h:panelGroup>
+							<div style="overflow: hidden">
+								<div style="float: left">
+									<p:inputNumber id="idValor" style="width: 100%" required="true"
+										value="#{pagamentoRecebimentoBean.item.valor}"
+										decimalSeparator="," thousandSeparator=".">
+										<p:ajax listener="#{pagamentoRecebimentoBean.validaValor()}"
+											process="@this" partialSubmit="true"
+											update="idTab idGridTransacao" />
+									</p:inputNumber>
+								</div>
+
+								<div style="float: left; margin-left: 10px">
+									<p:outputLabel value="Realizado" />
+									<p:selectBooleanCheckbox
+										value="#{pagamentoRecebimentoBean.item.realizado}"
+										style="margin-left: 5px">
+
+										<p:ajax process="@this" update="idTab" partialSubmit="true"
+											listener="#{pagamentoRecebimentoBean.confirmarStatusParcelas()}" />
+									</p:selectBooleanCheckbox>
+								</div>
+
+							</div>
+						</h:panelGroup>
+
+						<p:outputLabel value="Parcelas" for="idParcelas"
+							rendered="#{pagamentoRecebimentoBean.item.parcelado}" />
+						<p:inputNumber id="idParcelas" style="width: 100%" required="true"
+							value="#{pagamentoRecebimentoBean.item.numParcelas}"
+							decimalPlaces="0"
+							rendered="#{pagamentoRecebimentoBean.item.parcelado}">
+							<p:ajax listener="#{pagamentoRecebimentoBean.iniciaParcelas()}"
+								process="@this" partialSubmit="true"
+								update="idTab idGridTransacao" />
+						</p:inputNumber>
+
+						<p:commandButton value="Cheques"
+							style="background-color: green; color: white"
+							oncomplete="PF('InserirCheque').show()" />
+
+						<p:outputLabel
+							value="#{pagamentoRecebimentoBean.item.somaDosCheques()}"
+							style="color: red" />
+
+						<p:commandButton value="Dinheiro"
+							style="background-color: green; color: white" update="@none" />
+						<p:outputLabel value="#{pagamentoRecebimentoBean.valorDinheiro()}"
+							style="color: red" />
+
+						<p:outputLabel value="Obs" />
+						<p:inputTextarea value="#{pagamentoRecebimentoBean.item.obs}"
+							style="width: 100%" />
+
+					</p:panelGrid>
+
+				</div>
+
+
+
+				<div id="idDireita"
+					style="width: 55%; float: left; margin-left: 50px; margin-top: 15px">
+
+					<p:dataTable id="idTab"
+						value="#{pagamentoRecebimentoBean.item.listaParcelas}" var="item"
+						editable="true" editMode="cell" style="width: 70%" reflow="true">
+
+						<f:facet name="header">
+							<h:outputText value="Parcelas" />
+						</f:facet>
+
+						<p:column headerText="Número"
+							style="text-align: center; width: 13%">
+							<h:outputText value="#{item.numero}" />
+						</p:column>
+
+						<p:column headerText="Data" style="text-align:center; width: 32%">
+							<p:calendar value="#{item.data}" navigator="true"
+								mindate="#{transferenciaBean.item.data}" locale="pt">
+								<p:ajax event="dateSelect" process="@this" partialSubmit="true" />
+							</p:calendar>
+						</p:column>
+
+						<p:column headerText="Valor" id="idColunaValor"
+							style="text-align: center; width: 10%">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText id="valorOutPut" value="#{item.valor}">
+										<f:convertNumber pattern="#0.00" locale="pt_BR" />
+									</h:outputText>
+								</f:facet>
+
+								<f:facet name="input">
+									<p:inputNumber id="valorInput" value="#{item.valor}"
+										decimalSeparator="," thousandSeparator="." decimalPlaces="2"
+										minValue="0">
+
+										<p:ajax
+											listener="#{pagamentoRecebimentoBean.validaValorParcela(item)}"
+											process="valorInput" update="valorOutPut valorInput" />
+									</p:inputNumber>
+								</f:facet>
+
+							</p:cellEditor>
+						</p:column>
+
+						<p:column headerText="Status"
+							style="text-align: center; width: 25%">
+							<p:selectOneMenu value="#{item.status}">
+								<f:selectItems
+									value="#{pagamentoRecebimentoBean.statusParcela()}"
+									var="status" itemValue="#{status}"
+									itemLabel="#{status.descricao}" />
+							</p:selectOneMenu>
+						</p:column>
+
+					</p:dataTable>
+				</div>
+			</div>
+		</h:form>
+
+		<p:dialog widgetVar="InserirCheque" id="idInserirCheque" modal="true"
+			resizable="false" width="90%" header="Inserir cheque">
+			<h:form id="idFormInserirCheque">
+
+				<p:dataTable id="idTab"
+					value="#{pagamentoRecebimentoBean.item.listaCheques}" var="item"
+					style="margin-top: 5px; margin-left: 10px ; width: 50%; font-size: 10px;
+						float: left"
+					reflow="true">
+
+					<f:facet name="header">
+						<h:outputText value="Cheques da transação   -   Total: " />
+						<h:outputText
+							value="#{pagamentoRecebimentoBean.item.somaDosCheques()}">
+							<f:convertNumber type="currency" locale="pt_BR" />
+						</h:outputText>
+					</f:facet>
+
+					<p:column headerText="Origem"
+						style="text-align: center; width: 35%">
+						<h:outputText value="#{item.origem} #{item.funcionario.nome}"
+							style="font-size: 10px" />
+					</p:column>
+
+					<p:column headerText="Número"
+						style="text-align: center; width: 13%">
+						<h:outputText value="#{item.numero}" />
+					</p:column>
+
+					<p:column headerText="Banco" style="text-align: center; width: 16%">
+						<h:outputText value="#{item.banco.nome}" />
+					</p:column>
+
+					<p:column headerText="Bom para"
+						style="text-align: center; width: 13%">
+						<h:outputText value="#{item.bomPara}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Valor" style="text-align: center; width: 13%">
+						<h:outputText value="#{item.valor}" />
+					</p:column>
+
+					<p:column style="text-align: center; width: 10%">
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{pagamentoRecebimentoBean.removerCheque(item)}"
+							update="idFormInserirCheque idForm:idGridTransacao" />
+					</p:column>
+
+				</p:dataTable>
+
+				<p:dataTable id="idTab2"
+					value="#{pagamentoRecebimentoBean.listaCheques}" var="item"
+					style="margin-top: 5px; margin-left: 10px ; width: 47%; font-size: 10px;
+						float: left"
+					reflow="true">
+
+					<f:facet name="header">
+						<h:outputText value="Disponíveis" />
+					</f:facet>
+
+					<p:column headerText="Origem"
+						style="text-align: center; width: 35%">
+						<h:outputText value="#{item.origem} #{item.funcionario.nome}" />
+					</p:column>
+
+					<p:column headerText="Número"
+						style="text-align: center; width: 13%">
+						<h:outputText value="#{item.numero}" />
+					</p:column>
+
+					<p:column headerText="Banco" style="text-align: center; width: 16%">
+						<h:outputText value="#{item.banco.nome}" />
+					</p:column>
+
+					<p:column headerText="Bom para"
+						style="text-align: center; width: 13%">
+						<h:outputText value="#{item.bomPara}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Valor" style="text-align: center; width: 13%">
+						<h:outputText value="#{item.valor}" />
+					</p:column>
+
+					<p:column style="text-align: center; width: 10%">
+						<p:commandButton icon="ui-icon-check"
+							actionListener="#{pagamentoRecebimentoBean.adicionarCheque(item)}"
+							update="idFormInserirCheque idForm:idGridTransacao" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:dialog>
+
+
+	</ui:define>
+</ui:composition>

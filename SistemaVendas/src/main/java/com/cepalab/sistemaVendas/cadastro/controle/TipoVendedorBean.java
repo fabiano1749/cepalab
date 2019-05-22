@@ -14,11 +14,13 @@ import com.cepalab.sistemaVendas.cadastro.dominio.IntervaloColocacaoTipoProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.IntervaloVendaConsignacaoProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaAberturaTipoVendedorTipoProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaColocacaoTipoVendedorTipoProduto;
+import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaVendaConsignacaoTipoVendedorFormaPagamento;
 import com.cepalab.sistemaVendas.cadastro.dominio.PoliticaVendaConsignacaoTipoVendedorProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoCalculoAberturaColocacao;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoVendedor;
+import com.cepalab.sistemaVendas.operacao.dominio.FormaPagamento;
 import com.cepalab.sistemaVendas.repository.Produtos;
 import com.cepalab.sistemaVendas.repository.TiposProdutos;
 import com.cepalab.sistemaVendas.service.CadastroTipoVendedorService;
@@ -41,6 +43,8 @@ public class TipoVendedorBean implements Serializable {
 	
 	private PoliticaColocacaoTipoVendedorTipoProduto politicaCTVTP;
 	private IntervaloColocacaoTipoProduto intervaloColocacao;
+	
+	private PoliticaVendaConsignacaoTipoVendedorFormaPagamento politicaVCTVFP;
 	
 	
 	@Inject
@@ -67,6 +71,7 @@ public class TipoVendedorBean implements Serializable {
 		
 		politicaCTVTP = new PoliticaColocacaoTipoVendedorTipoProduto();
 		intervaloColocacao = new IntervaloColocacaoTipoProduto();
+		politicaVCTVFP = new PoliticaVendaConsignacaoTipoVendedorFormaPagamento();
 	}
 
 	public void inicio() {
@@ -75,6 +80,7 @@ public class TipoVendedorBean implements Serializable {
 		iniciaListaPoliticas();
 		iniciaListaPoliticasAberturas();
 		iniciaListaPoliticasColocacoes();
+		iniciaListaPoliticasFormaPagamento();
 	}
 
 	
@@ -177,10 +183,8 @@ public class TipoVendedorBean implements Serializable {
 				aux.setProduto(p);
 				aux.setTipoVendedor(item);
 				item.getPoliticasVCTVP().add(aux);
-
 			}//Caso haja novos produtos cadastrados
 		} else if (item.getPoliticasVCTVP().size() < listaProdutos.size()) {
-
 			for (Produto p : listaProdutos) {
 				PoliticaVendaConsignacaoTipoVendedorProduto aux = new PoliticaVendaConsignacaoTipoVendedorProduto();
 				int i = 0;
@@ -188,19 +192,43 @@ public class TipoVendedorBean implements Serializable {
 					if (politica.getProduto().equals(p)) {
 						i = 1;
 					}
-
 				}
 				if (i == 0) {
 					aux.setProduto(p);
 					aux.setTipoVendedor(item);
 					item.getPoliticasVCTVP().add(aux);
 				}
-
 			}
 		}
-
 	}
 
+	// Inicia a lista de politicas por forma pagamento inserindo novas formas cadastradas
+		private void iniciaListaPoliticasFormaPagamento() {
+			if (item.getPoliticasVCTVFP().size() == 0) {
+				for (FormaPagamento f : FormaPagamento.values()) {
+					if(!f.equals(FormaPagamento.NENHUM)) {
+						PoliticaVendaConsignacaoTipoVendedorFormaPagamento aux = new PoliticaVendaConsignacaoTipoVendedorFormaPagamento(item, f);
+						item.getPoliticasVCTVFP().add(aux);
+					}
+				}//Caso sejam adicionadas novas formas de pagamento adicionadas
+			} else if (item.getPoliticasVCTVFP().size() < FormaPagamento.values().length) {
+				for (FormaPagamento f : FormaPagamento.values()){
+					if(!f.equals(FormaPagamento.NENHUM)) {
+						int i = 0;
+						for (PoliticaVendaConsignacaoTipoVendedorFormaPagamento politica : item.getPoliticasVCTVFP()) {
+							if (politica.getFormaPagamento().equals(f)) {
+								i = 1;
+							}
+						}
+						if (i == 0) {
+							PoliticaVendaConsignacaoTipoVendedorFormaPagamento aux = new PoliticaVendaConsignacaoTipoVendedorFormaPagamento(item, f);
+							item.getPoliticasVCTVFP().add(aux);
+						}
+					}
+				}
+			}
+		}
+	
 	//Inicia a lista de politicas de Aberturas inserindo os tipos de produtos cadastrados.
 	public void iniciaListaPoliticasAberturas() {
 		
@@ -414,6 +442,14 @@ public class TipoVendedorBean implements Serializable {
 			return intervaloColocacao.getPremiacao().compareTo(BigDecimal.ZERO) >= 0;
 		}
 		
+		public PoliticaVendaConsignacaoTipoVendedorFormaPagamento getPoliticaVCTVFP() {
+			return politicaVCTVFP;
+		}
+
+		public void setPoliticaVCTVFP(PoliticaVendaConsignacaoTipoVendedorFormaPagamento politicaVCTVFP) {
+			this.politicaVCTVFP = politicaVCTVFP;
+		}
+
 		public void excluiIntervaloColocacao(IntervaloColocacaoTipoProduto intervalo) {
 			List<IntervaloColocacaoTipoProduto> lista = new ArrayList<>();
 			for (IntervaloColocacaoTipoProduto i : politicaCTVTP.getListaIntervalos()) {

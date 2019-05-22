@@ -21,6 +21,7 @@ public class Produto extends GenericDTO{
 	private static final long serialVersionUID = 1L;
 		
 	private String nome;
+	private String nomeAbreviado;
 	private BigDecimal custo = BigDecimal.ZERO;
 	private int posicao;
 	private PodeConsignar podeConsignar;
@@ -41,6 +42,14 @@ public class Produto extends GenericDTO{
 	public void setNome(String nome) {
 		this.nome = nome;
 	}	
+	
+	public String getNomeAbreviado() {
+		return nomeAbreviado;
+	}
+
+	public void setNomeAbreviado(String nomeAbreviado) {
+		this.nomeAbreviado = nomeAbreviado;
+	}
 
 	@Column(nullable=false, precision=10, scale=2)
 	public BigDecimal getCusto() {

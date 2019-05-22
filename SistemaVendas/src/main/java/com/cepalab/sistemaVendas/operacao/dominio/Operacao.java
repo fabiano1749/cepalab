@@ -3,6 +3,7 @@ package com.cepalab.sistemaVendas.operacao.dominio;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.cepalab.sistemaVendas.cadastro.dominio.AuxCalculoAbertura1p2p3p;
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
 import com.cepalab.sistemaVendas.cadastro.dominio.GenericDTO;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoProduto;
@@ -32,6 +34,8 @@ import com.cepalab.sistemaVendas.consulta.dominio.ProdutoQuantidade;
 import com.cepalab.sistemaVendas.consulta.dominio.ReceitaFormaPagamento;
 import com.cepalab.sistemaVendas.fechamento.dominio.Fechamento;
 import com.cepalab.sistemaVendas.fechamento.dominio.FormaPagamentoValor;
+import com.cepalab.sistemaVendas.utils.ComparaConsignacaoPosicaoProduto;
+import com.cepalab.sistemaVendas.utils.ComparaVendaPosicaoProduto;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 
 @SuppressWarnings("serial")
@@ -114,7 +118,13 @@ public class Operacao extends GenericDTO {
 
 	@OneToMany(mappedBy = "operacao", cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<Consignacao> getConsignacoes() {
+		ComparaConsignacaoPosicaoProduto compara = new ComparaConsignacaoPosicaoProduto();
+
+		if (consignacoes != null && consignacoes.size() > 1) {
+			Collections.sort(consignacoes, compara);
+		}
 		return consignacoes;
+
 	}
 
 	public void setConsignacoes(List<Consignacao> consignacoes) {
@@ -150,7 +160,15 @@ public class Operacao extends GenericDTO {
 
 	@OneToMany(mappedBy = "operacao", cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<Venda> getVendas() {
+
+		ComparaVendaPosicaoProduto compara = new ComparaVendaPosicaoProduto();
+		
+		if (vendas != null && vendas.size() > 1) {
+			Collections.sort(vendas, compara);
+		}
+		
 		return vendas;
+
 	}
 
 	public void setVendas(List<Venda> vendas) {
@@ -240,29 +258,16 @@ public class Operacao extends GenericDTO {
 
 		return comissao;
 	}
-/*
-	@Transient
-	public BigDecimal comisaoAbertura() {
-		int quantProd = 0;
-		int numFitas = 0;
-		if (tipo == TipoOperacao.ABERTURA && aberturasProdutos != null) {
-			quantProd = aberturasProdutos.size();
-			for (AberturaProduto a : aberturasProdutos) {
-				if (a.getProduto().getTipo().getNome().equals("Fita")) {
-					numFitas++;
-				}
-			}
-			if (numFitas > 1) {
-				quantProd = quantProd - (numFitas - 1);
-			}
-		}
-		if (quantProd > 3) {
-			quantProd = 3;
-		}
-		return new BigDecimal("10").multiply(new BigDecimal(quantProd));
-	}
-*/
-	
+	/*
+	 * @Transient public BigDecimal comisaoAbertura() { int quantProd = 0; int
+	 * numFitas = 0; if (tipo == TipoOperacao.ABERTURA && aberturasProdutos != null)
+	 * { quantProd = aberturasProdutos.size(); for (AberturaProduto a :
+	 * aberturasProdutos) { if (a.getProduto().getTipo().getNome().equals("Fita")) {
+	 * numFitas++; } } if (numFitas > 1) { quantProd = quantProd - (numFitas - 1); }
+	 * } if (quantProd > 3) { quantProd = 3; } return new
+	 * BigDecimal("10").multiply(new BigDecimal(quantProd)); }
+	 */
+
 	// Falta implementar esse método
 	@Transient
 	public BigDecimal premiacaoColocacao() {
@@ -309,19 +314,26 @@ public class Operacao extends GenericDTO {
 
 		// Alimenta o número de aberturas
 		if (tipo.equals(TipoOperacao.ABERTURA) && aberturasProdutos != null) {
-			if (aberturasProdutos.size() == 1) {
+			AuxCalculoAbertura1p2p3p aux = new AuxCalculoAbertura1p2p3p(this.getFuncionario().getTipoVendedor(),
+					aberturasProdutos);
+			int quant = aux.principal(tiposProdutos);
+
+			if (quant == 1) {
 				f.incrementaAberturas1p();
 
-			} else if (aberturasProdutos.size() == 2) {
+			} else if (quant == 2) {
 				f.incrementaAberturas2p();
-			} else if (aberturasProdutos.size() >= 3) {
+			} else if (quant >= 3) {
 				f.incrementaAberturas3p();
 			}
+
+			f.incrementaComissaoAberturas(
+					funcionario.getTipoVendedor().comissaoAbertura(aberturasProdutos, tiposProdutos));
+			f.incrementaPremiacaoAberturas(
+					funcionario.getTipoVendedor().premiacaoAbertura(aberturasProdutos, tiposProdutos));
 		}
 
 		f.incrementaComissaoVendas(comissaoTotal());
-		f.incrementaComissaoAberturas(funcionario.getTipoVendedor().comissaoAbertura(aberturasProdutos, tiposProdutos));
-		f.incrementaPremiacaoAberturas(funcionario.getTipoVendedor().premiacaoAbertura(aberturasProdutos, tiposProdutos));
 		f.incrementaPremiacaoColocacao(premiacaoColocacao());
 		f.incrementaFaturamento(ReceitaTotal());
 	}
@@ -360,6 +372,14 @@ public class Operacao extends GenericDTO {
 			}
 		}
 
+		// Alimenta a lista de Amostras	
+		if(amostras != null && amostras.size() != 0) {
+			for(Amostra a : amostras) {
+				f.getListaAmostras().add(a);
+			}
+		}
+		
+		
 		// Alimenta a lista de receitas por forma de pagamento
 		if (receitas != null && receitas.size() != 0) {
 			for (Receita r : receitas) {
@@ -372,9 +392,9 @@ public class Operacao extends GenericDTO {
 			}
 		}
 
-		//Essalista é utilizada para calcular as comissões e premiações de abertura
+		// Essa lista é utilizada para calcular as comissões e premiações de abertura
 		List<AberturaProduto> aberturasAuxiliares = new ArrayList<>();
-		
+
 		// Alimenta a lista de abertura de produtos / Clientes
 		if (aberturasProdutos != null && aberturasProdutos.size() > 0 && tipo.equals(TipoOperacao.ABERTURA))
 			for (AberturaProduto a : aberturasProdutos) {
@@ -382,33 +402,41 @@ public class Operacao extends GenericDTO {
 				aberturasAuxiliares.add(a);
 			}
 
-		//Essalista é utilizada para calcular as comissões e premiações de colocacoes
+		// Essalista é utilizada para calcular as comissões e premiações de colocacoes
 		List<AberturaProduto> colocacoesAuxiliares = new ArrayList<>();
-		
+
 		// Alimenta a lista de colocação de produtos
 		if (aberturasProdutos != null && aberturasProdutos.size() > 0 && tipo.equals(TipoOperacao.VISITA))
 			for (AberturaProduto a : aberturasProdutos) {
 				f.getListaColocacao().add(a);
 				colocacoesAuxiliares.add(a);
 			}
-		
+
 		// Alimenta o número de aberturas
 		if (tipo.equals(TipoOperacao.ABERTURA) && aberturasProdutos != null) {
-			if (aberturasProdutos.size() == 1) {
+			AuxCalculoAbertura1p2p3p aux = new AuxCalculoAbertura1p2p3p(this.getFuncionario().getTipoVendedor(),
+					aberturasAuxiliares);
+			int quant = aux.principal(tiposProdutos);
+
+			if (quant == 1) {
 				f.incrementaAberturas1p();
 
-			} else if (aberturasProdutos.size() == 2) {
+			} else if (quant == 2) {
 				f.incrementaAberturas2p();
-			} else if (aberturasProdutos.size() >= 3) {
+			} else if (quant >= 3) {
 				f.incrementaAberturas3p();
 			}
 		}
 
 		f.incrementaComissaoVendas(comissaoTotal());
-		f.incrementaComissaoAberturas(funcionario.getTipoVendedor().comissaoAbertura(aberturasAuxiliares, tiposProdutos));
-		f.incrementaPremiacaoAberturas(funcionario.getTipoVendedor().premiacaoAbertura(aberturasAuxiliares, tiposProdutos));
-		f.incrementaComissaoColocacao(funcionario.getTipoVendedor().comissaoColocacao(colocacoesAuxiliares, tiposProdutos));
-		f.incrementaPremiacaoColocacao(funcionario.getTipoVendedor().premiacaoColocacao(colocacoesAuxiliares, tiposProdutos));
+		f.incrementaComissaoAberturas(
+				funcionario.getTipoVendedor().comissaoAbertura(aberturasAuxiliares, tiposProdutos));
+		f.incrementaPremiacaoAberturas(
+				funcionario.getTipoVendedor().premiacaoAbertura(aberturasAuxiliares, tiposProdutos));
+		f.incrementaComissaoColocacao(
+				funcionario.getTipoVendedor().comissaoColocacao(colocacoesAuxiliares, tiposProdutos));
+		f.incrementaPremiacaoColocacao(
+				funcionario.getTipoVendedor().premiacaoColocacao(colocacoesAuxiliares, tiposProdutos));
 		f.incrementaFaturamento(ReceitaTotal());
 	}
 
@@ -477,13 +505,15 @@ public class Operacao extends GenericDTO {
 	}
 
 	@Transient
-	public void diluiFrete() {
-		BigDecimal receitaTotal = receitaTotalProdutosComFrete();
+	public BigDecimal descontoComissaoFrete() {
+		BigDecimal receitaTotalFrete = receitaTotalProdutosComFrete();
+		BigDecimal comissaoPagaSobreFrete = BigDecimal.ZERO;
 		if (receitaTotal.compareTo(BigDecimal.ZERO) > 0) {
 			if (vendas != null) {
 				for (Venda v : vendas) {
 					if (v.getProntaEntrega() == false) {
-						v.setFreteDiluido(calculaFrete(receitaTotal, v.receita(), valorFrete));
+						comissaoPagaSobreFrete = comissaoPagaSobreFrete.add(
+								comissaoSobreFrete(v.receita(), receitaTotalFrete, v.getTaxaComissao(), valorFrete));
 					}
 				}
 			}
@@ -491,28 +521,37 @@ public class Operacao extends GenericDTO {
 			if (consignacoes != null) {
 				for (Consignacao c : consignacoes) {
 					if (c.getProntaEntrega() == false) {
-						c.setFreteDiluido(calculaFrete(receitaTotal, c.receita(), valorFrete));
+						comissaoPagaSobreFrete = comissaoPagaSobreFrete.add(
+								comissaoSobreFrete(c.receita(), receitaTotalFrete, c.getTaxaComissao(), valorFrete));
 					}
 				}
 			}
 		}
+		return comissaoPagaSobreFrete;
+	}
+
+	public BigDecimal comissaoSobreFrete(BigDecimal receita, BigDecimal receitaTotal, BigDecimal taxaComissao,
+			BigDecimal valorFrete) {
+		BigDecimal percentual = receita.divide(receitaTotal, 3, RoundingMode.FLOOR);
+		BigDecimal freteDiluidoParaEssaVenda = percentual.multiply(valorFrete);
+		BigDecimal comissaoDescontada = (taxaComissao.multiply(freteDiluidoParaEssaVenda)).divide(new BigDecimal(100));
+		return comissaoDescontada;
 	}
 
 	@Transient
 	public String formasPagamento() {
 		String formas = "";
-		if(receitas != null && !receitas.isEmpty()) {
-			for(Receita r : receitas) {
-				if(formas.equals("")) {
+		if (receitas != null && !receitas.isEmpty()) {
+			for (Receita r : receitas) {
+				if (formas.equals("")) {
 					formas = r.getFormaPagamento().getDescricao();
-				}else {
-					formas = formas + " - "+ r.getFormaPagamento().getDescricao();
+				} else {
+					formas = formas + " - " + r.getFormaPagamento().getDescricao();
 				}
-				
+
 			}
 		}
 		return formas;
 	}
-	
-	
+
 }

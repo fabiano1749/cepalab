@@ -20,7 +20,7 @@
 					<p:button value="Novo" style="margin-left: 5px;"
 						outcome="/expedicao/expedicao" />
 
-					<p:commandButton value="Salvar" id="idBotaoSalvar"
+					<p:commandButton value="Salvar" id="idBotaoSalvar" disabled="#{expedicaoBean.isVendedor()==true}"
 						actionListener="#{expedicaoBean.salvar}" style="margin-left: 5px;" />
 
 				</p:toolbarGroup>
@@ -46,8 +46,10 @@
 					requiredMessage="Funcionario não informado!"
 					value="#{expedicaoBean.item.funcionario}"
 					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione"/>
 					<f:selectItems value="#{expedicaoBean.listaFuncionarios}" var="fun"
 						itemValue="#{fun}" itemLabel="#{fun.nome}" />
+					<p:ajax listener="#{expedicaoBean.possuiExpedicaoAberta()}" process="@this" partialSubmit="true" update="@this"/>
 				</p:selectOneMenu>
 
 				<p:outputLabel value="Data" for="idData" />
@@ -56,8 +58,9 @@
 					pattern="dd/MM/yyyy">
 				</p:calendar>
 
-				<p:outputLabel value="Status" />
+				<p:outputLabel value="Status"/>
 				<p:selectOneMenu id="Status" value="#{expedicaoBean.item.status}"
+					disabled="#{true}"
 					converter="omnifaces.SelectItemsConverter">
 					<f:selectItems value="#{expedicaoBean.status()}" var="status"
 						itemValue="#{status}" itemLabel="#{status.descricao}" />
@@ -72,48 +75,51 @@
 					rendered="#{expedicaoBean.statusFechado}" pattern="dd/MM/yyyy" />
 
 			</p:panelGrid>
+				<p:panel id="idPanelDados"
+					header="Quantidades de saída e chegada de produtos"
+					style="width: 80%; text-align: center; float: left">
 
-			<p:dataTable id="idTabela"
-				value="#{expedicaoBean.item.expedProdutos}" var="item"
-				style="margin-top: 20px ; width: 50% " reflow="true" editable="true"
-				editMode="cell">
+					<p:dataTable id="idTabela"
+						value="#{expedicaoBean.item.expedProdutos}" var="item"
+						style="width: 100%" reflow="true" editable="true" editMode="cell">
 
-				<p:column headerText="Produto" style="text-align: center">
-					<h:outputText value="#{item.produto.nome}" />
-				</p:column>
+						<p:column headerText="Produto" style="text-align: center">
+							<h:outputText value="#{item.produto.nome}" />
+						</p:column>
 
-				<p:column headerText="Quantidade - Saída"
-					style="font-size: small; text-align: center">
-					<p:cellEditor>
-						<f:facet name="output">
-							<h:outputText value="#{item.saida}" id="outputSaida" />
-						</f:facet>
-						<f:facet name="input">
-							<p:inputText value="#{item.saida}" id="inputSaida">
-								<p:ajax process="@this" partialSubmit="true"
-									update="outputSaida" />
-							</p:inputText>
-						</f:facet>
-					</p:cellEditor>
-				</p:column>
+						<p:column headerText="Quantidade - Saída"
+							style="font-size: small; text-align: center">
+							<p:cellEditor
+								disabled="#{expedicaoBean.item.conferidoSaidaVendedor}">
+								<f:facet name="output">
+									<h:outputText value="#{item.saida}" id="outputSaida" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{item.saida}" id="inputSaida">
+										<p:ajax process="@this" partialSubmit="true"
+											update="outputSaida" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
-				<p:column headerText="Quantidade - Chegada"
-					style="font-size: small; text-align: center">
-					<p:cellEditor>
-						<f:facet name="output">
-							<h:outputText value="#{item.chegada}" id="outputChegada" />
-						</f:facet>
-						<f:facet name="input">
-							<p:inputText value="#{item.chegada}" id="inputChegada">
-								<p:ajax process="@this" partialSubmit="true"
-									update="outputChegada" />
-							</p:inputText>
-						</f:facet>
-					</p:cellEditor>
-				</p:column>
+						<p:column headerText="Quantidade - Chegada"
+							style="font-size: small; text-align: center">
+							<p:cellEditor disabled="#{true}">
+								<f:facet name="output">
+									<h:outputText value="#{item.chegada}" id="outputChegada" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{item.chegada}" id="inputChegada">
+										<p:ajax process="@this" partialSubmit="true"
+											update="outputChegada" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 
-			</p:dataTable>
-
+					</p:dataTable>
+				</p:panel>
 		</h:form>
 
 	</ui:define>

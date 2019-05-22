@@ -37,7 +37,7 @@ public class ComissaoRecolhidaRessarcidaBean implements Serializable {
 	public void inicio() {
 		item = new ComissaoRecolhidaRessarcida();
 		itens = new ArrayList<ComissaoRecolhidaRessarcida>();
-		listaFuncionario = funcionarios.funcionarios();
+		listaFuncionario = funcionarios.vendedorAtivo();
 	}
 
 	public void limpar() {

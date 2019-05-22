@@ -38,7 +38,7 @@
 
 			</p:panelGrid>
 
-			<p:dataTable id="idTabFun"
+			<p:dataTable id="idTabFun" stickyHeader="true"
 				value="#{pesquisaFuncionarioBean.listaFuncionarios}" var="item"
 				style="margin-top: 20px ; width: 100% " reflow="true"
 				rowIndexVar="rowIndex">
@@ -47,7 +47,7 @@
        			 	#{rowIndex+1}
     			</p:column>
 
-				<p:column headerText="Nome" style="width: 15%; text-align: center">
+				<p:column headerText="Nome" style="width: 17%; text-align: center">
 					<h:outputText value="#{item.nome}" />
 				</p:column>
 
@@ -64,7 +64,7 @@
 				</p:column>
 
 
-				<p:column headerText="Função" style=" text-align: center; width:6%">
+				<p:column headerText="Função" style=" text-align: center; width:8%">
 					<h:outputText value="#{item.tipo.nome}" />
 				</p:column>
 
@@ -79,12 +79,12 @@
 					</h:outputText>
 				</p:column>
 
-				<p:column headerText="Status" style=" text-align: center;width:5%">
+				<p:column headerText="Status" style=" text-align: center;width:8%">
 					<h:outputText value="#{item.status.descricao}" />
 				</p:column>
 
 
-				<p:column headerText="Ações" style="text-align: center">
+				<p:column headerText="Ações" style="text-align: center; width:8%">
 					<p:commandButton icon="ui-icon-pencil" title="Editar"
 						process="@this" update="@none"
 						style="margin-left: 4px; width: 70%"

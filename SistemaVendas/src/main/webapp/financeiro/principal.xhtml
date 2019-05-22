@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+
+		<style>
+			.coluna{
+				width: 33%
+			}
+		</style>	
+		
+
+		<h:form id="idForm">
+			
+			<p:panelGrid columns= "3" style="margin-top: 15px; width: 40%"
+				styleClass="semBorda" columnClasses="coluna, coluna, coluna">
+			
+			<p:selectOneMenu id="Conta" style="width: 83%">
+				<f:selectItem itemLabel="Conta"/>
+				</p:selectOneMenu>
+			
+			<p:commandButton value="Acessar"/>
+			
+								
+			</p:panelGrid>	
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

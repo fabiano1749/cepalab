@@ -5,28 +5,66 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:o="http://omnifaces.org/ui">
 
-
-
-
 	<p:panel header="Resumo da Operação" id="idPainelResumo"
-		style="width: 68%; text-align: center; overflow: hidden; float: left">
-
-
+		style="width: 72%; text-align: center; overflow: hidden; float: left">
 
 		<p:panel header="Receitas" id="idPainelReceitas"
 			style="width: 40%; text-align: center; float: left">
 
 			<p:panelGrid styleClass="semBorda" columns="2" style="width: 100%">
-
-				<p:outputLabel value="Faturamento Total" />
-				<p:outputLabel value="#{fechamentoBean.item.faturamento}"
-					style="text-align:left">
-					<f:convertNumber type="currency" locale="pt_BR" />
-				</p:outputLabel>
+				
 			</p:panelGrid>
-
-			<p:dataTable id="idTabela" style="width: 100%; margin-top: 10px"
+			<label style="font-size: 20px">Receitas das vendas do período</label>
+			<p:dataTable id="idTabela" style="width: 100%; margin-top: 10px; margin-bottom: 30px"
 				value="#{fechamentoBean.item.listaReceitaFormaPagamento}" var="item">
+				<p:column headerText="Pagamento" style="text-align: center">
+					<h:outputText value="#{item.forma.descricao}"/>
+				</p:column>
+
+				<p:column headerText="Valor" style="text-align: left">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Taxa Comissão" style="text-align: center" visible="#{fechamentoBean.isComissaoFormaPagamento() == true}">
+					<h:outputText value="#{item.taxaComissaoPercentualFormatada()}">
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Comissão" style="text-align: left" visible="#{fechamentoBean.isComissaoFormaPagamento() == true}">
+					<h:outputText value="#{item.comissao}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+				
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column colspan="1" 
+							footerText="Totais"
+							style="text-align: center">
+						</p:column>
+						<p:column colspan="1"
+							footerText="R$ #{fechamentoBean.item.faturamentoFormatado}"
+							style="text-align: left">
+						</p:column>
+						<p:column colspan="1" visible="#{fechamentoBean.isComissaoFormaPagamento() == true}"
+							footerText=""
+							style="text-align: center">
+						</p:column>
+						<p:column colspan="1" visible="#{fechamentoBean.isComissaoFormaPagamento() == true}"
+							footerText="R$ #{fechamentoBean.item.comissoesFormatadas()}"
+							style="text-align: left">
+						</p:column>
+					</p:row>
+				</p:columnGroup>
+				
+			</p:dataTable>
+			
+			<label style="font-size: 20px">Recebimentos inadimplentes</label>
+			
+			<p:dataTable id="idTabelaInadimplentes" style="width: 100%; margin-top: 5px"
+				value="#{fechamentoBean.item.inadimplentes}" var="item">
 				<p:column headerText="Pagamento" style="text-align: center">
 					<h:outputText value="#{item.forma.descricao}"/>
 				</p:column>
@@ -36,6 +74,21 @@
 						<f:convertNumber type="currency" locale="pt_BR" />
 					</h:outputText>
 				</p:column>
+				
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column colspan="1" 
+							footerText="Total"
+							style="text-align: center">
+						</p:column>
+						
+						<p:column colspan="1" 
+							footerText="R$ #{fechamentoBean.item.totalInadimplennteFormatado()}"
+							style="text-align: center">
+						</p:column>
+						
+					</p:row>
+				</p:columnGroup>
 				
 			</p:dataTable>
 
@@ -61,7 +114,7 @@
 					style="text-align:center">
 					<f:convertNumber type="currency" locale="pt_BR" />
 				</p:outputLabel>
-
+				
 				<p:outputLabel value="Comissões Aberturas" />
 				<p:outputLabel value="#{fechamentoBean.item.comissaoAberturas}"
 					style="text-align:center">
@@ -89,20 +142,14 @@
 					<f:convertNumber type="currency" locale="pt_BR" />
 				</p:outputLabel>
 
-				<p:outputLabel value="Faturamento Premiação" />
-				<p:outputLabel value="#{fechamentoBean.item.faturamentoPremiacao}"
-					style="text-align:center">
-					<f:convertNumber type="currency" locale="pt_BR" />
-				</p:outputLabel>
-
 				<p:separator />
 				<p:separator />
-
-				<p:outputLabel value="Premiação" />
+				
+				<p:outputLabel value="Premiação / Mês" />
 				<p:inputNumber value="#{fechamentoBean.item.premiacao}"
 					style="text-align:center" id="premiacao">
-				<p:ajax listener="#{fechamentoBean.atualizaRepasse}" process="@this premiacao" 
-				update="repasse"/>
+					<p:ajax listener="#{fechamentoBean.atualizaRepasse}" process="@this premiacao" 
+					update="repasse"/>
 				</p:inputNumber>
 
 				<p:outputLabel value="Repasse" />
@@ -110,10 +157,14 @@
 					style="text-align:center">
 					<f:convertNumber type="currency" locale="pt_BR" />
 				</p:outputLabel>
-
-
 			</p:panelGrid>
-
+			
+			<p:panelGrid columns="2"  styleClass="semBorda"  style="text-align: left" columnClasses="grid40, grid60">
+				<p:outputLabel value="Observções do Fechamento" />
+				<p:inputTextarea style="width: 200px; margin-left: 10px"/>
+			</p:panelGrid>
+				
+			
 		</p:panel>
 
 	</p:panel>
@@ -121,7 +172,7 @@
 
 
 	<p:panel header="Outros Valores" id="idPainelOutros"
-		style="width: 30%; text-align: center; margin-top: 0px; float: right">
+		style="width: 26%; text-align: center; margin-top: 0px; float: right">
 
 		<p:panelGrid columns="2" styleClass="semBorda"
 			style="text-align: left">
@@ -164,6 +215,12 @@
 
 			<p:outputLabel value="Diferença - Produtos" />
 			<p:outputLabel value="#{fechamentoBean.item.diferencaProdutos}"
+				style="text-align:center; color: green">
+				<f:convertNumber type="currency" locale="pt_BR" />
+			</p:outputLabel>
+			
+			<p:outputLabel value="Desconto de comissão - Frete" />
+			<p:outputLabel value="#{fechamentoBean.item.descontoComissaoFrete}"
 				style="text-align:center; color: green">
 				<f:convertNumber type="currency" locale="pt_BR" />
 			</p:outputLabel>

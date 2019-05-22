@@ -15,6 +15,7 @@ import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.Grupo;
 import com.cepalab.sistemaVendas.fechamento.dominio.Fechamento;
 import com.cepalab.sistemaVendas.repository.ComissoesRecolhidasRessarcidas;
+import com.cepalab.sistemaVendas.repository.Consignados;
 import com.cepalab.sistemaVendas.repository.CustosViagens;
 import com.cepalab.sistemaVendas.repository.DescontosSalarios;
 import com.cepalab.sistemaVendas.repository.DespesasVendedores;
@@ -35,7 +36,6 @@ public class FechamentoBean implements Serializable {
 	private Date inicio = new Date();
 	private Date fim = new Date();
 	private List<Funcionario> listaFuncionarios = new ArrayList<>();
-	private List<Funcionario> listaFun = new ArrayList<>();
 
 	@Inject
 	private Funcionarios fun;
@@ -66,21 +66,21 @@ public class FechamentoBean implements Serializable {
 	
 	@Inject
 	private Seguranca seg;
+	
+	@Inject
+	private Consignados consignados;
+	
 
 	@PostConstruct
 	public void inicio() {
 
-		if (!isAdministrador()) {
-			funcionario = (seg.UsuarioLogado());
+		if (isVendedor()) {
+			funcionario = seg.UsuarioLogado();
 			limpa();
 		} else {
-			listaFun = fun.funcionarios();
-			retiraTiposFuncionários();
+			listaFuncionarios = fun.vendedorAtivo();
 			limpa();
 		}
-		
-		
-
 	}
 
 	public void limpa() {
@@ -93,10 +93,9 @@ public class FechamentoBean implements Serializable {
 		item.setInicio(inicio);
 		item.setFim(fim);
 
-		item.start(operacoes, custos, despesas, recolhidaRessarcida, descontos, recebimentoInadimplente, tiposProdutos.tipos());
+		item.start(operacoes, custos, despesas, recolhidaRessarcida, descontos, recebimentoInadimplente, tiposProdutos.tipos(), consignados);
 		acertoProduto.inicio();
 		item.calculaRepasse();
-
 	}
 
 	public boolean isAdministrador() {
@@ -107,15 +106,23 @@ public class FechamentoBean implements Serializable {
 		}
 		return false;
 	}
-
-	// Melhorar isso em versões posteriores
-	private void retiraTiposFuncionários() {
-		listaFuncionarios = new ArrayList<>();
-		for (Funcionario f : listaFun) {
-			if (!f.getTipoVendedor().getNome().equals("Interno-0")) {
-				listaFuncionarios.add(f);
+	
+	public boolean isRoot() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("ROOT")) {
+				return true;
 			}
 		}
+		return false;
+	}
+	
+	public boolean isVendedor() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("VENDEDORES")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void atualizaRepasse() {
@@ -125,7 +132,6 @@ public class FechamentoBean implements Serializable {
 		} else {
 			item.calculaRepasse();
 		}
-
 	}
 
 	public List<Funcionario> getListaFuncionarios() {
@@ -136,14 +142,7 @@ public class FechamentoBean implements Serializable {
 		this.listaFuncionarios = listaFuncionarios;
 	}
 
-	public List<Funcionario> getListaFun() {
-		return listaFun;
-	}
-
-	public void setListaFun(List<Funcionario> listaFun) {
-		this.listaFun = listaFun;
-	}
-
+	
 	public Fechamento getItem() {
 		return item;
 	}
@@ -175,4 +174,12 @@ public class FechamentoBean implements Serializable {
 	public void setFim(Date fim) {
 		this.fim = fim;
 	}
+	
+	public Boolean isComissaoFormaPagamento() {
+		if(item != null && item.getFuncionario()!= null && item.getFuncionario().getTipoVendedor() != null) {
+			return item.getFuncionario().getTipoVendedor().isComissaoPorFormaPagamento();
+		}
+		return false;
+	}
+	
 }

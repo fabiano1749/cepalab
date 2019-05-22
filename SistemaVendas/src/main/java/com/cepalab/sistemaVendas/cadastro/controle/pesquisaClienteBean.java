@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,12 +14,15 @@ import javax.inject.Named;
 import org.primefaces.context.RequestContext;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
+import com.cepalab.sistemaVendas.cadastro.dominio.EstadosBrasileiros;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
+import com.cepalab.sistemaVendas.cadastro.dominio.Grupo;
 import com.cepalab.sistemaVendas.cadastro.dominio.Rota;
 import com.cepalab.sistemaVendas.repository.Clientes;
 import com.cepalab.sistemaVendas.repository.Funcionarios;
 import com.cepalab.sistemaVendas.repository.Rotas;
 import com.cepalab.sistemaVendas.repository.filter.ClienteFilter;
+import com.cepalab.sistemaVendas.security.Seguranca;
 
 @Named
 @ViewScoped
@@ -33,6 +37,9 @@ public class pesquisaClienteBean implements Serializable {
 	private Rotas rotas;
 
 	@Inject
+	private Seguranca seg;
+	
+	@Inject
 	private Funcionarios funcionarios;
 
 	private ClienteFilter filtro;
@@ -42,23 +49,39 @@ public class pesquisaClienteBean implements Serializable {
 
 	public pesquisaClienteBean() {
 		filtro = new ClienteFilter();
-		filtro.setRota(new Rota());
 		filtro.setFuncionario(new Funcionario());
-		listaRotas = new ArrayList<>();
+		
 	}
 
+	@PostConstruct
+	public void rota2() {
+		listaRotas = new ArrayList<>();
+		if(isVendedor()) {
+			listaRotas = rotas.rotasPorFuncionario(seg.UsuarioLogado());
+		}
+	}
+	
 	public void rota() {
+		listaRotas = new ArrayList<>();
 		if (filtro.getFuncionario() != null) {
 			listaRotas = rotas.rotasPorFuncionario(filtro.getFuncionario());
 		}
 	}
 
 	public List<Funcionario> funcionarios() {
-		return funcionarios.funcionarios();
+		return funcionarios.vendedor();
 	}
 
 	public void pesquisar() {
-		clientesFiltrados = clientes.filtrados(filtro);
+		clientesFiltrados = new ArrayList<>();
+		total = 0;
+		
+		if(isVendedor()) {
+			filtro.setFuncionario(seg.UsuarioLogado());
+		}
+		
+		
+		clientesFiltrados = clientes.filtrados2(filtro);
 		total = clientesFiltrados.size();
 	}
 
@@ -84,6 +107,19 @@ public class pesquisaClienteBean implements Serializable {
 		RequestContext.getCurrentInstance().openDialog("/dialogos/clienteDialogo", opcoes, params);
 	}
 
+	public boolean isVendedor() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("VENDEDORES")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public EstadosBrasileiros[] estados() {
+		return EstadosBrasileiros.values();
+	}
+	
 	public List<Cliente> getClientesFiltrados() {
 		return clientesFiltrados;
 	}

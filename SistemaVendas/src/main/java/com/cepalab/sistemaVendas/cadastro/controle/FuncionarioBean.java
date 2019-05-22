@@ -20,6 +20,8 @@ import com.cepalab.sistemaVendas.repository.TiposVendedores;
 import com.cepalab.sistemaVendas.service.CadastroFuncionarioService;
 import com.cepalab.sistemaVendas.service.NegocioException;
 import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
+import com.cepalab.sistemaVendas.utils.GeraTestaCpfCnpj;
+import com.cepalab.sistemaVendas.utils.ValidaSenha;
 
 @Named
 @ViewScoped
@@ -96,6 +98,21 @@ public class FuncionarioBean implements Serializable {
 		}
 	}
 
+	public void validaCPF() {
+		GeraTestaCpfCnpj teste = new GeraTestaCpfCnpj();
+		if(teste.isCPF(item.getCpf()) == false) {
+			FacesUtil.addErrorMessage("O CPF informado não é válido!");
+			item.setCpf("");
+		}	
+	}
+	
+	public void validaSenha() {
+		if(ValidaSenha.senhaValida(item.getSenha()) == false) {
+			FacesUtil.addErrorMessage("A senha deve possuir números e letras e conter 6 ou mais caracteres !");
+			item.setSenha("");
+		}
+	}
+	
 	public List<TipoFuncionario> getTiposFuncionarios() {
 		return tiposFuncionarios;
 	}

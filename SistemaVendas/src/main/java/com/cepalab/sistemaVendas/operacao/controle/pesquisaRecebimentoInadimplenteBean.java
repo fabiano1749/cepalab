@@ -42,10 +42,10 @@ public class pesquisaRecebimentoInadimplenteBean implements Serializable {
 	public void inicio() {
 		filtro = new RecebimentoInadimplenteFilter();
 		
-		if (!isAdministrador()) {
+		if (isVendedor()) {
 			filtro.setFuncionario(seg.UsuarioLogado());
 		} else {
-			listaFuncionarios = funcionarios.funcionarios();
+			listaFuncionarios = funcionarios.vendedorAtivo();
 		}
 	}
 
@@ -54,9 +54,9 @@ public class pesquisaRecebimentoInadimplenteBean implements Serializable {
 
 	}
 
-	public boolean isAdministrador() {
+	public boolean isVendedor() {
 		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
-			if (g.getNome().equals("ADMINISTRADORES")) {
+			if (g.getNome().equals("VENDEDORES")) {
 				return true;
 			}
 

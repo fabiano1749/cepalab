@@ -1,0 +1,245 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title" style="">Produtos Consignados</h1>
+
+		<h:form id="form">
+
+			<p:messages autoUpdate="true" />
+
+			<p:panelGrid columns="8" id="pnlNovo" styleClass="semBorda"
+				style="margin-top: 10px">
+
+				<p:outputLabel value="Produto" />
+				<p:selectOneMenu id="idProduto" style="width: 200px"
+					value="#{consignadosPorProdutoBean.filtro.produto}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{consignadosPorProdutoBean.listaProdutos}"
+						var="prod" itemValue="#{prod}" itemLabel="#{prod.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Vendedor" />
+				<p:selectOneMenu id="idVendedor" style="width: 200px"
+					value="#{consignadosPorProdutoBean.filtro.funcionario}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems
+						value="#{consignadosPorProdutoBean.listaFuncionarios}" var="fun"
+						itemValue="#{fun}" itemLabel="#{fun.nome}" />
+					<p:ajax listener="#{consignadosPorProdutoBean.clienteSelecionado}"
+						process="idVendedor" update="idCliente idRota" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Rota" />
+				<p:selectOneMenu id="idRota" style="width: 200px"
+					value="#{consignadosPorProdutoBean.filtro.rota}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{consignadosPorProdutoBean.listaRotas}"
+						var="rota" itemValue="#{rota}" itemLabel="#{rota.descricao}" />
+				</p:selectOneMenu>
+
+				<h:panelGroup>
+					<h:outputText value="Detalhado" />
+					<p:selectBooleanCheckbox id="idSintetico" style="margin-left: 5px"
+						value="#{consignadosPorProdutoBean.sintetico}">
+						<p:ajax process="idSintetico" update="form" />
+					</p:selectBooleanCheckbox>
+
+				</h:panelGroup>
+				<h:outputText value="" />
+
+				<p:outputLabel value="Cliente" />
+				<p:selectOneMenu id="idCliente" style="width: 200px"
+					value="#{consignadosPorProdutoBean.filtro.cliente}"
+					converter="omnifaces.SelectItemsConverter" filter="true"
+					filterMatchMode="contains">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{consignadosPorProdutoBean.listaClientes}"
+						var="cliente" itemValue="#{cliente}"
+						itemLabel="#{cliente.nome} - #{cliente.codigo}- #{cliente.cpfCnpj}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Estado" />
+				<p:selectOneMenu id="estadoId" style="width: 200px"
+					value="#{consignadosPorProdutoBean.filtro.uf}" filter="true"
+					filterMatchMode="contains">
+					<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+					<f:selectItems value="#{consignadosPorProdutoBean.estados()}"
+						var="estado" itemValue="#{estado}"
+						itemLabel="#{estado} - #{estado.descricao} " />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Cidade" />
+				<p:inputText value="#{consignadosPorProdutoBean.filtro.cidade}"
+					style="width: 215px" />
+
+				<p:commandButton value="Pesquisar"
+					actionListener="#{consignadosPorProdutoBean.pesquisa}"
+					update="idTab idTabSintetico" />
+
+
+			</p:panelGrid>
+
+
+			<p:dataTable id="idTab"
+				rendered="#{consignadosPorProdutoBean.sintetico}"
+				style="margin-top:10px; width: 100%; font-size: 10px"
+				value="#{consignadosPorProdutoBean.listaConsulta}" var="item">
+
+				<p:columnGroup type="header">
+
+					<p:row>
+						<p:column rowspan="2" headerText="Cliente" style="width: 10%" />
+
+						<p:column
+							colspan="#{consignadosPorProdutoBean.listaProdutos.size()}"
+							headerText="Produtos" />
+					</p:row>
+
+					<p:row>
+						<ui:repeat value="#{consignadosPorProdutoBean.listaProdutos}"
+							var="produto">
+							<p:column headerText="#{produto.nome}" />
+						</ui:repeat>
+					</p:row>
+				</p:columnGroup>
+
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column colspan="1" style="text-align:left" footerText="Total" />
+						<ui:repeat
+							value="#{consignadosPorProdutoBean.listaTotalConsignados}"
+							var="total">
+							<p:column style="text-align:center">
+								<f:facet name="footer">
+									<h:outputText value="#{total.quantidade}" />
+								</f:facet>
+							</p:column>
+						</ui:repeat>
+					</p:row>
+				</p:columnGroup>
+
+
+
+				<p:column style="text-align: center">
+					<h:outputText value="#{item.cliente.codigoOuCnpj()}" />
+				</p:column>
+
+				<p:columns style="text-align: center"
+					value="#{consignadosPorProdutoBean.listaProdutos}" var="produto">
+					<h:outputText
+						value="#{consignadosPorProdutoBean.consignadosClienteProduto(item.cliente, produto)}" />
+				</p:columns>
+
+
+
+
+			</p:dataTable>
+
+
+			<p:dataTable id="idTabSintetico"
+				rendered="#{!consignadosPorProdutoBean.sintetico}"
+				style="margin-top:10px; width: 60%; font-size: 10px"
+				value="#{consignadosPorProdutoBean.listaTotalConsignados}"
+				var="item2">
+
+				<p:column headerText="Produto" style="text-align: center">
+					<h:outputText value="#{item2.produto.nome}" />
+				</p:column>
+
+				<p:column headerText="Quantidade" style="text-align: center">
+					<h:outputText value="#{item2.quantidade}" />
+				</p:column>
+
+				<p:column headerText="Custo Unitário" style="text-align: center">
+					<h:outputText value="#{item2.produto.custo}">
+						<f:convertNumber maxFractionDigits="3" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Custo Total" style="text-align: center">
+					<h:outputText value="#{item2.custoTotal()}">
+						<f:convertNumber maxFractionDigits="2" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Valor médio de venda"
+					style="text-align: center">
+					<h:outputText value="#{item2.valorMedioDeVenda()}">
+						<f:convertNumber maxFractionDigits="2" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Receita prevista" style="text-align: center">
+					<h:outputText value="#{item2.somaValoresDeVenda}">
+						<f:convertNumber maxFractionDigits="2" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:columnGroup type="footer">
+					<p:row>
+						<p:column colspan="1" footerText="Totais:"
+							style="text-align: left">
+						</p:column>
+
+						<p:column colspan="1">
+							<f:facet name="footer">
+								<h:outputText
+									value="#{consignadosPorProdutoBean.totalProduto()}">
+									<f:convertNumber maxFractionDigits="0" locale="pt_BR" />
+								</h:outputText>
+							</f:facet>
+						</p:column>
+
+						<p:column colspan="1">
+							<f:facet name="footer">
+								<h:outputText value="" />
+							</f:facet>
+						</p:column>
+
+						<p:column colspan="1">
+							<f:facet name="footer">
+								<h:outputText
+									value="#{consignadosPorProdutoBean.totalPorProduto()}">
+									<f:convertNumber maxFractionDigits="2" locale="pt_BR" />
+								</h:outputText>
+							</f:facet>
+						</p:column>
+						
+						<p:column colspan="1">
+							<f:facet name="footer">
+								<h:outputText value="" />
+							</f:facet>
+						</p:column>
+						
+						<p:column colspan="1">
+							<f:facet name="footer">
+								<h:outputText
+									value="#{consignadosPorProdutoBean.totalReceita()}">
+									<f:convertNumber maxFractionDigits="2" locale="pt_BR" />
+								</h:outputText>
+							</f:facet>
+						</p:column>
+						
+					</p:row>
+				</p:columnGroup>
+
+			</p:dataTable>
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+
+

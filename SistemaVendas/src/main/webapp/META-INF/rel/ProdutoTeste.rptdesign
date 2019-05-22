@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0.v201706222054</property>
+    <list-property name="propertyBindings">
+        <structure>
+            <property name="name">odaDriverClass</property>
+            <property name="id">9</property>
+        </structure>
+        <structure>
+            <property name="name">odaURL</property>
+            <property name="id">9</property>
+        </structure>
+        <structure>
+            <property name="name">odaUser</property>
+            <property name="id">9</property>
+        </structure>
+        <structure>
+            <property name="name">odaAutoCommit</property>
+            <property name="id">9</property>
+        </structure>
+        <structure>
+            <property name="name">odaIsolationMode</property>
+            <property name="id">9</property>
+        </structure>
+        <structure>
+            <property name="name">odaPassword</property>
+            <property name="id">9</property>
+        </structure>
+        <structure>
+            <property name="name">odaJndiName</property>
+            <property name="id">9</property>
+        </structure>
+        <structure>
+            <property name="name">OdaConnProfileName</property>
+            <property name="id">9</property>
+        </structure>
+        <structure>
+            <property name="name">OdaConnProfileStorePath</property>
+            <property name="id">9</property>
+        </structure>
+    </list-property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="layoutPreference">fixed layout</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">96</property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.birt.report.data.oda.jdbc" name="Data Source" id="9">
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>metadataBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledMetadataBidiFormatStr</name>
+                </ex-property>
+                <ex-property>
+                    <name>contentBidiFormatStr</name>
+                    <value>ILYNN</value>
+                </ex-property>
+                <ex-property>
+                    <name>disabledContentBidiFormatStr</name>
+                </ex-property>
+            </list-property>
+            <property name="odaDriverClass">com.mysql.jdbc.Driver</property>
+            <property name="odaURL">jdbc:mysql://localhost:3306/cepalab</property>
+            <property name="odaUser">root</property>
+            <encrypted-property name="odaPassword" encryptionID="base64">MTc0OQ==</encrypted-property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.birt.report.data.oda.jdbc.JdbcSelectDataSet" name="Data Set" id="13">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">nome</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">nome</text-property>
+                    <text-property name="heading">nome</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">pode_consignar</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="displayName">pode_consignar</text-property>
+                    <text-property name="heading">pode_consignar</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">custo</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="displayName">custo</text-property>
+                    <text-property name="heading">custo</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">nome</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">pode_consignar</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">custo</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">nome</property>
+                    <property name="nativeName">nome</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">pode_consignar</property>
+                    <property name="nativeName">pode_consignar</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">custo</property>
+                    <property name="nativeName">custo</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select nome, pode_consignar, custo 
+from produto
+order by posicao]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">a4</property>
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <label id="14">
+            <property name="backgroundColor">teal</property>
+            <property name="fontSize">16pt</property>
+            <property name="color">white</property>
+            <property name="textAlign">center</property>
+            <text-property name="text">Produtos</text-property>
+        </label>
+        <table id="37">
+            <property name="dataSet">Data Set</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">nome</property>
+                    <text-property name="displayName">nome</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["nome"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">pode_consignar</property>
+                    <text-property name="displayName">pode_consignar</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["pode_consignar"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">custo</property>
+                    <text-property name="displayName">custo</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["custo"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+            </list-property>
+            <column id="50"/>
+            <column id="51"/>
+            <column id="52"/>
+            <header>
+                <row id="38">
+                    <property name="backgroundColor">silver</property>
+                    <property name="fontSize">12pt</property>
+                    <cell id="39">
+                        <label id="53">
+                            <text-property name="text">nome</text-property>
+                        </label>
+                    </cell>
+                    <cell id="40">
+                        <label id="55">
+                            <text-property name="text">pode_consignar</text-property>
+                        </label>
+                    </cell>
+                    <cell id="41">
+                        <label id="57">
+                            <text-property name="text">custo</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="42">
+                    <property name="textAlign">center</property>
+                    <cell id="43">
+                        <data id="54">
+                            <property name="resultSetColumn">nome</property>
+                        </data>
+                    </cell>
+                    <cell id="44">
+                        <data id="56">
+                            <property name="resultSetColumn">pode_consignar</property>
+                        </data>
+                    </cell>
+                    <cell id="45">
+                        <data id="58">
+                            <property name="textAlign">center</property>
+                            <property name="resultSetColumn">custo</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+            <footer>
+                <row id="46">
+                    <cell id="47"/>
+                    <cell id="48"/>
+                    <cell id="49"/>
+                </row>
+            </footer>
+        </table>
+    </body>
+</report>

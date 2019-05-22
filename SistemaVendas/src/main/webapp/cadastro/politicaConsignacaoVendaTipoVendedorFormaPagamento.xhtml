@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui">
+
+	<p:dataTable id="idComissaoFormaPagamentoTab" style="margin-top:10px; width: 40%"
+				value="#{tipoVendedorBean.item.politicasVCTVFP}" editable="true"
+				editMode="cell" var="politica">
+
+				<p:column style="text-align: center" headerText="Forma de pagamento">
+					<h:outputText value="#{politica.formaPagamento.descricao}" />
+				</p:column>
+				
+				<p:column headerText="Taxa %">
+					<p:cellEditor>
+						<f:facet name="output">
+							<h:outputText id="taxaOut" value="#{politica.taxa}">
+								<f:convertNumber pattern="#0.00" locale="pt_BR" />
+							</h:outputText>
+						</f:facet>
+						<f:facet name="input">
+							<p:inputNumber id="taxaImput" value="#{politica.taxa}"
+								decimalSeparator="," thousandSeparator="." decimalPlaces="2">
+								<p:ajax
+									update="taxaOut taxaImput" process="@this" partialSubmit="true" />
+							</p:inputNumber>
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+	</p:dataTable>
+</ui:composition>

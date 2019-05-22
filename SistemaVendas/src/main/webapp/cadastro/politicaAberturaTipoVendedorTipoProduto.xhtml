@@ -27,7 +27,7 @@
 		resizable="false" width="80%" height="70%" id="dialogoNovaAbertura">
 
 
-		<p:panelGrid id="idPnlIntervaloAbertura" columns="4"
+		<p:panelGrid id="idPnlIntervaloAbertura" columns="6"
 			styleClass="semBorda" style="margin-top: 10px; margin-left: 10px">
 
 			<p:outputLabel value="Inicio" />
@@ -36,6 +36,15 @@
 			<p:outputLabel value="Comissão" for="comissao" />
 			<p:inputNumber value="#{tipoVendedorBean.intervaloAbertura.valor}"
 				id="comissao" />
+
+			<p:outputLabel value="Menor quantidade por produto" />
+			<h:panelGroup>
+				<p:inputNumber id="menorQuantidade" value="#{tipoVendedorBean.politicaATVTP.quantMinimaPorProduto}" decimalPlaces="0"
+					minValue="1">
+					<p:ajax process="@this" update="@this"/>
+				</p:inputNumber>
+				<p:tooltip for="menorQuantidade" value="Menor quantidade de um produto para que ele possa ser contado na abertura" position="top" />
+			</h:panelGroup>
 			<p:outputLabel value="Fim" />
 			<p:inputNumber value="#{tipoVendedorBean.intervaloAbertura.fim}"
 				decimalPlaces="0" />
@@ -44,7 +53,8 @@
 				value="#{tipoVendedorBean.intervaloAbertura.premiacao}" />
 
 
-			<p:outputLabel value="" />
+
+
 			<p:commandButton value="Inserir Intervalo"
 				actionListener="#{tipoVendedorBean.adicionarIntervaloAbertura()}"
 				process="@this idPnlIntervaloAbertura" partialSubmit="true"

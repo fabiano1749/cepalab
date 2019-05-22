@@ -28,7 +28,7 @@
 				</h:outputText>
 			</p:column>
 
-			<p:column headerText="Produto" style="text-align: center">
+			<p:column headerText="Produto" style="text-align: center" filterBy="#{item.produto.nome}" filterMatchMode="contains" >
 				<h:outputText value="#{item.produto.nome}" />
 			</p:column>
 

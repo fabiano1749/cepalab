@@ -1,0 +1,268 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/template/LayoutPadrao.xhtml">
+
+	<ui:define name="corpo">
+
+		<h1 class="fa-page-title">Pesquisa Cheque</h1>
+
+		<h:form id="idFormPesquisaCheque">
+
+			<p:toolbar style="width: 80%; margin-top: 20px">
+
+				<p:toolbarGroup align="left">
+					<p:button value="Novo" outcome="/financeiro/cheque" />
+				</p:toolbarGroup>
+
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Pesquisar"
+						actionListener="#{pesquisaChequeBean.pesquisa()}" update="idTab" />
+				</p:toolbarGroup>
+
+			</p:toolbar>
+
+			<p:panelGrid columns="8" styleClass="semBorda"
+				style="margin-top: 10px">
+
+				<p:outputLabel value="Vendedor" />
+				<p:selectOneMenu value="#{pesquisaChequeBean.filtro.funcionario}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem itemLabel="todos" />
+					<f:selectItems value="#{pesquisaChequeBean.vendedores()}" var="fun"
+						itemValue="#{fun}" itemLabel="#{fun.nome}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Status" />
+				<p:selectOneMenu value="#{pesquisaChequeBean.filtro.status}"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItems value="#{pesquisaChequeBean.status()}" var="status"
+						itemValue="#{status}" itemLabel="#{status.descricao}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Bom-para" />
+				<p:calendar id="idBomParaInicio" placeholder="A partir de"
+					value="#{pesquisaChequeBean.filtro.bomParaInicio}" locale="pt"
+					pattern="dd/MM/yyyy" />
+
+				<p:outputLabel value="Bom-para" />
+				<p:calendar id="idBomParaFim" placeholder="Até"
+					value="#{pesquisaChequeBean.filtro.bomParaFim}" locale="pt"
+					pattern="dd/MM/yyyy" />
+
+			</p:panelGrid>
+
+			<p:messages id="messages" showDetail="false" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:dataTable id="idTab" value="#{pesquisaChequeBean.listaCheques}"
+				var="item" style="margin-top: 20px; margin-left: 10px ; width: 80% "
+				reflow="true">
+
+				<p:column headerText="Número" style="text-align: center; width: 10%">
+					<h:outputText value="#{item.numero}" />
+				</p:column>
+
+				<p:column headerText="Origem" style="text-align: center">
+					<h:outputText value="#{item.origem} #{item.funcionario.nome}" />
+				</p:column>
+
+				<p:column headerText="Valor" style="text-align: center">
+					<h:outputText value="#{item.valor}">
+						<f:convertNumber type="currency" locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Data Cadastro"
+					style="text-align: center; width: 12%">
+					<h:outputText value="#{item.dataCadastro}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Bom para"
+					style="text-align: center; width: 10%">
+					<h:outputText value="#{item.bomPara}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Status" style="text-align: center; width: 10%">
+					<h:outputText value="#{item.status.descricao}" />
+				</p:column>
+
+				<p:column headerText="Ações" style="text-align: center; width: 15%">
+					<p:commandButton icon="ui-icon-pencil" title="Editar"
+						process="@this" update="idFormEdita"
+						style="margin-left: 4px; width: 45%"
+						actionListener="#{pesquisaChequeBean.setChequeEdicao(item)}"
+						onclick="PF('editaCheque').show()" />
+
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{pesquisaChequeBean.setChequeExclusao(item)}"
+						style="margin-left: 5px; width: 45%"
+						update="idConfirmDialogExlusao" 
+						oncomplete="PF('confirmExclusao').show()" />
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+
+		<style>
+.rotulo5 {
+	width: 20%;
+	height: 30px;
+}
+
+.campo5 {
+	width: 70%;
+}
+</style>
+
+
+		<p:dialog widgetVar="editaCheque" header="Editar Cheque"
+			resizable="false" modal="true">
+			<h:form id="idFormEdita">
+
+				<div id="divPrincipal" style="overflow: hidden; width: 100%">
+					<div id="divEsquerda"
+						style="width: 45%; overflow: hidden; float: left; margin-top: 15px">
+						<p:panelGrid id="gridEsquerdo" columns="2"
+							style="margin-top: 15px; width: 95%" styleClass="semBorda"
+							columnClasses="rotulo5, campo5">
+
+							<p:outputLabel value="Número" for="idNumero" />
+							<h:inputText id="idNumero"
+								value="#{pesquisaChequeBean.chequeEdicao.numero}"
+								style="width: 100%" required="true" />
+
+							<p:outputLabel value="Banco" />
+							<p:selectOneMenu id="Banco"
+								value="#{pesquisaChequeBean.chequeEdicao.banco}"
+								style="width: 93%" converter="omnifaces.SelectItemsConverter">
+								<f:selectItems value="#{pesquisaChequeBean.listaBancos()}"
+									var="banco" itemValue="#{banco}" itemLabel="#{banco.nome}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Agência" for="idAgencia" />
+							<h:inputText id="idAgencia" required="true"
+								value="#{pesquisaChequeBean.chequeEdicao.agencia}"
+								style="width: 100%" />
+
+							<p:outputLabel value="Conta" for="idConta" />
+							<h:inputText id="idConta" style="width: 100%" required="true"
+								value="#{pesquisaChequeBean.chequeEdicao.conta}" />
+
+							<p:outputLabel value="Valor" for="idValor" />
+							<p:inputNumber id="idValor" style="width: 100%" required="true"
+								decimalSeparator="," thousandSeparator="."
+								value="#{pesquisaChequeBean.chequeEdicao.valor}" />
+
+							<p:outputLabel value="Obs" />
+							<p:inputTextarea
+								value="#{pesquisaChequeBean.chequeEdicao.observacao}"
+								style="width: 100%" />
+
+						</p:panelGrid>
+
+					</div>
+
+					<div id="divDireita"
+						style="width: 45%; overflow: hidden; float: left; margin-left: 10px; margin-top: 15px">
+
+						<p:panelGrid id="gridDireito" columns="2"
+							style="margin-top: 15px; width: 95%" styleClass="semBorda"
+							columnClasses="rotulo5, campo5">
+
+							<p:outputLabel value="Bom para" for="idBomPara" />
+							<p:calendar id="idBomPara"
+								value="#{pesquisaChequeBean.chequeEdicao.bomPara}"
+								required="true" locale="pt" pattern="dd/MM/yyyy" />
+
+							<p:outputLabel value="Nome" for="idNome" />
+							<p:inputText id="idNome"
+								placeholder="Nome que esta escrito no cheque!"
+								style="width: 100%" required="true"
+								value="#{pesquisaChequeBean.chequeEdicao.nome}" />
+
+							<p:outputLabel value="Cheque de vendedor" />
+							<p:selectBooleanCheckbox
+								value="#{pesquisaChequeBean.chequeDeVendedor}">
+								<p:ajax process="@this" partialSubmit="true"
+									update="gridDireito" />
+							</p:selectBooleanCheckbox>
+
+							<p:outputLabel value="Vendedor" for="idVendedor"
+								rendered="#{pesquisaChequeBean.chequeDeVendedor}" />
+							<p:selectOneMenu id="idVendedor" style="width: 95%"
+								required="true"
+								rendered="#{pesquisaChequeBean.chequeDeVendedor}"
+								value="#{pesquisaChequeBean.chequeEdicao.funcionario}"
+								converter="omnifaces.SelectItemsConverter">
+								<f:selectItem itemLabel="Selecione" itemDisabled="true" />
+								<f:selectItems value="#{pesquisaChequeBean.vendedores()}"
+									var="funcionario" itemValue="#{funcionario}"
+									itemLabel="#{funcionario.nome}" />
+								<p:ajax process="@this" partialSubmit="true" update="idCliente" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Cliente" for="idCliente"
+								rendered="#{pesquisaChequeBean.chequeDeVendedor}" />
+							<p:selectOneMenu id="idCliente"
+								value="#{pesquisaChequeBean.chequeEdicao.cliente}"
+								style="width: 95%" required="true"
+								rendered="#{pesquisaChequeBean.chequeDeVendedor}" filter="true"
+								filterMatchMode="contains">
+
+								<f:selectItems value="#{pesquisaChequeBean.clientes()}"
+									var="cliente" itemValue="#{cliente}"
+									itemLabel="#{cliente.nome}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Origem" for="idOrigem"
+								rendered="#{!pesquisaChequeBean.chequeDeVendedor}" />
+							<p:inputText id="idOrigem"
+								value="#{pesquisaChequeBean.chequeEdicao.origem}"
+								style="width: 100%" required="true"
+								placeholder="De quem você recebeu o cheque"
+								rendered="#{!pesquisaChequeBean.chequeDeVendedor}" />
+
+
+
+						</p:panelGrid>
+
+					</div>
+				</div>
+
+				<p:commandButton value="Salvar"
+					actionListener="#{pesquisaChequeBean.editar()}"
+					update="idFormPesquisaCheque:idTab"
+					oncomplete="PF('editaCheque').hide(); return false;" />
+			</h:form>
+		</p:dialog>
+
+
+		<p:confirmDialog id="idConfirmDialogExlusao"
+			widgetVar="confirmExclusao" header="Exclusão de Cheque"
+			message="Quer realmente excluir o cheque no valor de : #{pesquisaChequeBean.chequeExclusao.valor}?">
+			<h:form id="formExclusao">
+				<p:messages />
+
+				<p:commandButton value="Sim" actionListener="#{pesquisaChequeBean.excluir}"
+					update="idFormPesquisaCheque:idTab" process="@this"
+					oncomplete="PF('confirmExclusao').hide() return false;" />
+				<p:commandButton value="Não"
+					onclick="PF('confirmExclusao').hide(); return false;"
+					process="@this" />
+			</h:form>
+		</p:confirmDialog>
+
+
+
+
+
+	</ui:define>
+</ui:composition>

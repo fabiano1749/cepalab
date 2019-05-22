@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.cepalab.sistemaVendas.cadastro.dominio.GenericDTO;
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
@@ -55,6 +56,11 @@ public class RecebimentoInadiplente extends GenericDTO {
 		return valor;
 	}
 
+	@Transient
+	public Double getValorDouble() {
+		return valor.doubleValue();
+	}
+	
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
@@ -106,4 +112,10 @@ public class RecebimentoInadiplente extends GenericDTO {
 	public void setFormaPagamento(FormaPagamento formaPagamento) {
 		this.formaPagamento = formaPagamento;
 	}
+	
+	@Transient
+	public boolean isDinheiro() {
+		return this.formaPagamento.equals(FormaPagamento.DINHEIRO);
+	}
+	
 }

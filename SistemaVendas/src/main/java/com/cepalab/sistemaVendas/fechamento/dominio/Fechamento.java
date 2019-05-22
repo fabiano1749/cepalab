@@ -2,6 +2,7 @@ package com.cepalab.sistemaVendas.fechamento.dominio;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,8 @@ import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.RecolhidaRessarcida;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoProduto;
 import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
+import com.cepalab.sistemaVendas.operacao.dominio.Amostra;
+import com.cepalab.sistemaVendas.operacao.dominio.Consignacao;
 import com.cepalab.sistemaVendas.operacao.dominio.CustoViagem;
 import com.cepalab.sistemaVendas.operacao.dominio.DescontoSalario;
 import com.cepalab.sistemaVendas.operacao.dominio.DespesaVendedor;
@@ -19,6 +22,7 @@ import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
 import com.cepalab.sistemaVendas.operacao.dominio.RecebimentoInadiplente;
 import com.cepalab.sistemaVendas.operacao.dominio.ResumoConsignacaoVenda;
 import com.cepalab.sistemaVendas.repository.ComissoesRecolhidasRessarcidas;
+import com.cepalab.sistemaVendas.repository.Consignados;
 import com.cepalab.sistemaVendas.repository.CustosViagens;
 import com.cepalab.sistemaVendas.repository.DescontosSalarios;
 import com.cepalab.sistemaVendas.repository.DespesasVendedores;
@@ -34,6 +38,7 @@ public class Fechamento implements Serializable {
 	private Date fim;
 
 	private List<Operacao> listaOperacoes = new ArrayList<>();
+	private List<Operacao> listaOperacoesComFreteNoPeriodo = new ArrayList<>();
 	private List<FormaPagamentoValor> listaReceitaFormaPagamento;
 	private List<ResumoConsignacaoVenda> listaResumoConsignacaoVenda = new ArrayList<>();
 	private List<AberturaProduto> listaAberturas = new ArrayList<>();
@@ -43,7 +48,10 @@ public class Fechamento implements Serializable {
 	private List<ComissaoRecolhidaRessarcida> listaRecolhidaRessarcida = new ArrayList<>();
 	private List<DescontoSalario> listaDescontosSalarios = new ArrayList<>();
 	private List<RecebimentoInadiplente> listaRecebimentoInadimplente = new ArrayList<>();
-
+	private List<Consignacao> listaAumentoConsignacao = new  ArrayList<>();
+	private List<Amostra> listaAmostras = new ArrayList<>();
+	
+	
 	private BigDecimal faturamento = BigDecimal.ZERO;
 	private BigDecimal comissoesTotais = BigDecimal.ZERO;
 	private BigDecimal comissaoVendas = BigDecimal.ZERO;
@@ -64,6 +72,7 @@ public class Fechamento implements Serializable {
 	private BigDecimal salarioDescontado = BigDecimal.ZERO;
 	private BigDecimal recebimentoInadimplente = BigDecimal.ZERO;
 	private BigDecimal diferencaProdutos = BigDecimal.ZERO;
+	private BigDecimal descontoComissaoFrete = BigDecimal.ZERO;
 	private String observacao;
 
 	private int aberturas3p;
@@ -81,7 +90,8 @@ public class Fechamento implements Serializable {
 		this.listaRecolhidaRessarcida = new ArrayList<>();
 		this.listaDescontosSalarios = new ArrayList<>();
 		this.listaRecebimentoInadimplente = new ArrayList<>();
-
+		this.listaAumentoConsignacao = new  ArrayList<>();
+		
 		faturamento = BigDecimal.ZERO;
 		comissoesTotais = BigDecimal.ZERO;
 		comissaoVendas = BigDecimal.ZERO;
@@ -102,6 +112,7 @@ public class Fechamento implements Serializable {
 		salarioDescontado = BigDecimal.ZERO;
 		recebimentoInadimplente = BigDecimal.ZERO;
 		diferencaProdutos = BigDecimal.ZERO;
+		descontoComissaoFrete = BigDecimal.ZERO;
 		observacao = new String();
 
 		aberturas3p = 0;
@@ -111,23 +122,31 @@ public class Fechamento implements Serializable {
 
 	public void start(Operacoes operacoes, CustosViagens custos, DespesasVendedores despesas,
 			ComissoesRecolhidasRessarcidas recolhidaRessarcida, DescontosSalarios descontos,
-			RecebimentosInadiplentes recebimentoInadimplente, List<TipoProduto> tiposProdutos) {
+			RecebimentosInadiplentes recebimentoInadimplente, List<TipoProduto> tiposProdutos,
+			Consignados consignados) {
 		limpa();
 
 		this.listaOperacoes = operacoes.resumo(funcionario, inicio, fim);
+		this.listaOperacoesComFreteNoPeriodo = operacoes.operacoesComFrete(funcionario, inicio, fim);
 		criaListaReceitasFormaPagamento();
 		this.listaCustos = custos.porFuncionario(funcionario, inicio, fim);
 		this.listaDespesas = despesas.porFuncionario(funcionario, inicio, fim);
 		this.listaRecolhidaRessarcida = recolhidaRessarcida.porFuncionario(funcionario, inicio, fim);
 		this.listaDescontosSalarios = descontos.porFuncionario(funcionario, inicio, fim);
 		this.listaRecebimentoInadimplente = recebimentoInadimplente.porFuncionario(funcionario, inicio, fim);
+		
+		this.listaAumentoConsignacao = consignados.aumentoPorFuncionario(funcionario, inicio, fim);
+		
+		calculaDescontoComissaoFrete();
 		calculaResumo(tiposProdutos);
 	}
 
 	public void criaListaReceitasFormaPagamento() {
 		for (FormaPagamento f : FormaPagamento.values()) {
-			FormaPagamentoValor r = new FormaPagamentoValor(f, BigDecimal.ZERO);
-			listaReceitaFormaPagamento.add(r);
+			if (f != FormaPagamento.NENHUM) {
+				FormaPagamentoValor r = new FormaPagamentoValor(f, BigDecimal.ZERO);
+				listaReceitaFormaPagamento.add(r);
+			}
 		}
 
 	}
@@ -142,13 +161,50 @@ public class Fechamento implements Serializable {
 		// calculaRepasse();
 	}
 
+	public BigDecimal comissaoVendasPorFomaPagamento() {
+		BigDecimal comissaoDinheiro = getComissaoFormaPagamento(FormaPagamento.DINHEIRO);
+		BigDecimal comissaoBoleto = getComissaoFormaPagamento(FormaPagamento.BOLETO);
+		BigDecimal comissaoCheque = getComissaoFormaPagamento(FormaPagamento.CHEQUE);
+		return  comissaoDinheiro.add(comissaoCheque).add(comissaoBoleto);
+	}
+	
+	public String comissoesFormatadas() {
+		DecimalFormat df = new DecimalFormat("#,###.00");
+		return df.format(comissaoVendasPorFomaPagamento().doubleValue()); 
+	}
+		
+	public String totalInadimplennteFormatado() {
+		double soma = listaRecebimentoInadimplente.stream().map(x -> x.getValor()).mapToDouble(BigDecimal::doubleValue).sum();
+		DecimalFormat df = new DecimalFormat("#,###.00");
+		return df.format(soma);
+	}
+	
+	
+	private void addComissaoListaReceitaFormaPagamento() {
+		if(funcionario.getTipoVendedor().isComissaoPorFormaPagamento()) {
+			for(FormaPagamentoValor f : listaReceitaFormaPagamento) {
+				f.setTaxaComissao(funcionario.getTipoVendedor().taxaComissaoFormaPagamento(f.getForma()));
+				f.setComissao(f.getValor().multiply(f.getTaxaComissao()));
+			}
+		}
+	}
+	
 	public void calculaValoresFechamento() {
 
+		addComissaoListaReceitaFormaPagamento();
+		
 		// Cálculo das comissões totais
+		if(funcionario.getTipoVendedor().isComissaoPorFormaPagamento()) {
+			this.setComissaoVendas(comissaoVendasPorFomaPagamento());
+		}
+		
 		comissoesTotais = comissoesTotais.add(comissaoVendas).add(comissaoAberturas).add(comissaoColocacao);
-
+		
+		
 		// Cálculo do faturamento premiação
-		faturamentoPremiacao = faturamentoPremiacao.add(faturamento).add(premiacaoAberturas).add(premiacaoColocacao);
+		// TODO Desabilitado na demanda do dia 19-05-2019
+		// Deichando comentado porque pode voltar a ser usado
+		// faturamentoPremiacao = faturamentoPremiacao.add(faturamento).add(premiacaoAberturas).add(premiacaoColocacao);
 
 		// Implementar calculo do repasse
 
@@ -184,19 +240,28 @@ public class Fechamento implements Serializable {
 			}
 		}
 
+		recebimentoInadimplente = FormaPagamentoValor.dinheiroInadimplentes(listaRecebimentoInadimplente);
+		
 		// Cálculo dos recebimentos inadimplentes
-		if (listaRecebimentoInadimplente != null && listaRecebimentoInadimplente.size() != 0) {
-			for (RecebimentoInadiplente r : listaRecebimentoInadimplente) {
-				if (r.getFormaPagamento()!= null && r.getFormaPagamento().equals(FormaPagamento.DINHEIRO)) {
-					recebimentoInadimplente = recebimentoInadimplente.add(r.getValor());
-				}
-				else {
-					incrementaReceitaFormaPagamento(r);
-				}
-			}
-		}
+		//Dessa forma a receita inadimplente em cheqhe era somado junto com as receitas de cheque da 
+		//tabela de resumo
+		
+//		if (listaRecebimentoInadimplente != null && listaRecebimentoInadimplente.size() != 0) {
+//			for (RecebimentoInadiplente r : listaRecebimentoInadimplente) {
+//				if (r.getFormaPagamento() != null && r.getFormaPagamento().equals(FormaPagamento.DINHEIRO)) {
+//					recebimentoInadimplente = recebimentoInadimplente.add(r.getValor());
+//				} 
+//				else {
+//					incrementaReceitaFormaPagamento(r);
+//				}
+//			}
+//		}
 	}
 
+	public List<FormaPagamentoValor> getInadimplentes(){
+		return FormaPagamentoValor.resumoFormaPagamento(listaRecebimentoInadimplente);
+	}
+	
 	public void calculaRepasse() {
 		this.repasse = BigDecimal.ZERO;
 
@@ -204,32 +269,61 @@ public class Fechamento implements Serializable {
 		this.repasse = this.repasse.subtract(premiacao);
 		this.repasse = this.repasse.subtract(custosTotais);
 		this.repasse = this.repasse.subtract(comissoesRessarcidas);
+		this.repasse = this.repasse.add(descontoComissaoFrete);
 		this.repasse = this.repasse.add(despesasTotais);
 		this.repasse = this.repasse.add(comissoesRecolhidas);
 		this.repasse = this.repasse.add(salarioDescontado);
 		this.repasse = this.repasse.add(recebimentoInadimplente);
 		this.repasse = this.repasse.add(diferencaProdutos);
-		this.repasse = this.repasse.add(receitaDinheiro());
+		this.repasse = this.repasse.add(getReceitaFormaPagamento(FormaPagamento.DINHEIRO));
 	}
 
-	public BigDecimal receitaDinheiro() {
+//	public BigDecimal receitaDinheiro() {
+//		for (FormaPagamentoValor f : listaReceitaFormaPagamento) {
+//			if (f.getForma().equals(FormaPagamento.DINHEIRO)) {
+//				return f.getValor();
+//			}
+//		}
+//		return BigDecimal.ZERO;
+//	}
+
+	public BigDecimal getReceitaFormaPagamento(FormaPagamento forma) {
 		for (FormaPagamentoValor f : listaReceitaFormaPagamento) {
-			if (f.getForma().equals(FormaPagamento.DINHEIRO)) {
+			if (f.getForma().equals(forma)) {
 				return f.getValor();
 			}
 		}
 		return BigDecimal.ZERO;
 	}
 	
-	//Coloca as receitas de recebimento inadimplente que nãosão em espécies na lista de receitaFormaPagamento
+	public BigDecimal getComissaoFormaPagamento(FormaPagamento forma) {
+		if(listaReceitaFormaPagamento != null && !listaReceitaFormaPagamento.isEmpty()) {
+			for (FormaPagamentoValor f : listaReceitaFormaPagamento) {
+				if (f.getForma().equals(forma)) {
+					return f.getValor().multiply(funcionario.getTipoVendedor().taxaComissaoFormaPagamento(forma));
+				}
+			}
+		}
+		return BigDecimal.ZERO;
+	}
+	
+	// Coloca as receitas de recebimento inadimplente que não são em espécies na
+	// lista de receitaFormaPagamento
 	public void incrementaReceitaFormaPagamento(RecebimentoInadiplente r) {
-		for(FormaPagamentoValor f: listaReceitaFormaPagamento) {
-			if(f.getForma().equals(r.getFormaPagamento())) {
+		for (FormaPagamentoValor f : listaReceitaFormaPagamento) {
+			if (f.getForma().equals(r.getFormaPagamento())) {
 				f.incrementaReceita(r.getValor());
 			}
 		}
 	}
-	
+
+	public void calculaDescontoComissaoFrete() {
+		if (listaOperacoesComFreteNoPeriodo != null) {
+			for (Operacao o : listaOperacoesComFreteNoPeriodo) {
+				descontoComissaoFrete = descontoComissaoFrete.add(o.descontoComissaoFrete());
+			}
+		}
+	}
 
 	public void incrementaComissaoVendas(BigDecimal valor) {
 		comissaoVendas = comissaoVendas.add(valor);
@@ -375,6 +469,11 @@ public class Fechamento implements Serializable {
 		return faturamento;
 	}
 
+	public String getFaturamentoFormatado() {
+		DecimalFormat df = new DecimalFormat("#,###.00");
+		return df.format(getFaturamento().doubleValue()); 
+	}
+	
 	public void setFaturamento(BigDecimal faturamento) {
 		this.faturamento = faturamento;
 	}
@@ -539,4 +638,37 @@ public class Fechamento implements Serializable {
 		this.aberturas1p = aberturas1p;
 	}
 
+	public List<Operacao> getListaOperacoesComFreteNoPeriodo() {
+		return listaOperacoesComFreteNoPeriodo;
+	}
+
+	public void setListaOperacoesComFreteNoPeriodo(List<Operacao> listaOperacoesComFreteNoPeriodo) {
+		this.listaOperacoesComFreteNoPeriodo = listaOperacoesComFreteNoPeriodo;
+	}
+
+	public List<Consignacao> getListaAumentoConsignacao() {
+		return listaAumentoConsignacao;
+	}
+
+	public void setListaAumentoConsignacao(List<Consignacao> listaAumentoConsignacao) {
+		this.listaAumentoConsignacao = listaAumentoConsignacao;
+	}
+
+	public BigDecimal getDescontoComissaoFrete() {
+		return descontoComissaoFrete;
+	}
+
+	public void setDescontoComissaoFrete(BigDecimal descontoComissaoFrete) {
+		this.descontoComissaoFrete = descontoComissaoFrete;
+	}
+
+	public List<Amostra> getListaAmostras() {
+		return listaAmostras;
+	}
+
+	public void setListaAmostras(List<Amostra> listaAmostras) {
+		this.listaAmostras = listaAmostras;
+	}
+	
+	
 }

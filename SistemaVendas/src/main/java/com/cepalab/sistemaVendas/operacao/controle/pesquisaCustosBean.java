@@ -48,10 +48,10 @@ public class pesquisaCustosBean implements Serializable {
 	@PostConstruct
 	public void inicio() {
 		filtro = new CustosViagemFilter();
-		if (!isAdministrador()) {
+		if (isVendedor()) {
 			filtro.setFuncionario(seg.UsuarioLogado());
 		} else {
-			listaFuncionarios = fun.funcionarios();
+			listaFuncionarios = fun.vendedorAtivo();
 		}
 
 	}
@@ -81,15 +81,32 @@ public class pesquisaCustosBean implements Serializable {
 		RequestContext.getCurrentInstance().openDialog("/dialogos/custosDialogo", opcoes, params);
 	}
 
-	public boolean isAdministrador() {
+	public boolean isVendedor() {
 		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
-			if (g.getNome().equals("ADMINISTRADORES")) {
+			if (g.getNome().equals("VENDEDORES")) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+	public boolean isRoot() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("ROOT")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean podeExcluir() {
+		if(isRoot() || isVendedor()) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 	public CustosViagemFilter getFiltro() {
 		return filtro;
 	}

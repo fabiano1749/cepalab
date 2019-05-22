@@ -2,6 +2,7 @@ package com.cepalab.sistemaVendas.repository.filter;
 
 import java.io.Serializable;
 
+import com.cepalab.sistemaVendas.cadastro.dominio.EstadosBrasileiros;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 import com.cepalab.sistemaVendas.cadastro.dominio.Rota;
 
@@ -13,7 +14,9 @@ public class ClienteFilter implements Serializable {
 	private String nome;
 	private Funcionario funcionario;
 	private Rota rota;
-	
+	private EstadosBrasileiros uf;
+	private String cidade;
+	private String cnpj;
 	
 	public Long getCodigo() {
 		return codigo;
@@ -47,5 +50,29 @@ public class ClienteFilter implements Serializable {
 		this.funcionario = funcionario;
 	}
 
+	public EstadosBrasileiros getUf() {
+		return uf;
+	}
+
+	public void setUf(EstadosBrasileiros uf) {
+		this.uf = uf;
+	}
+
+	public String getCidade() {
+		return cidade;
+	}
+
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
+	}
+
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+	
 	
 }

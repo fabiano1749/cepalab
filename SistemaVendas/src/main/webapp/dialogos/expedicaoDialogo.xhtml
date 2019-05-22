@@ -25,6 +25,7 @@
 			<p:toolbarGroup>
 
 				<p:commandButton value="Salvar" id="idBotaoSalvar"
+					disabled="#{expedicaoBean.podeSalvar() == false}"
 					actionListener="#{expedicaoBean.salvar}" style="margin-left: 5px;"
 					process="@form" action="#{pesquisaExpedicaoBean.fechaDialogo}" />
 
@@ -41,7 +42,8 @@
 			<p:selectOneMenu id="vendedor" required="true"
 				requiredMessage="Funcionario não informado!"
 				value="#{expedicaoBean.item.funcionario}"
-				converter="omnifaces.SelectItemsConverter">
+				converter="omnifaces.SelectItemsConverter"
+				disabled="#{expedicaoBean.podeEditarVendedorDataSaida() == false}">
 				<f:selectItems value="#{expedicaoBean.listaFuncionarios}" var="fun"
 					itemValue="#{fun}" itemLabel="#{fun.nome}" />
 			</p:selectOneMenu>
@@ -49,65 +51,128 @@
 			<p:outputLabel value="Data" for="idData" />
 			<p:calendar id="idData" value="#{expedicaoBean.item.abertura}"
 				required="true" requiredMessage="Data não informada!" locale="pt"
-				pattern="dd/MM/yyyy">
+				pattern="dd/MM/yyyy"
+				disabled="#{expedicaoBean.podeEditarVendedorDataSaida() == false}">
 			</p:calendar>
 
 			<p:outputLabel value="Status" />
 			<p:selectOneMenu id="Status" value="#{expedicaoBean.item.status}"
-				converter="omnifaces.SelectItemsConverter">
+				converter="omnifaces.SelectItemsConverter"
+				disabled="#{expedicaoBean.podeFecharStatus() == false}">
 				<f:selectItems value="#{expedicaoBean.status()}" var="status"
 					itemValue="#{status}" itemLabel="#{status.descricao}" />
-				<p:ajax listener="#{expedicaoBean.statusFechado()}"
-					update="idPngDados" process="@this idPngDados" />
+				<p:ajax listener="#{expedicaoBean.statusFechado}"
+					update="idPngDados @form" process="@this idPngDados" />
 			</p:selectOneMenu>
 
-			<p:outputLabel value="Data do fechamento"
+			<p:outputLabel value="Data do fechamento" for="idDataFechamento"
 				rendered="#{expedicaoBean.statusFechado}" />
 			<p:calendar id="idDataFechamento"
-				value="#{expedicaoBean.item.acerto}" locale="pt"
-				rendered="#{expedicaoBean.statusFechado}" pattern="dd/MM/yyyy" />
+				value="#{expedicaoBean.item.acerto}" locale="pt" required="true"
+				requiredMessage="Data do fechamento não informada!"
+				rendered="#{expedicaoBean.statusFechado}" pattern="dd/MM/yyyy"
+				disabled="#{expedicaoBean.isVendedor()==true}">
+				<p:ajax process="@this" partialSubmit="true" />
+			</p:calendar>
 
 		</p:panelGrid>
 
-		<p:dataTable id="idTabela" value="#{expedicaoBean.item.expedProdutos}"
-			var="item" style="margin-top: 20px ; width: 50% " reflow="true"
-			editable="true" editMode="cell">
+		<p:panel id="idPainelGeral"
+			style="width: 97%; text-align: center; overflow: hidden;">
+			<p:panel id="idPanel1"
+				header="Quantidades de saída e chegada de produtos"
+				style="width: 55%; text-align: center; float: left">
 
-			<p:column headerText="Produto" style="text-align: center">
-				<h:outputText value="#{item.produto.nome}" />
-			</p:column>
+				<p:dataTable id="idTabela"
+					value="#{expedicaoBean.item.expedProdutos}" var="item"
+					style="margin-top: 20px ; width: 100% " reflow="true"
+					editable="true" editMode="cell" sortBy="#{item.produto.posicao}">
 
-			<p:column headerText="Quantidade - Saída"
-				style="font-size: small; text-align: center">
-				<p:cellEditor>
-					<f:facet name="output">
-						<h:outputText value="#{item.saida}" id="outputSaida" />
-					</f:facet>
-					<f:facet name="input">
-						<p:inputText value="#{item.saida}" id="inputSaida">
-							<p:ajax process="@this" partialSubmit="true" update="outputSaida" />
-						</p:inputText>
-					</f:facet>
-				</p:cellEditor>
-			</p:column>
+					<p:column headerText="Produto" sortBy="#{item.produto.posicao}"
+						style="text-align: center; width: 40%">
+						<h:outputText value="#{item.produto.nome}" />
+					</p:column>
 
-			<p:column headerText="Quantidade - Chegada"
-				style="font-size: small; text-align: center">
-				<p:cellEditor>
-					<f:facet name="output">
-						<h:outputText value="#{item.chegada}" id="outputChegada" />
-					</f:facet>
-					<f:facet name="input">
-						<p:inputText value="#{item.chegada}" id="inputChegada">
-							<p:ajax process="@this" partialSubmit="true"
-								update="outputChegada" />
-						</p:inputText>
-					</f:facet>
-				</p:cellEditor>
-			</p:column>
+					<p:column headerText="Quantidade - Saída"
+						style="font-size: small; text-align: center;  width: 30%">
+						<p:cellEditor
+							disabled="#{expedicaoBean.podeEditarSaida() == false}">
+							<f:facet name="output">
+								<h:outputText value="#{item.saida}" id="outputSaida" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{item.saida}" id="inputSaida">
+									<p:ajax process="@this" partialSubmit="true"
+										update="outputSaida" />
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
 
-		</p:dataTable>
+					<p:column headerText="Quantidade - Chegada"
+						style="font-size: small; text-align: center;  width: 30%">
+						<p:cellEditor
+							disabled="#{expedicaoBean.podeEditarChegada() == false}">
+							<f:facet name="output">
+								<h:outputText value="#{item.chegada}" id="outputChegada" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText value="#{item.chegada}" id="inputChegada">
+									<p:ajax process="@this" partialSubmit="true"
+										update="outputChegada" />
+								</p:inputText>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
 
+				</p:dataTable>
+
+			</p:panel>
+
+			<p:panel id="idPanel2" header="Conferências / Vendedor"
+				style="width: 40%;text-align: center; float: right ">
+				<p:panelGrid id="pnlConferencia" columns="4">
+					<p:outputLabel value="Descrição" />
+					<p:outputLabel value="De acordo" />
+					<p:outputLabel value="Senha" />
+					<p:outputLabel value="" />
+
+					<p:outputLabel value="Saídas" />
+					<p:selectBooleanCheckbox value="#{expedicaoBean.confirmaSaida}"
+						disabled="#{expedicaoBean.podeConfirmarSaida() == false}">
+						<p:ajax process="@this" partialSubmit="true" />
+					</p:selectBooleanCheckbox>
+
+					<h:inputSecret value="#{expedicaoBean.senhaVendedor}"
+						disabled="#{expedicaoBean.podeConfirmarSaida() == false}">
+						<p:ajax process="@this" partialSubmit="true" />
+					</h:inputSecret>
+
+					<p:commandButton value="Confirma"
+						disabled="#{expedicaoBean.podeConfirmarSaida() == false}"
+						actionListener="#{expedicaoBean.confirmaSaida}" />
+
+
+					<p:outputLabel value="Chegadas" />
+					<p:selectBooleanCheckbox value="#{expedicaoBean.confirmaChegada}"
+						disabled="#{expedicaoBean.podeConfirmarChegada() == false}" />
+					<h:inputSecret value="#{expedicaoBean.senhaVendedor}"
+						disabled="#{expedicaoBean.podeConfirmarChegada() == false}">
+						<p:ajax process="@this" partialSubmit="true" />
+					</h:inputSecret>
+
+					<p:commandButton value="Confirma"
+						disabled="#{expedicaoBean.podeConfirmarChegada() == false}"
+						actionListener="#{expedicaoBean.confirmaChegada}"
+						action="#{pesquisaExpedicaoBean.fechaDialogo}" />
+				</p:panelGrid>
+
+				<p:commandButton value="Liberar Edição"
+					disabled="#{expedicaoBean.podeLiberarEdicao() == false}"
+					actionListener="#{expedicaoBean.liberarEdicao()}" update="@form" />
+
+			</p:panel>
+		</p:panel>
 	</h:form>
 </h:body>
 

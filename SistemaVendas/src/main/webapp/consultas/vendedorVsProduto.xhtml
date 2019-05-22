@@ -39,7 +39,7 @@
 
 			<p:dataTable var="produto" id="tbl"
 				value="#{consolidadoProdutoVendedorBean.listaProdutos}"
-				style="margin-top:10px; font-size: 9px" >
+				style="margin-top:10px; font-size: 9px" stickyHeader="true">
 
 				<p:columnGroup type="header">
 					<p:row>
@@ -65,8 +65,8 @@
 				<p:columns
 					value="#{consolidadoProdutoVendedorBean.listaFuncionarios}"
 					var="fun">
-					<p:panelGrid columns="2" columnClasses="grid10, grid90" 
-						style="width:115%; text-align: left; margin-left: -6px; margin-right: 0px" >
+					<p:panelGrid columns="2" columnClasses="grid10, grid90"
+						style="width:115%; text-align: left; margin-left: -6px; margin-right: 0px">
 
 						<p:outputLabel value="Qt" />
 						<h:outputText
@@ -76,7 +76,7 @@
 						<p:outputLabel value="R$ " />
 						<h:outputText
 							value="#{consolidadoProdutoVendedorBean.consolidado.receitaPorProduto(fun, produto)}">
-							<f:convertNumber locale="pt_BR" maxFractionDigits="2"/>
+							<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
 						</h:outputText>
 					</p:panelGrid>
 
@@ -84,15 +84,20 @@
 				</p:columns>
 
 
-				<p:columnGroup type="footer" >
+				<p:columnGroup type="footer">
 					<p:row>
-						<p:column colspan="1" style="text-align:left" 
+						<p:column colspan="1" style="text-align:left"
 							footerText="Faturamento" />
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.faturamentoString()}"
-								style="text-align:left" />
+							<p:column style="text-align:left">
+								<f:facet name="footer">
+									<h:outputText value="#{fecha.faturamento}">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
 						</ui:repeat>
 					</p:row>
 
@@ -101,8 +106,13 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.receitaBoletoString()}"
-								style="text-align:left" />
+							<p:column style="text-align:left">
+								<f:facet name="footer">
+									<h:outputText value="#{fecha.receitaBoleto}">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
 						</ui:repeat>
 					</p:row>
 
@@ -111,8 +121,13 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.receitaChequeString()}"
-								style="text-align:left" />
+							<p:column style="text-align:left">
+								<f:facet name="footer">
+									<h:outputText value="#{fecha.receitaCheque}">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
 						</ui:repeat>
 					</p:row>
 
@@ -122,8 +137,13 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.receitaDinheiroString()}"
-								style="text-align:left" />
+							<p:column style="text-align:left">
+								<f:facet name="footer">
+									<h:outputText value="#{fecha.receitaDinheiro}">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
 						</ui:repeat>
 					</p:row>
 
@@ -133,8 +153,13 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.comissoesTotaisString()}"
-								style="text-align:left" />
+							<p:column style="text-align:left">
+								<f:facet name="footer">
+									<h:outputText value="#{fecha.comissoesTotais}">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
 						</ui:repeat>
 					</p:row>
 
@@ -144,8 +169,13 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.custoViagemString()}"
-								style="text-align:left" />
+							<p:column style="text-align:left">
+								<f:facet name="footer">
+									<h:outputText value="#{fecha.custosViagem}">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
 						</ui:repeat>
 					</p:row>
 
@@ -155,8 +185,13 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.faturamentoLiquidoString()}"
-								style="text-align:left" />
+							<p:column style="text-align:left">
+								<f:facet name="footer">
+									<h:outputText value="#{fecha.faturamentoLiquido}">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
+							</p:column>
 						</ui:repeat>
 					</p:row>
 
@@ -166,9 +201,12 @@
 						<ui:repeat
 							value="#{consolidadoProdutoVendedorBean.consolidado.listaFechamento}"
 							var="fecha">
-							<p:column footerText="R$ #{fecha.faturamentoPremiacaoString()}"
-								style="text-align:left">
-
+							<p:column style="text-align:left">
+								<f:facet name="footer">
+									<h:outputText value="#{fecha.faturamentoPremiacao}">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" />
+									</h:outputText>
+								</f:facet>
 							</p:column>
 						</ui:repeat>
 					</p:row>

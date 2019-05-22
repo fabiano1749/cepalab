@@ -9,12 +9,14 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.cepalab.sistemaVendas.cadastro.dominio.Grupo;
 import com.cepalab.sistemaVendas.cadastro.dominio.PodeConsignar;
 import com.cepalab.sistemaVendas.cadastro.dominio.Produto;
 import com.cepalab.sistemaVendas.operacao.dominio.AberturaProduto;
 import com.cepalab.sistemaVendas.operacao.dominio.Consignacao;
 import com.cepalab.sistemaVendas.repository.Consignados;
 import com.cepalab.sistemaVendas.repository.Produtos;
+import com.cepalab.sistemaVendas.security.Seguranca;
 import com.cepalab.sistemaVendas.util.jsf.FacesUtil;
 
 @Named
@@ -26,6 +28,7 @@ public class ConsignacaoBean implements Serializable {
 	private Consignacao consignacao = new Consignacao();
 	private List<Produto> listaProdutos = new ArrayList<>();
 	private AberturaProduto abertura = new AberturaProduto();
+	private List<Consignacao> novasConsignacoes = new ArrayList<>();
 
 	@Inject
 	private OperacaoBean operacao;
@@ -38,14 +41,15 @@ public class ConsignacaoBean implements Serializable {
 
 	@Inject
 	ReceitaBean receitaBean;
-
+	
 	@Inject
 	private Produtos produtos;
 
+	
 	public void iniciaConsignacao() {
 		consignacao = new Consignacao();
 	}
-	
+
 	public void inicio() {
 		listaProdutos = criaListaProduto();
 		consignacao = new Consignacao();
@@ -179,6 +183,9 @@ public class ConsignacaoBean implements Serializable {
 	}
 
 	public void removeConsignacao() {
+		System.out.println(consignacao.getId());
+		System.out.println(consignacao.getProduto().getNome());
+		
 		List<Consignacao> listaConsignacao = new ArrayList<>();
 		for (Consignacao c : operacao.getItem().getConsignacoes()) {
 			if (!c.getProduto().getNome().equals(consignacao.getProduto().getNome())) {
@@ -192,7 +199,7 @@ public class ConsignacaoBean implements Serializable {
 			resumoOperacaoBean.alimentaListaResumoConsignacaoVenda();
 			receitaBean.criaListaReceitas();
 		}
-
+																																			
 		if (operacao.getItem().getAberturasProdutos() != null) {
 			List<AberturaProduto> aberturas = new ArrayList<>();
 			for (AberturaProduto abertura : operacao.getItem().getAberturasProdutos()) {
@@ -229,7 +236,7 @@ public class ConsignacaoBean implements Serializable {
 	}
 
 	public Boolean notaEmitidaNovo() {
-		
+
 		if (consignacao != null && consignacao.getNota() == true) {
 			return false;
 		} else {
@@ -313,6 +320,63 @@ public class ConsignacaoBean implements Serializable {
 		return BigDecimal.ZERO;
 	}
 
+	public boolean jaEConsignado(Produto p) {
+		if (operacao.getItem().getConsignacoes() != null && !operacao.getItem().getConsignacoes().isEmpty()) {
+			for (Consignacao c : operacao.getItem().getConsignacoes()) {
+				if (p.equals(c.getProduto())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public void criaListaNovasConsignacoes() {
+		novasConsignacoes = new ArrayList<>();
+		for (Produto p : listaProdutos) {
+			if (p.getPodeConsignar().equals(PodeConsignar.SIM) && !jaEConsignado(p)) {
+				Consignacao c = new Consignacao();
+				c.setProduto(p);
+				c.setOperacao(operacao.getItem());
+				novasConsignacoes.add(c);
+			}
+
+		}
+	}
+
+	public BigDecimal menorValorConsignacao(Consignacao c) {
+		if (c != null && c.getProduto() != null) {
+			return operacao.getTipoVendedor().minConsignacao(c);
+		}
+		return BigDecimal.ZERO;
+	}
+
+	public void insereValorNovaConsignacao(Consignacao c) {
+		c.setValorUnitario(operacao.getTipoVendedor().minConsignacao(c));
+	}
+
+	public void adicionaConsignacao2() {
+		if (novasConsignacoes != null && !novasConsignacoes.isEmpty()) {
+			for (Consignacao c : novasConsignacoes) {
+				if (c.getConsignados().intValue() > 0) {
+					
+					c.setTotalConsignado(c.getConsignados());
+					c.setTaxaComissao(operacao.getTipoVendedor().taxaComissaoConsignacao(c));
+					operacao.getItem().getConsignacoes().add(c);
+
+					AberturaProduto a = new AberturaProduto();
+					a.setProduto(c.getProduto());
+					a.setQuantidade(c.getConsignados());
+					a.setOperacao(operacao.getItem());
+					a.setColocacao(true);
+					operacao.getItem().getAberturasProdutos().add(a);
+				}
+			}
+			resumoOperacaoBean.alimentaListaResumoConsignacaoVenda();
+			receitaBean.criaListaReceitas();
+		}
+	}
+	
 	public void ataulizaValorConsignacao() {
 		consignacao.setValorUnitario(menorValorConsignacao());
 	}
@@ -331,6 +395,14 @@ public class ConsignacaoBean implements Serializable {
 
 	public void setAbertura(AberturaProduto abertura) {
 		this.abertura = abertura;
+	}
+
+	public List<Consignacao> getNovasConsignacoes() {
+		return novasConsignacoes;
+	}
+
+	public void setNovasConsignacoes(List<Consignacao> novasConsignacoes) {
+		this.novasConsignacoes = novasConsignacoes;
 	}
 
 }

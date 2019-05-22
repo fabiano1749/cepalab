@@ -3,6 +3,7 @@ package com.cepalab.sistemaVendas.repository.filter;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
 import com.cepalab.sistemaVendas.cadastro.dominio.Funcionario;
 
 
@@ -15,6 +16,7 @@ public class OperacaoFilter implements Serializable {
 	private Date fim;
 	private Integer codigoCliente;
 	private String cnpjCpf;
+	private Cliente cliente;
 	
 	public Funcionario getFuncionario() {
 		return funcionario;
@@ -55,6 +57,13 @@ public class OperacaoFilter implements Serializable {
 	public void setCnpjCpf(String cnpjCpf) {
 		this.cnpjCpf = cnpjCpf;
 	}
-	
+
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
 	
 }

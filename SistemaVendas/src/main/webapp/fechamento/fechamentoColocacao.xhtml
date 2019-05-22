@@ -10,8 +10,7 @@
 
 		<p:dataTable id="idTabelaColocacao"
 			value="#{fechamentoBean.item.listaColocacao}" style="width: 100%"
-			var="item" rows="10" paginator="true" paginatorPosition="bottom"
-			paginatorAlwaysVisible="false"
+			var="item" 
 			sortBy="#{item.operacao.cliente.codigo}">
 
 			<p:column headerText="Código" style="text-align: center"
@@ -30,7 +29,7 @@
 				</h:outputText>
 			</p:column>
 
-			<p:column headerText="Produto" style="text-align: center">
+			<p:column headerText="Produto" style="text-align: center" filterBy="#{item.produto.nome}" filterMatchMode="contains">
 				<h:outputText value="#{item.produto.nome}" />
 			</p:column>
 

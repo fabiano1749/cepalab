@@ -3,6 +3,7 @@ package com.cepalab.sistemaVendas.operacao.controle;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
@@ -11,13 +12,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import com.cepalab.sistemaVendas.Expedicao.dominio.Expedicao;
 import com.cepalab.sistemaVendas.cadastro.dominio.Cliente;
+import com.cepalab.sistemaVendas.cadastro.dominio.Grupo;
 import com.cepalab.sistemaVendas.cadastro.dominio.TipoVendedor;
 import com.cepalab.sistemaVendas.operacao.dominio.Consignacao;
 import com.cepalab.sistemaVendas.operacao.dominio.Operacao;
 import com.cepalab.sistemaVendas.operacao.dominio.TipoOperacao;
 import com.cepalab.sistemaVendas.operacao.dominio.Venda;
 import com.cepalab.sistemaVendas.repository.Clientes;
+import com.cepalab.sistemaVendas.repository.Expedicoes;
 import com.cepalab.sistemaVendas.repository.Operacoes;
 import com.cepalab.sistemaVendas.repository.TiposVendedores;
 import com.cepalab.sistemaVendas.security.Seguranca;
@@ -34,8 +38,7 @@ public class OperacaoBean implements Serializable {
 	private Operacao item;
 	private List<Cliente> listaClientes;
 	private TipoVendedor tipoVendedor;
-	
-	
+
 	// private List<Rota> listaRotas;
 	// private Rota rota;
 
@@ -65,7 +68,10 @@ public class OperacaoBean implements Serializable {
 
 	@Inject
 	private ReceitaBean receita;
-	
+
+	@Inject
+	private Expedicoes expedicoes;
+
 	@Inject
 	private TiposVendedores tiposVendedores;
 
@@ -79,7 +85,11 @@ public class OperacaoBean implements Serializable {
 	public void buscaTipoVendedor() {
 		tipoVendedor = tiposVendedores.porNome(seg.UsuarioLogado().getTipoVendedor().getNome());
 	}
-	
+
+	public Date dataAtual() {
+		return new Date();
+	}
+
 	/*
 	 * Alimenta a lista de clientes por rota + eficiente public void
 	 * alimentaListaClientes() { listaClientes = clientes.porFuncionario(rota); rota
@@ -114,14 +124,13 @@ public class OperacaoBean implements Serializable {
 		}
 	}
 
-	
 	public void salvar() {
 		preparaSalvar();
 		item.setReceitaTotal(item.ReceitaTotal());
 		item.setComissaoTotal(item.comissaoTotal());
 		try {
-			if(item.getId() == null) {
-				item.setFuncionario(seg.UsuarioLogado());	
+			if (item.getId() == null) {
+				item.setFuncionario(seg.UsuarioLogado());
 			}
 			cadastroOperacao.salvar(item);
 			inicio();
@@ -142,7 +151,7 @@ public class OperacaoBean implements Serializable {
 	}
 
 	public void setItem(Operacao operacao) {
-		
+
 		String paramResposta = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
 				.getRequest()).getParameter("operacao");
 
@@ -151,13 +160,11 @@ public class OperacaoBean implements Serializable {
 			operacao = operacoes.porId2(id);
 		}
 
-		
-		
 		if (operacao == null) {
 			inicio();
 			consignacaoBean.inicio();
 			vendaBean.inicio();
-			
+
 		} else {
 			this.item = operacao;
 			// listaRotas = rotas.rotasPorFuncionario(item.getFuncionario());
@@ -178,8 +185,66 @@ public class OperacaoBean implements Serializable {
 		}
 	}
 
+	public boolean isAdministrador() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("ADMINISTRADORES")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isVendedor() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("VENDEDORES")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isRoot() {
+		for (Grupo g : seg.UsuarioLogado().getTipo().getGrupos()) {
+			if (g.getNome().equals("ROOT")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean podeEditar() {
+		if (item.getFuncionario().equals(seg.UsuarioLogado()) && this.item.isChecado() == false) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean ConfirmouSaidaExpedicao() {
+
+		if (isVendedor()) {
+			Expedicao exp = expedicoes.expedicaoAbertaVendedor(seg.UsuarioLogado());
+			if (exp != null) {
+				return exp.isConferidoSaidaVendedor();
+			}
+		}
+		return true;
+	}
+	
+	public boolean RenderizarMensagemExpedicao() {
+		
+		if (isVendedor()) {
+			Expedicao exp = expedicoes.expedicaoAbertaVendedor(seg.UsuarioLogado());
+			if (exp != null) {
+				if(!exp.isConferidoSaidaVendedor()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	
 	
+
 	public TipoVendedor getTipoVendedor() {
 		return tipoVendedor;
 	}
@@ -196,6 +261,4 @@ public class OperacaoBean implements Serializable {
 		this.listaClientes = listaClientes;
 	}
 
-	
-	
 }

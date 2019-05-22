@@ -22,7 +22,7 @@
 					<p:button value="Novo" outcome="/cadastro/funcionario" />
 					<p:commandButton value="Salvar"
 						actionListener="#{funcionarioBean.salvar()}"
-						process="pnlNovo @this"/>
+						process="pnlNovo @this" />	
 				</p:toolbarGroup>
 
 				<p:toolbarGroup align="right">
@@ -56,7 +56,10 @@
 				<p:outputLabel value="CPF" for="idCpfNovo" />
 				<p:inputMask mask="999.999.999-99" id="idCpfNovo"
 					value="#{funcionarioBean.item.cpf}" required="true"
-					requiredMessage="Cpf Não informado ou incompleto!" />
+					requiredMessage="Cpf Não informado ou incompleto!">
+					<p:ajax listener="#{funcionarioBean.validaCPF()}" update="@this"
+						process="@this" />
+				</p:inputMask>
 
 
 				<p:outputLabel value="Telefone" />
@@ -75,7 +78,10 @@
 
 				<p:outputLabel value="Senha" for="senha" />
 				<p:inputText id="senha" value="#{funcionarioBean.item.senha}"
-					required="true" requiredMessage="É preciso informar uma senha!" />
+					required="true" requiredMessage="É preciso informar uma senha!">
+					<p:ajax listener="#{funcionarioBean.validaSenha}" update="@this"
+						process="@this" />
+				</p:inputText>
 
 
 				<p:outputLabel value="Tipo" for="idTipoVendedor" />

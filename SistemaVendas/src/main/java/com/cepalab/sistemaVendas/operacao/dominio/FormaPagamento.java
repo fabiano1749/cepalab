@@ -2,9 +2,10 @@ package com.cepalab.sistemaVendas.operacao.dominio;
 
 public enum FormaPagamento {
 
-	DINHEIRO("Dinheiro"),
+	NENHUM(""),
+	BOLETO("Boleto"),
 	CHEQUE("Cheque"),
-	BOLETO("Boleto");
+	DINHEIRO("Dinheiro");
 	
 private String descricao;
 	

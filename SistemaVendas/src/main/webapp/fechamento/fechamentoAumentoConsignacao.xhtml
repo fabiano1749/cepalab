@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui">
+
+	<p:panel header="Aumentos de consignação do período"
+		style="margin-top:20px; width: 95%; text-align: center">
+
+		<p:dataTable id="idTabelaAumentoConsignacao"
+			value="#{fechamentoBean.item.listaAumentoConsignacao}"
+			style="width: 100%" var="item" 
+			sortBy="#{item.operacao.cliente.codigo}">
+
+			<p:column headerText="Código" style="text-align: center; width: 10%"
+				sortBy="#{item.operacao.cliente.codigo}">
+				<h:outputText value="#{item.operacao.cliente.codigo}" />
+			</p:column>
+
+			<p:column headerText="Cliente" style="text-align: center; width:30%">
+				<h:outputText value="#{item.operacao.cliente.nome}" />
+			</p:column>
+
+			<p:column headerText="Produto" style="text-align: center" filterBy="#{item.produto.nome}" filterMatchMode="contains" >
+				<h:outputText value="#{item.produto.nome}" />
+			</p:column>
+
+			<p:column headerText="Consignados-Anterior" style="text-align: center">
+				<h:outputText value="#{item.totalAux}" />
+			</p:column>
+
+			<p:column headerText="Vendidos" style="text-align: center">
+				<h:outputText value="#{item.vendidos}" />
+			</p:column>	
+
+			<p:column headerText="Aumento" style="text-align: center">
+				<h:outputText value="#{item.totalConsignado - item.totalAux}" style="color:green" />
+			</p:column>	
+
+			<p:column headerText="Consignados-Atual" style="text-align: center">
+				<h:outputText value="#{item.totalConsignado}" />
+			</p:column>
+			
+		</p:dataTable>
+
+	</p:panel>
+
+</ui:composition>

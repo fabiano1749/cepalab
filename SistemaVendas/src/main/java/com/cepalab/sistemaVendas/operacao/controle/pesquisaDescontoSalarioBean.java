@@ -38,7 +38,7 @@ public class pesquisaDescontoSalarioBean implements Serializable {
 	@PostConstruct
 	public void inicio() {
 		filtro = new DescontoSalarioFilter();
-		listaFuncionarios = fun.funcionarios();
+		listaFuncionarios = fun.vendedorAtivo();
 	}
 
 	public void pesquisar() {
