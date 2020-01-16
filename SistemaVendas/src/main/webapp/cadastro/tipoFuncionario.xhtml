@@ -21,7 +21,7 @@
 
 
 		<h:form id="idFormTab">
-			<p:messages autoUpdate="true" />
+<!-- 			<p:messages autoUpdate="true" /> -->
 
 			<p:dataTable id="tabTF" value="#{tipoFuncionarioBean.itens}"
 				var="item" style="margin-top: 20px ; width: 70% " reflow="true">
@@ -52,7 +52,7 @@
 						oncomplete="PF('confirmExclusao').show()" process="@this"
 						update="idConfirmDialogExlusao" />
 				</p:column>
-			</p:dataTable>
+			</p:dataTable>	
 		</h:form>
 
 

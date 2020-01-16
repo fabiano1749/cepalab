@@ -12,7 +12,7 @@
 
 			<p:messages autoUpdate="true" />
 
-			<p:panelGrid columns="5" id="pnlNovo" styleClass="semBorda"
+			<p:panelGrid columns="6" id="pnlNovo" styleClass="semBorda"
 				style="margin-top: 10px">
 
 				<p:outputLabel value="Data inicial" for="dataInicio" />
@@ -33,6 +33,10 @@
 				<p:commandButton value="Pesquisar"
 					actionListener="#{consolidadoProdutoVendedorBean.pesquisa}"
 					update="@form" process="idForm pnlNovo" />
+					
+				<p:commandButton value="Export excel" ajax="false" >
+       			 <p:dataExporter type="xls" target="tbl" fileName="consolidado"/>
+    			</p:commandButton>
 
 			</p:panelGrid>
 
@@ -65,13 +69,12 @@
 				<p:columns
 					value="#{consolidadoProdutoVendedorBean.listaFuncionarios}"
 					var="fun">
-					<p:panelGrid columns="2" columnClasses="grid10, grid90"
+					<p:panelGrid columns="2" columnClasses="grid10, grid90" 
 						style="width:115%; text-align: left; margin-left: -6px; margin-right: 0px">
-
+						
 						<p:outputLabel value="Qt" />
 						<h:outputText
 							value="#{consolidadoProdutoVendedorBean.consolidado.quantidadeVendida(fun, produto)}" />
-
 
 						<p:outputLabel value="R$ " />
 						<h:outputText
@@ -243,13 +246,8 @@
 								style="text-align:left" />
 						</ui:repeat>
 					</p:row>
-
-
 				</p:columnGroup>
-
 			</p:dataTable>
 		</h:form>
-
-
 	</ui:define>
 </ui:composition>
